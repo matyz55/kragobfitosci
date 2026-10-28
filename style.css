@@ -1,0 +1,164 @@
+:root {
+  --bg: #14101f;
+  --panel: #1f1930;
+  --panel-2: #2b2342;
+  --text: #f5f1ff;
+  --muted: #a99fc4;
+  --accent: #ff8a3d;
+  --accent-2: #39d0c6;
+  --team-a: #39d0c6;
+  --team-b: #ff6fa5;
+  --band-2: #f6c945;
+  --band-3: #ff8a3d;
+  --band-4: #e8424f;
+  --ok: #4fdc8a;
+  --bad: #ff5c5c;
+  --face: #f3e9d2;
+  --radius: 16px;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: radial-gradient(circle at 50% -10%, #3a2154 0%, var(--bg) 60%);
+  background-color: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; max-width: 760px; margin: 0 auto;
+}
+.topbar h1 { margin: 0; font-size: 1.5rem; cursor: pointer; letter-spacing: .3px; }
+.topbar h1 span { color: var(--accent); }
+
+.screen { max-width: 760px; margin: 0 auto; padding: 0 16px 40px; }
+.hidden { display: none !important; }
+
+.card {
+  background: var(--panel); border-radius: var(--radius);
+  padding: 16px; margin-bottom: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.25);
+}
+.card h2 { margin: 0 0 12px; font-size: 1.2rem; }
+.card h3 { margin: 18px 0 6px; font-size: 1rem; color: var(--accent); }
+.center { text-align: center; }
+.muted { color: var(--muted); font-size: .9rem; }
+.lead { font-size: 1.05rem; line-height: 1.45; }
+.error { color: var(--bad); }
+.app-version { font-size: .75rem; opacity: .7; }
+
+button {
+  font: inherit; border: 0; border-radius: 12px; padding: 10px 16px;
+  cursor: pointer; color: var(--text); background: var(--panel-2);
+  transition: transform .08s, background .2s, opacity .2s;
+}
+button:active:not(:disabled) { transform: scale(.97); }
+button:disabled { opacity: .45; cursor: not-allowed; }
+button.primary { background: var(--accent); color: #241000; font-weight: 700; }
+button.ghost { background: transparent; border: 1px solid #463b63; }
+button.small { padding: 6px 12px; font-size: .9rem; }
+button.big { width: 100%; padding: 16px; font-size: 1.15rem; }
+
+input[type=text], select {
+  font: inherit; color: var(--text); background: var(--panel-2);
+  border: 1px solid #463b63; border-radius: 10px; padding: 10px 12px; width: 100%;
+}
+select { width: auto; }
+label { display: block; margin-bottom: 12px; color: var(--muted); font-size: .9rem; }
+label input { margin-top: 4px; }
+label.row { display: flex; align-items: center; gap: 8px; color: var(--text); font-size: 1rem; }
+
+.actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 12px; }
+.actions > button { flex: 1 1 140px; }
+
+/* menu */
+.hero { padding-bottom: 8px; }
+.hero-dial { width: min(100%, 320px); display: block; margin: 0 auto 4px; }
+.modes { display: grid; gap: 12px; margin-bottom: 16px; }
+.mode {
+  text-align: left; padding: 16px; background: var(--panel); border: 1px solid #352b4f;
+  display: flex; flex-direction: column; gap: 4px; border-radius: var(--radius);
+}
+.mode b { font-size: 1.15rem; }
+.mode span { color: var(--muted); font-size: .92rem; }
+.mode:hover { border-color: var(--accent); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { border-radius: 999px; padding: 8px 14px; border: 1px solid #463b63; background: transparent; color: var(--muted); }
+.chip.on { background: var(--accent-2); color: #062421; border-color: var(--accent-2); font-weight: 600; }
+
+/* ustawienia drużyn */
+.teams-setup { display: grid; gap: 12px; grid-template-columns: 1fr; margin-bottom: 8px; }
+@media (min-width: 600px) { .teams-setup { grid-template-columns: 1fr 1fr; } }
+.team-box { border-radius: 12px; padding: 12px 12px 2px; background: var(--panel-2); border-left: 4px solid var(--team-a); }
+.team-box.team-b { border-left-color: var(--team-b); }
+
+/* przekazanie urządzenia */
+.pass { padding: 32px 16px; }
+.pass-icon, .end-icon { font-size: 3rem; }
+
+/* rozgrywka */
+.scores { display: flex; gap: 8px; margin-bottom: 8px; }
+.score {
+  flex: 1; background: var(--panel); border-radius: 12px; padding: 8px 10px;
+  display: flex; flex-direction: column; align-items: center; min-width: 0; border: 2px solid transparent;
+}
+.score span { font-size: .8rem; color: var(--muted); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.score b { font-size: 1.5rem; }
+.score.active { border-color: var(--accent); }
+.score.team-a.active { border-color: var(--team-a); }
+.score.team-b.active { border-color: var(--team-b); }
+.score.goal { flex: 0 0 70px; }
+
+.status { text-align: center; min-height: 1.4em; margin: 8px 0; font-size: 1.02rem; }
+
+.card-choice { display: grid; gap: 8px; grid-template-columns: 1fr 1fr; margin-bottom: 8px; }
+.choice { font-size: .92rem; border: 2px solid transparent; }
+.choice.on { border-color: var(--accent); background: #3a2d55; }
+
+.spectrum { display: flex; justify-content: space-between; gap: 12px; margin-top: 4px; }
+.spec {
+  flex: 1; padding: 10px 12px; border-radius: 12px; font-weight: 700; font-size: 1.05rem;
+  background: #2f6e9e; line-height: 1.2;
+}
+.spec-left { background: linear-gradient(90deg, #3268a8, #2a4f7d); }
+.spec-right { background: linear-gradient(90deg, #a13a5b, #c94a4a); text-align: right; }
+
+.dial-wrap { position: relative; }
+#dial { width: 100%; display: block; touch-action: none; user-select: none; -webkit-user-select: none; cursor: grab; }
+#dial-range { width: 100%; margin: 4px 0 0; accent-color: var(--accent); }
+
+.dial-face { fill: var(--face); stroke: #c9b98f; stroke-width: 3; }
+.dial-tick { stroke: #b9a77a; stroke-width: 2; }
+.band { stroke: rgba(0,0,0,.25); stroke-width: 1; }
+.band-2 { fill: var(--band-2); }
+.band-3 { fill: var(--band-3); }
+.band-4 { fill: var(--band-4); }
+.band-label { fill: #1b1020; font-weight: 800; font-size: 15px; text-anchor: middle; dominant-baseline: middle; }
+.dial-needle { stroke: #2b1d3c; stroke-width: 6; stroke-linecap: round; }
+.dial-hub { fill: #2b1d3c; }
+.lr-label { fill: #2b1d3c; font-size: 26px; text-anchor: middle; dominant-baseline: middle; }
+
+.psychic-view .dial-face { fill: #fff5dc; }
+
+.clue-box {
+  text-align: center; font-size: 1.25rem; padding: 12px; margin-top: 8px;
+  background: var(--panel); border-radius: 12px;
+}
+.clue-input { margin-top: 8px; }
+
+.result { text-align: center; font-size: 1.15rem; padding: 12px; margin-top: 8px; border-radius: 12px; background: var(--panel); line-height: 1.5; }
+.result.pts-4 { box-shadow: inset 0 0 0 2px var(--band-4); }
+.result.pts-3 { box-shadow: inset 0 0 0 2px var(--band-3); }
+.result.pts-2 { box-shadow: inset 0 0 0 2px var(--band-2); }
+
+button.lr { font-size: 1.1rem; padding: 16px; font-weight: 700; }
+
+.rules ul { padding-left: 20px; }
+.rules li { margin-bottom: 6px; line-height: 1.4; }
+.rules p { line-height: 1.45; }
