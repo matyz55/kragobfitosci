@@ -34,9 +34,22 @@ tuż przed startem gry; wybór jest zapamiętywany. Karty i przykłady: `js/data
 
 ## Wygląd
 
-Ciemny motyw z animowaną „zorzą” w tle, tarcza z gradientami (obręcz od niebieskiego do czerwonego jak końce skali,
-wachlarz celu rozkładający się przy odsłonięciu, wskazówka obracająca się płynnie), konfetti przy trafieniu w środek
-i przy wygranej. Czcionki Baloo 2 (nagłówki, przyciski) i Nunito (tekst) są dołączone w `fonts/` (licencja SIL Open
+Ciemny motyw z animowaną „zorzą” w tle i tarcza z gradientami: obręcz od niebieskiego do czerwonego jak końce skali,
+przerywany pierścień i napis „Krąg obfitości” na tarczy, wachlarz celu rozkładający się przy odsłonięciu. Po odpowiedzi
+świeci pole, w które trafiła wskazówka (pozostałe są przygaszone), a liczby pól leżą nad wskazówką.
+
+- **Ekran tury**: nad tarczą duża karta z hasłem (i imieniem psychika), u psychika dwie karty do wyboru jako
+  mini-skale i pole „Twoje hasło”, po odsłonięciu karta wyniku z odznaką punktów. Gdy brakuje wysokości, zmniejsza się
+  tarcza, nie hasło.
+- **Tablica wyników**: paski postępu drużyn do progu wygranej, kropki rund (kolor = zdobyte punkty).
+- **Koniec gry**: puchar, kryształowa kula albo tarcza strzelnicza (własne ilustracje SVG), paski drużyn albo kropki
+  rund, licznik do wygranej we współpracy i statystyki (średnia, trafienia w sam środek).
+- **Ikony** w górnym pasku, menu i na dużym ekranie to własne ikony SVG (`js/ui.js`) – wyglądają tak samo na każdym
+  urządzeniu.
+- **Suwak pod tarczą** jest zablokowany i wyszarzony, gdy wskazówki nie wolno ruszać (u psychika, po zatwierdzeniu
+  odpowiedzi, przy „lewo/prawo” i po odsłonięciu).
+
+Czcionki Baloo 2 (nagłówki, przyciski) i Nunito (tekst) są dołączone w `fonts/` (licencja SIL Open
 Font License 1.1 – pliki `fonts/OFL-*.txt`), więc działają także bez sieci. Przy ustawieniu systemu „ogranicz ruch”
 animacje i konfetti są wyłączone.
 
@@ -86,6 +99,7 @@ i dźwięki. Telefon (albo komputer), na którym toczy się gra, jest pilotem: p
 - `js/data.js` – kategorie i karty
 - `js/game.js` – zasady (punktacja, tury, dogrywka, współpraca, tryb jednoosobowy)
 - `js/dial.js` – tarcza SVG (przeciąganie palcem/myszą i suwak)
+- `js/ui.js` – wspólne elementy wyglądu telefonu i dużego ekranu: ikony, ilustracje, karta hasła, karta wyniku, tablica wyników, podsumowanie
 - `js/sound.js` – efekty dźwiękowe
 - `tv.html`, `tv.css`, `js/tv.js` – duży ekran; `js/remote.js` – pilot (wysyłanie stanu); `js/net.js` – połączenia sieciowe
 - `js/app.js` – ekrany i przebieg gry

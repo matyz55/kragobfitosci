@@ -41,7 +41,7 @@ test('wibracje przy wyniku i przełącznik obok dźwięku', async ({ page }) => 
   await page.click('#btn-home');
   await page.click('#btn-haptics');
   await expect(page.locator('#btn-haptics')).toHaveClass(/off/);
-  await expect(page.locator('#btn-haptics')).toHaveText('📴');
+  await expect(page.locator('#btn-haptics')).toHaveAttribute('aria-label', 'Wibracje wyłączone');
   await page.reload();
   await expect(page.locator('#btn-haptics')).toHaveClass(/off/);
   await page.click('#btn-solo');

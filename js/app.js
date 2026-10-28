@@ -17,17 +17,13 @@ settings.cats = settings.cats.filter((id) => CATEGORIES.some((c) => c.id === id)
 if (!settings.cats.length) settings.cats = CATEGORIES.map((c) => c.id);
 
 // Stan bieżącej gry (dostępny globalnie – także dla testów).
-const state = { game: null, phase: 'menu', deck: null, card: null, choices: null, target: null, clue: '', lr: null, last: null, setup: null, pending: null };
+const state = { game: null, phase: 'menu', deck: null, card: null, choices: null, target: null, clue: '', lr: null, last: null, setup: null, pending: null, history: [] };
 
 let dial;
 
 function show(id) {
   document.querySelectorAll('.screen').forEach((s) => s.classList.toggle('hidden', s.id !== id));
   $('#btn-home').classList.toggle('hidden', id === 'screen-menu');
-}
-
-function esc(s) {
-  return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 }
 
 function parseNames(s) {
@@ -80,6 +76,11 @@ function renderCats() {
       if (on && settings.cats.length === 1) return; // co najmniej jedna kategoria
       setCats(on ? settings.cats.filter((x) => x !== c.id) : settings.cats.concat(c.id));
     });
+    const count = state.pending === 'solo' ? soloRounds([c.id], 9999).length : c.cards.length;
+    const small = document.createElement('small');
+    small.textContent = String(count);
+    small.title = state.pending === 'solo' ? 'haseł' : 'kart';
+    b.append(small);
     b.dataset.cat = c.id;
     b.setAttribute('aria-pressed', String(on));
     box.append(b);
@@ -161,32 +162,36 @@ function confetti(n = 70) {
   setTimeout(() => { fx.textContent = ''; }, 3200);
 }
 
-let shownScores = [];
+// Kropki rund: punkty rozegranych rund, null – runda jeszcze przed nami.
+function roundDots(total) {
+  const pts = state.history.map((h) => h.pts);
+  return Array.from({ length: Math.max(total, pts.length) }, (_, i) => (i < pts.length ? pts[i] : null));
+}
+
+// Dane tablicy wyników – te same dla telefonu i dużego ekranu.
+function scoreList() {
+  const g = state.game;
+  if (g.mode === 'teams') {
+    return g.teams.map((t, i) => ({ name: t.name, score: t.score, active: i === g.active, team: i ? 'b' : 'a', progress: t.score / g.goal, bump: true }))
+      .concat({ name: 'gra do', score: g.goal, small: true });
+  }
+  if (g.mode === 'coop') {
+    return [{ name: 'Wspólny wynik', score: g.score, active: true, bump: true },
+      { name: 'Karty', score: g.cardsLeft, dots: roundDots(g.cardsTotal) }];
+  }
+  return [{ name: 'Wynik', score: g.score, active: true, bump: true },
+    { name: 'Runda', score: `${Math.min(g.index + 1, g.rounds.length)}/${g.rounds.length}`, dots: roundDots(g.rounds.length) },
+    { name: 'Rekord', score: loadJSON(BEST_KEY, 0) }];
+}
 
 function renderScores() {
-  const g = state.game, box = $('#scores');
-  if (g.mode === 'teams') {
-    box.innerHTML = g.teams.map((t, i) => `<div class="score team-${i ? 'b' : 'a'}${i === g.active ? ' active' : ''}">` +
-      `<span>${esc(t.name)}</span><b>${t.score}</b></div>`).join('') +
-      `<div class="score goal"><span>gra do</span><b>${g.goal}</b></div>`;
-  } else if (g.mode === 'coop') {
-    box.innerHTML = `<div class="score active"><span>Wspólny wynik</span><b>${g.score}</b></div>` +
-      `<div class="score"><span>Karty</span><b>${g.cardsLeft}</b></div>`;
-  } else {
-    const best = loadJSON(BEST_KEY, 0);
-    box.innerHTML = `<div class="score active"><span>Wynik</span><b>${g.score}</b></div>` +
-      `<div class="score"><span>Runda</span><b>${Math.min(g.index + 1, g.rounds.length)}/${g.rounds.length}</b></div>` +
-      `<div class="score"><span>Rekord</span><b>${best}</b></div>`;
-  }
-  // podskok liczby, która właśnie wzrosła (tylko wyniki, nie runda ani karty)
-  const vals = [...box.querySelectorAll('.score b')].map((b) => Number(b.textContent.split('/')[0]));
-  box.querySelectorAll('.score b').forEach((b, i) => {
-    const label = b.previousElementSibling.textContent;
-    if (/Wynik|wynik/.test(label) || b.parentElement.matches('.team-a, .team-b')) {
-      if (shownScores[i] != null && vals[i] > shownScores[i]) b.classList.add('bump');
-    }
-  });
-  shownScores = vals;
+  renderScoreboard($('#scores'), scoreList());
+}
+
+// Początek nowej gry: czysta historia rund i tablica wyników bez „podskoków”.
+function newGameView() {
+  state.history = [];
+  $('#scores')._prev = null;
 }
 
 function resetPlayView() {
@@ -196,6 +201,7 @@ function resetPlayView() {
   dial.set(50);
   $('#card-choice').classList.add('hidden');
   $('#clue-box').classList.add('hidden');
+  $('#clue-box').classList.remove('compact');
   $('#clue-input-box').classList.add('hidden');
   $('#result').classList.add('hidden');
   $('#screen-play').classList.remove('psychic-view');
@@ -210,7 +216,7 @@ function currentPsychic() {
 function showClue() {
   const box = $('#clue-box');
   box.classList.remove('hidden');
-  box.innerHTML = state.clue ? `Hasło: <b>${esc(state.clue)}</b>` : `<span class="muted">Hasło podane na głos</span>`;
+  renderClue(box, state.clue, state.game.mode === 'solo' ? null : state.psychic);
 }
 
 // ---------- tryb jednoosobowy ----------
@@ -218,12 +224,12 @@ function showClue() {
 function startSolo() {
   state.setup = { mode: 'solo' };
   state.game = newSoloGame(settings.cats, 10);
+  newGameView();
   if (state.game.done) { alert('W wybranych kategoriach nie ma haseł do gry jednoosobowej. Dodaj kategorię.'); return; }
   soloRound();
 }
 
 function soloRound() {
-  if (state.game.index === 0) shownScores = [];
   const g = state.game, r = g.rounds[g.index];
   show('screen-play');
   resetPlayView();
@@ -233,7 +239,7 @@ function soloRound() {
   setCard({ left: r.left, right: r.right });
   renderScores();
   showClue();
-  $('#status').textContent = 'Gdzie na tej skali leży hasło? Przesuń wskazówkę.';
+  $('#status').textContent = 'Gdzie na tej skali leży hasło? Ustaw wskazówkę.';
   setActions(button('Sprawdź', 'primary big', soloReveal, 'btn-confirm'));
 }
 
@@ -242,10 +248,13 @@ function soloReveal() {
   const res = finishSoloTurn(g, dial.value);
   state.phase = 'reveal';
   state.last = res;
+  state.history.push({ pts: res.pts, centre: res.pts === 4 });
   dial.locked = true;
   dial.showTarget(state.target);
+  dial.markHit(dial.value);
+  $('#clue-box').classList.add('compact');
   renderScores();
-  showResult(`${pointsText(res.pts)}`, res.pts);
+  showResult({ pts: res.pts, title: `${res.pts} pkt` });
   SFX.points(res.pts); Haptics.points(res.pts);
   if (res.pts === 4) confetti(40);
   $('#status').textContent = '';
@@ -261,6 +270,7 @@ function startTeams() {
   state.setup = { mode: 'teams', names, players, goal };
   state.game = newTeamGame(names.map((n, i) => ({ name: n, players: players[i] })), goal);
   state.deck = makeDeck(settings.cats);
+  newGameView();
   passDevice();
 }
 
@@ -276,11 +286,11 @@ function startCoop() {
   state.setup = { mode: 'coop', players, cards };
   state.game = newCoopGame(players, cards);
   state.deck = makeDeck(settings.cats);
+  newGameView();
   passDevice();
 }
 
 function passDevice(extra) {
-  if (state.game.turn === 0 && !extra) shownScores = [];
   const g = state.game;
   state.phase = 'pass';
   state.choices = [state.deck.draw(), state.deck.draw()];
@@ -289,11 +299,17 @@ function passDevice(extra) {
   state.lr = null;
   show('screen-pass');
   const who = currentPsychic();
+  state.psychic = who;
   $('#pass-title').textContent = `Psychik: ${who}`;
-  let text = 'Przekaż urządzenie psychikowi. Pozostali – nie patrzcie na ekran!';
+  const chip = $('#pass-chip');
+  let text = 'Przekaż urządzenie psychikowi.';
   if (g.mode === 'teams') {
-    text = `${extra ? 'Trafienie w sam środek i wciąż strata – dodatkowa tura! ' : ''}Tura drużyny „${g.teams[g.active].name}”. ` + text;
-    if (g.suddenDeath) text = 'Dogrywka! ' + text;
+    chip.textContent = g.suddenDeath ? `Dogrywka · ${g.teams[g.active].name}` : `Tura: ${g.teams[g.active].name}`;
+    chip.className = `turn-chip team-${g.active ? 'b' : 'a'}`;
+    if (extra) text = 'Sam środek, a drużyna wciąż przegrywa – dodatkowa tura! ' + text;
+  } else {
+    chip.textContent = `Współpraca · karty: ${g.cardsLeft}`;
+    chip.className = 'turn-chip';
   }
   $('#pass-text').textContent = text;
   tvSync();
@@ -308,18 +324,24 @@ function psychicPhase() {
   dial.locked = true;
   dial.showTarget(state.target, state.game.mode === 'coop');
   SFX.mystic(); Haptics.mystic();
-  $('#status').textContent = 'Tylko ty widzisz cel. Wybierz kartę i wymyśl hasło.';
+  $('#status').textContent = 'Tylko Ty widzisz cel. Wybierz kartę i wymyśl hasło.';
   const box = $('#card-choice');
   box.classList.remove('hidden');
   box.textContent = '';
   state.choices.forEach((c, i) => {
-    const b = button(`${c.left} ↔ ${c.right}`, 'choice', () => pick(i));
+    const b = button('', 'choice', () => pick(i));
+    const l = document.createElement('span'), bar = document.createElement('span'), r = document.createElement('span');
+    l.className = 'ch-l'; l.textContent = c.left;
+    bar.className = 'ch-bar';
+    r.className = 'ch-r'; r.textContent = c.right;
+    b.append(l, bar, r);
     b.dataset.i = i;
+    b.setAttribute('aria-label', `${c.left} – ${c.right}`);
     box.append(b);
   });
   function pick(i) {
     setCard(state.choices[i]);
-    box.querySelectorAll('.choice').forEach((b, j) => b.classList.toggle('on', i === j));
+    box.querySelectorAll('.choice').forEach((b, j) => { b.classList.toggle('on', i === j); b.setAttribute('aria-pressed', String(i === j)); });
     tvSync();
   }
   pick(0);
@@ -336,8 +358,9 @@ function guessPhase() {
   SFX.hide(); Haptics.hide();
   renderScores();
   showClue();
-  const who = g.mode === 'teams' ? `Drużyna „${g.teams[g.active].name}”` : 'Wszyscy oprócz psychika';
-  $('#status').textContent = `${who}: ustawcie wskazówkę. Psychik milczy!`;
+  $('#status').textContent = g.mode === 'teams'
+    ? `„${g.teams[g.active].name}” ustawia wskazówkę. Psychik milczy!`
+    : 'Wszyscy oprócz psychika ustawiają wskazówkę.';
   setActions(button('Zatwierdź wskazówkę', 'primary big', afterGuess, 'btn-confirm'));
 }
 
@@ -347,7 +370,7 @@ function afterGuess() {
   if (g.mode === 'teams') {
     state.phase = 'lr';
     const other = g.teams[1 - g.active].name;
-    $('#status').textContent = `„${other}”: środek celu jest na lewo czy na prawo od wskazówki? (1 pkt)`;
+    $('#status').textContent = `„${other}”: środek celu jest na lewo czy na prawo od wskazówki? Trafienie: 1 pkt.`;
     setActions(
       button('◀ Na lewo', 'lr', () => reveal('L'), 'btn-left'),
       button('Na prawo ▶', 'lr', () => reveal('R'), 'btn-right'),
@@ -357,14 +380,10 @@ function afterGuess() {
   }
 }
 
-function pointsText(p) {
-  return p === 0 ? 'Pudło – 0 pkt' : `${p} pkt`;
-}
-
-function showResult(html, pts) {
-  const r = $('#result');
-  r.className = 'result pts-' + pts;
-  r.innerHTML = html;
+// Wynik rundy: { pts, title, sub, eyebrow } – ten sam obiekt trafia na duży ekran.
+function showResult(r) {
+  state.result = r;
+  renderResult($('#result'), r);
 }
 
 function reveal(lr) {
@@ -372,18 +391,24 @@ function reveal(lr) {
   state.lr = lr;
   state.phase = 'reveal';
   dial.showTarget(state.target, g.mode === 'coop');
-  if (lr) dial.showLR(lr);
-  let html, done;
+  dial.markHit(dial.value);
+  $('#clue-box').classList.add('compact');
+  let done;
   if (g.mode === 'teams') {
-    const team = g.teams[g.active].name, other = g.teams[1 - g.active].name;
+    const me = g.active;
+    const team = g.teams[me].name, other = g.teams[1 - me].name;
+    state.lrTeam = me ? 'team-a' : 'team-b';
+    if (lr) dial.showLR(lr, state.lrTeam);
     const res = finishTeamTurn(g, dial.value, state.target, lr);
     state.last = res;
-    html = `„${esc(team)}”: <b>${pointsText(res.pts)}</b>`;
-    if (res.pts === 4) html += `<br><span class="muted">Środek celu – „${esc(other)}” nie zgaduje.</span>`;
-    else html += `<br>„${esc(other)}”: ${res.lrOk ? '<b>+1 pkt</b> za lewo/prawo' : 'pudło w lewo/prawo'}`;
+    state.history.push({ pts: res.pts, team: me, lrOk: res.lrOk, centre: res.pts === 4 });
     done = g.winner != null;
     renderScores();
-    showResult(html, res.pts);
+    showResult({
+      pts: res.pts,
+      title: `„${team}”: ${res.pts} pkt`,
+      sub: res.pts === 4 ? `Sam środek – „${other}” nie zgaduje` : `„${other}”: ${res.lrOk ? '+1 pkt za lewo/prawo' : 'pudło w lewo/prawo'}`,
+    });
     SFX.points(res.pts); Haptics.points(res.pts);
     SFX.bonus(res.lrOk); Haptics.bonus(res.lrOk);
     if (res.pts === 4) confetti(40);
@@ -392,10 +417,10 @@ function reveal(lr) {
   } else {
     const res = finishCoopTurn(g, dial.value, state.target);
     state.last = res;
-    html = `<b>${pointsText(res.pts)}</b>` + (res.bonus ? '<br>Sam środek! +1 karta do talii.' : '');
+    state.history.push({ pts: res.pts, centre: res.bonus });
     done = g.done;
     renderScores();
-    showResult(html, res.pts);
+    showResult({ pts: res.pts, title: `${res.pts} pkt`, eyebrow: res.bonus ? 'Sam środek!' : undefined, sub: res.bonus ? '+1 karta do talii' : undefined });
     SFX.points(res.pts); Haptics.points(res.pts);
     if (res.bonus) confetti(40);
     $('#status').textContent = '';
@@ -405,31 +430,64 @@ function reveal(lr) {
 
 // ---------- koniec gry ----------
 
+// Liczba z przecinkiem dziesiętnym (polski zapis).
+const plNum = (x) => x.toFixed(1).replace('.', ',');
+
+// Podsumowanie gry: paski drużyn albo kropki rund, statystyki trafień.
+function endSummary() {
+  const g = state.game, h = state.history;
+  const centres = (team) => h.filter((x) => x.centre && (team == null || x.team === team)).length;
+  if (g.mode === 'teams') {
+    const max = Math.max(g.goal, ...g.teams.map((t) => t.score));
+    return {
+      kind: 'teams',
+      rows: g.teams.map((t, i) => ({ name: t.name, score: t.score, max, win: i === g.winner, team: i ? 'b' : 'a' })),
+      stats: `Tury: ${h.length} · trafienia w sam środek: ${centres(0)} : ${centres(1)}`,
+    };
+  }
+  if (g.mode === 'coop') {
+    return {
+      kind: 'rounds', dots: h.map((x) => x.pts),
+      meter: { value: g.score, max: Math.max(25, g.score), mark: 16, label: 'Wygrana od 16 pkt' },
+      stats: `Rozegrane karty: ${g.turn} · trafienia w sam środek: ${centres()}`,
+    };
+  }
+  return {
+    kind: 'rounds', dots: h.map((x) => x.pts), meter: null,
+    stats: `Średnio ${plNum(g.score / Math.max(1, h.length))} pkt na rundę · trafienia w sam środek: ${centres()}`,
+  };
+}
+
 function endGame() {
   const g = state.game;
   state.phase = 'end';
   show('screen-end');
+  let win;
   if (g.mode === 'teams') {
     const w = g.teams[g.winner];
-    $('#end-icon').textContent = '🏆';
+    state.endIcon = 'trophy';
     $('#end-title').textContent = `Wygrywa „${w.name}”!`;
     $('#end-text').textContent = `${g.teams[0].name} ${g.teams[0].score} : ${g.teams[1].score} ${g.teams[1].name}`;
-    SFX.win(); Haptics.win();
-    confetti();
+    win = true;
   } else if (g.mode === 'coop') {
+    win = g.score >= 16;
+    state.endIcon = win ? 'trophy' : 'orb';
     $('#end-title').textContent = `${g.score} pkt`;
-    $('#end-text').textContent = `${coopRank(g.score)} (rozegrane karty: ${g.turn})`;
-    if (g.score >= 16) { SFX.win(); Haptics.win(); confetti(); } else { SFX.end(); Haptics.end(); }
-    $('#end-icon').textContent = g.score >= 16 ? '🏆' : '🔮';
+    $('#end-text').textContent = coopRank(g.score);
   } else {
     const best = loadJSON(BEST_KEY, 0);
     const record = g.score > best;
     if (record) saveJSON(BEST_KEY, g.score);
+    win = record || g.score >= 30;
+    state.endIcon = win ? 'trophy' : 'target';
     $('#end-title').textContent = `${g.score} / ${g.rounds.length * 4} pkt`;
     $('#end-text').textContent = record ? 'Nowy rekord!' : `Rekord: ${best} pkt`;
-    if (record || g.score >= 30) { SFX.win(); Haptics.win(); confetti(); } else { SFX.end(); Haptics.end(); }
-    $('#end-icon').textContent = record || g.score >= 30 ? '🏆' : '🎯';
   }
+  $('#end-icon').innerHTML = art(state.endIcon);
+  $('#end-icon').className = `big-icon ${state.endIcon === 'trophy' ? 'trophy' : 'orb'}`;
+  state.summary = endSummary();
+  renderSummary($('#end-summary'), state.summary);
+  if (win) { SFX.win(); Haptics.win(); confetti(); } else { SFX.end(); Haptics.end(); }
   tvSync();
 }
 
@@ -440,6 +498,7 @@ function again() {
   state.deck = makeDeck(settings.cats);
   if (s.mode === 'teams') state.game = newTeamGame(s.names.map((n, i) => ({ name: n, players: s.players[i] })), s.goal);
   else state.game = newCoopGame(s.players, s.cards);
+  newGameView();
   passDevice();
 }
 
@@ -455,6 +514,7 @@ function home() {
 
 function init() {
   $('#version').textContent = GAME_VERSION;
+  fillIcons(document);
   dial = createDial($('#dial'), $('#dial-range'), (v, user) => { if (user) { SFX.tick(v); Haptics.dial(v); } else Haptics.sync(v); tvDial(v); });
   const hero = createDial($('#hero-dial'), $('#hero-range'));
   hero.locked = true;
@@ -466,7 +526,7 @@ function init() {
   document.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b && b.id !== 'btn-sound' && !b.disabled) { SFX.click(); if (b.id !== 'btn-haptics') Haptics.tap(); } });
   const soundBtn = $('#btn-sound');
   const soundIcon = () => {
-    soundBtn.textContent = SFX.enabled ? '🔊' : '🔇';
+    soundBtn.innerHTML = icon(SFX.enabled ? 'soundOn' : 'soundOff');
     soundBtn.setAttribute('aria-label', SFX.enabled ? 'Dźwięk włączony' : 'Dźwięk wyłączony');
   };
   soundBtn.addEventListener('click', () => { SFX.toggle(); soundIcon(); });
@@ -475,7 +535,7 @@ function init() {
   const hapticBtn = $('#btn-haptics');
   const hapticLabel = () => {
     hapticBtn.classList.toggle('off', !Haptics.enabled);
-    hapticBtn.textContent = Haptics.enabled ? '📳' : '📴';
+    hapticBtn.innerHTML = icon(Haptics.enabled ? 'vibrate' : 'vibrateOff');
     hapticBtn.setAttribute('aria-pressed', String(Haptics.enabled));
     hapticBtn.title = Haptics.enabled ? 'Wibracje włączone' : 'Wibracje wyłączone';
     hapticBtn.setAttribute('aria-label', hapticBtn.title);

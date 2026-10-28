@@ -15,35 +15,28 @@ function tvSend(msg) {
   try { if (tvConn && tvConn.open) tvConn.send(msg); } catch {}
 }
 
-function tvScores() {
-  const g = state.game;
-  if (g.mode === 'teams') {
-    return g.teams.map((t, i) => ({ name: t.name, score: t.score, active: i === g.active, team: i ? 'b' : 'a' }))
-      .concat({ name: 'gra do', score: g.goal });
-  }
-  if (g.mode === 'coop') return [{ name: 'Wspólny wynik', score: g.score, active: true }, { name: 'Karty', score: g.cardsLeft }];
-  return [{ name: 'Wynik', score: g.score, active: true }, { name: 'Runda', score: `${Math.min(g.index + 1, g.rounds.length)}/${g.rounds.length}` }];
-}
-
 // Stan dla dużego ekranu – tylko dane (bez HTML), żeby nic z sieci nie trafiało na stronę jako kod.
 function tvSnapshot() {
   const g = state.game;
   const s = { t: 'state', ver: GAME_VERSION, phase: g ? state.phase : 'menu' };
   if (!g) return s;
   s.mode = g.mode;
-  s.scores = tvScores();
+  s.scores = scoreList();
   s.dial = dial.value;
-  if (g.mode !== 'solo') s.psychic = currentPsychic();
+  if (g.mode !== 'solo') s.psychic = state.psychic;
   if (g.mode === 'teams') { s.team = g.teams[g.active].name; s.other = g.teams[1 - g.active].name; s.sudden = !!g.suddenDeath; }
   if (state.phase !== 'pass' && state.card) { s.left = state.card.left; s.right = state.card.right; }
   if (['guess', 'lr', 'reveal'].includes(state.phase)) s.clue = state.clue;
   if (state.phase === 'reveal' || state.phase === 'end') {
     s.target = state.target;
     s.lr = state.lr;
+    s.lrTeam = state.lrTeam;
     s.coop = g.mode === 'coop';
-    s.result = { pts: state.last ? state.last.pts : 0, text: $('#result').innerText };
+    s.result = state.result;
   }
-  if (state.phase === 'end') s.end = { title: $('#end-title').textContent, text: $('#end-text').textContent, icon: $('#end-icon').textContent };
+  if (state.phase === 'end') {
+    s.end = { title: $('#end-title').textContent, text: $('#end-text').textContent, icon: state.endIcon, summary: state.summary };
+  }
   return s;
 }
 

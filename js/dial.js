@@ -43,7 +43,10 @@ function dialDefs(id) {
     ${radial('hub', stop(0, '#7d6aa8') + stop(0.6, '#3a2b5e') + stop(1, '#1d1433'), 20)}
     <linearGradient id="${id}-rim" x1="0" x2="1" y1="0" y2="0">${stop(0, '#4f7cff')}${stop(0.5, '#a66bff')}${stop(1, '#ff5470')}</linearGradient>
     <linearGradient id="${id}-needle" x1="0" x2="1" y1="0" y2="0">${stop(0, '#2b1d3c')}${stop(0.5, '#53407a')}${stop(1, '#2b1d3c')}</linearGradient>
+    <linearGradient id="${id}-shine" x1="0" x2="1" y1="0" y2="0">${stop(0, 'rgba(255,255,255,0)')}${stop(0.5, 'rgba(255,255,255,.55)')}${stop(1, 'rgba(255,255,255,0)')}</linearGradient>
     <filter id="${id}-shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#0b0614" flood-opacity=".45"/></filter>
+    <filter id="${id}-glow" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#fff" flood-opacity=".85"/></filter>
+    <path id="${id}-arc" d="${arcPath(16, 84, r * 0.52)}"/>
   </defs>`;
 }
 
@@ -59,8 +62,16 @@ function createDial(svg, range, onChange) {
   // obudowa: półkole z obręczą i podstawa
   svg.append(el('path', { d: `${wedgePath(0, 100, r + 14)}`, fill: url('bezel'), class: 'dial-bezel', filter: url('shadow') }));
   svg.append(el('rect', { x: cx - r - 18, y: cy - 4, width: 2 * r + 36, height: 20, rx: 10, class: 'dial-base' }));
+  svg.append(el('path', { d: arcPath(6, 40, r + 7), stroke: url('shine'), class: 'dial-shine' }));
   svg.append(el('path', { d: wedgePath(0, 100, r), fill: url('face'), class: 'dial-face' }));
   svg.append(el('path', { d: arcPath(0.4, 99.6, r - 4), stroke: url('rim'), class: 'dial-rim' }));
+  // zdobienia: przerywany pierścień i napis wzdłuż łuku
+  svg.append(el('path', { d: arcPath(2, 98, r * 0.66), class: 'dial-ring' }));
+  const brand = el('text', { class: 'dial-brand' });
+  const tp = el('textPath', { href: `#${id}-arc`, startOffset: '50%' });
+  tp.textContent = 'KRĄG OBFITOŚCI';
+  brand.append(tp);
+  svg.append(brand);
 
   const targetG = el('g', { class: 'dial-target' });
   svg.append(targetG);
@@ -81,10 +92,22 @@ function createDial(svg, range, onChange) {
   svg.append(needle);
   svg.append(el('circle', { cx, cy, r: 19, fill: url('hub'), class: 'dial-hub' }));
   svg.append(el('circle', { cx, cy, r: 7, class: 'dial-hub-cap' }));
+  // liczby pól celu leżą nad wskazówką, żeby jej nie zasłaniała
+  const labelsG = el('g', { class: 'dial-target dial-labels' });
+  svg.append(labelsG);
+  let bandPaths = [];
+  let curTarget = null;
 
+  // zablokowana tarcza: wskazówka i suwak pod nią nie reagują (po odpowiedzi, u psychika, na dużym ekranie)
+  let locked = false;
   const api = {
     value: 50,
-    locked: false,
+    get locked() { return locked; },
+    set locked(v) {
+      locked = !!v;
+      range.disabled = locked;
+      svg.classList.toggle('locked', locked);
+    },
     set(v, user) {
       v = Math.max(0, Math.min(100, Math.round(v * 2) / 2));
       api.value = v;
@@ -94,31 +117,52 @@ function createDial(svg, range, onChange) {
       if (onChange) onChange(v, !!user);
     },
     showTarget(t, coop) {
-      targetG.textContent = '';
-      targetG.classList.remove('reveal');
+      api.hideTarget();
+      curTarget = t;
       const bands = [[-2.5, -1.5, 2], [-1.5, -0.5, 3], [-0.5, 0.5, coop ? 3 : 4], [0.5, 1.5, 3], [1.5, 2.5, 2]];
       for (const [a, b, p] of bands) {
         const d = wedgePath(t + a * BAND, t + b * BAND, r - 1);
-        if (!d) continue;
+        if (!d) { bandPaths.push(null); continue; }
         const centre = a === -0.5;
-        targetG.append(el('path', { d, fill: url(centre && coop ? 'b3' : `b${p}`), class: `band band-${p}${centre ? ' band-center' : ''}` }));
+        const path = el('path', { d, fill: url(centre && coop ? 'b3' : `b${p}`), class: `band band-${p}${centre ? ' band-center' : ''}` });
+        targetG.append(path);
+        bandPaths.push(path);
         const mid = (Math.max(0, t + a * BAND) + Math.min(100, t + b * BAND)) / 2;
         const [lx, ly] = dialPoint(mid, r - 30);
         if (mid > 0 && mid < 100 && Math.min(100, t + b * BAND) - Math.max(0, t + a * BAND) >= BAND * 0.6) {
           const txt = el('text', { x: lx.toFixed(1), y: ly.toFixed(1), class: 'band-label' });
           txt.textContent = String(p);
-          targetG.append(txt);
+          labelsG.append(txt);
         }
       }
       // animacja odsłonięcia (wachlarz rozkłada się od osi)
-      requestAnimationFrame(() => targetG.classList.add('reveal'));
+      requestAnimationFrame(() => { targetG.classList.add('reveal'); labelsG.classList.add('reveal'); });
     },
-    hideTarget() { targetG.textContent = ''; targetG.classList.remove('reveal'); },
+    hideTarget() {
+      targetG.textContent = '';
+      labelsG.textContent = '';
+      targetG.classList.remove('reveal', 'scored');
+      labelsG.classList.remove('reveal');
+      bandPaths = [];
+      curTarget = null;
+    },
+    // wyróżnienie pola, w które trafiła wskazówka (pozostałe lekko przygaszone);
+    // pole wybierane tak jak w punktacji (scoreFor) – na granicy dwóch pól liczy się lepsze
+    markHit(v) {
+      if (curTarget == null) return false;
+      const d = Math.abs(v - curTarget), left = v < curTarget;
+      const idx = d <= BAND / 2 ? 2 : d <= BAND * 1.5 ? (left ? 1 : 3) : d <= BAND * 2.5 ? (left ? 0 : 4) : -1;
+      const hit = idx >= 0 ? bandPaths[idx] : null;
+      targetG.classList.add('scored');
+      for (const p of bandPaths) if (p) p.classList.toggle('hit', p === hit);
+      if (hit) { hit.setAttribute('filter', url('glow')); targetG.append(hit); }
+      return !!hit;
+    },
     // znacznik wskazania „lewo/prawo” drużyny przeciwnej
-    showLR(side) {
+    showLR(side, cls) {
       lrMark.textContent = '';
-      if (!side) { lrMark.classList.add('hidden'); return; }
-      lrMark.classList.remove('hidden');
+      lrMark.setAttribute('class', `dial-lr${cls ? ` ${cls}` : ''}${side ? '' : ' hidden'}`);
+      if (!side) return;
       const off = side === 'L' ? -13 : 13;
       const [x, y] = dialPoint(Math.max(6, Math.min(94, api.value + off)), r * 0.5);
       lrMark.append(el('circle', { cx: x.toFixed(1), cy: y.toFixed(1), r: 17, class: 'lr-bg' }));

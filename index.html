@@ -20,10 +20,10 @@
   <header class="topbar">
     <h1 id="logo"><img src="icons/icon.svg" alt="" class="logo-icon">Krąg <span>obfitości</span></h1>
     <div class="top-btns">
-      <button id="btn-tv" class="ghost small" title="Duży ekran" aria-label="Duży ekran">📺</button>
-      <button id="btn-haptics" class="ghost small hidden" title="Wibracje" aria-label="Wibracje" aria-pressed="true">📳</button>
-      <button id="btn-sound" class="ghost small" title="Dźwięk" aria-label="Dźwięk włączony">🔊</button>
-      <button id="btn-home" class="ghost small hidden" title="Menu główne" aria-label="Menu główne">✕<span class="wide"> Menu</span></button>
+      <button id="btn-tv" class="ghost small icon-btn" title="Duży ekran" aria-label="Duży ekran" data-icon="tv"></button>
+      <button id="btn-haptics" class="ghost small icon-btn hidden" title="Wibracje" aria-label="Wibracje" aria-pressed="true"></button>
+      <button id="btn-sound" class="ghost small icon-btn" title="Dźwięk" aria-label="Dźwięk włączony"></button>
+      <button id="btn-home" class="ghost small icon-btn hidden" title="Menu główne" aria-label="Menu główne" data-icon="close"><span class="wide">Menu</span></button>
     </div>
   </header>
 
@@ -36,18 +36,18 @@
     </section>
     <section class="modes">
       <button class="mode" id="btn-solo" data-mode="solo">
-        <span class="mode-icon">👤</span><span class="mode-txt"><b>Jeden gracz</b><span class="mode-desc">10 rund z gotowymi hasłami, do 40 pkt</span></span>
+        <span class="mode-icon" data-icon="solo"></span><span class="mode-txt"><b>Jeden gracz</b><span class="mode-desc">10 rund z gotowymi hasłami, do 40 pkt</span></span>
       </button>
       <button class="mode" id="btn-teams" data-mode="teams">
-        <span class="mode-icon">⚔️</span><span class="mode-txt"><b>Dwie drużyny</b><span class="mode-desc">Psychik, hasło, 4/3/2 pkt i „lewo czy prawo?”</span></span>
+        <span class="mode-icon" data-icon="teams"></span><span class="mode-txt"><b>Dwie drużyny</b><span class="mode-desc">Psychik, hasło, 4/3/2 pkt i „lewo czy prawo?”</span></span>
       </button>
       <button class="mode" id="btn-coop" data-mode="coop">
-        <span class="mode-icon">🤝</span><span class="mode-txt"><b>Współpraca</b><span class="mode-desc">2+ graczy razem przeciw talii kart</span></span>
+        <span class="mode-icon" data-icon="coop"></span><span class="mode-txt"><b>Współpraca</b><span class="mode-desc">2+ graczy razem przeciw talii kart</span></span>
       </button>
     </section>
     <nav class="menu-row">
-      <button id="btn-rules" class="ghost"><i>📖 </i>Zasady</button>
-      <button id="btn-install" class="ghost hidden"><i>📲 </i>Zainstaluj</button>
+      <button id="btn-rules" class="ghost" data-icon="book">Zasady</button>
+      <button id="btn-install" class="ghost hidden" data-icon="install">Zainstaluj</button>
     </nav>
     <p class="center muted app-version">Wersja <span id="version"></span></p>
   </main>
@@ -95,19 +95,31 @@
   <!-- PRZEKAZANIE URZĄDZENIA -->
   <main id="screen-pass" class="screen hidden">
     <section class="pass center">
-      <div class="big-icon orb">🔮</div>
-      <h2 id="pass-title"></h2>
-      <p id="pass-text" class="lead"></p>
+      <div class="pass-card">
+        <span id="pass-chip" class="turn-chip"></span>
+        <div class="big-icon orb" data-art="orb"></div>
+        <h2 id="pass-title"></h2>
+        <p id="pass-text" class="lead"></p>
+        <p class="pass-hint">Pozostali – nie patrzcie na ekran!</p>
+      </div>
       <button class="primary big" id="btn-psychic-ready">Jestem psychikiem – pokaż cel</button>
     </section>
   </main>
 
   <!-- ROZGRYWKA -->
   <main id="screen-play" class="screen hidden">
-    <div class="play-side">
+    <div class="play-head">
       <div id="scores" class="scores"></div>
       <p id="status" class="status"></p>
+    </div>
+    <div class="play-stage">
       <div id="card-choice" class="card-choice hidden"></div>
+      <div id="clue-input-box" class="clue-input hidden">
+        <label for="clue-input">Twoje hasło</label>
+        <input type="text" id="clue-input" maxlength="60" placeholder="wpisz albo powiedz na głos">
+      </div>
+      <div id="clue-box" class="clue-card hidden"></div>
+      <div id="result" class="result hidden"></div>
     </div>
     <div class="play-main">
       <div class="dial-wrap">
@@ -120,11 +132,6 @@
       </div>
     </div>
     <div class="play-bottom">
-      <div id="clue-box" class="clue-box hidden"></div>
-      <div id="clue-input-box" class="clue-input hidden">
-        <input type="text" id="clue-input" maxlength="60" placeholder="Hasło (wpisz albo powiedz na głos)">
-      </div>
-      <div id="result" class="result hidden"></div>
       <div id="actions" class="actions"></div>
     </div>
   </main>
@@ -132,9 +139,10 @@
   <!-- KONIEC -->
   <main id="screen-end" class="screen hidden">
     <section class="center end">
-      <div class="big-icon trophy" id="end-icon">🏆</div>
+      <div class="big-icon trophy" id="end-icon"></div>
       <h2 id="end-title"></h2>
       <p id="end-text" class="lead"></p>
+      <div id="end-summary" class="end-summary"></div>
     </section>
     <div class="actions"><button class="ghost" id="btn-menu">Menu</button><button class="primary" id="btn-again">Jeszcze raz</button></div>
   </main>
@@ -195,7 +203,7 @@
   <!-- DUŻY EKRAN -->
   <div id="tv-dialog" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="tv-title">
     <div class="dialog">
-      <h2 id="tv-title">📺 Duży ekran</h2>
+      <h2 id="tv-title" class="with-icon" data-icon="tv">Duży ekran</h2>
       <p class="muted">Tarcza, karty i wyniki na telewizorze, rzutniku albo drugim monitorze. Ten telefon zostaje pilotem.
         Cel widzi tylko psychik – na dużym ekranie pojawia się dopiero przy odsłonięciu.</p>
       <button class="primary" id="btn-tv-window">Otwórz w nowym oknie na tym urządzeniu</button>
@@ -212,6 +220,7 @@
   <script src="js/data.js"></script>
   <script src="js/game.js"></script>
   <script src="js/dial.js"></script>
+  <script src="js/ui.js"></script>
   <script src="js/sound.js"></script>
   <script src="js/haptics.js"></script>
   <script src="js/net.js"></script>

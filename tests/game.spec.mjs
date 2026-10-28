@@ -194,15 +194,15 @@ test('każdą kategorię da się grać osobno: min. 32 karty i 15 haseł, bez po
 });
 
 test('dźwięk: przełącznik zapamiętany, gra działa z dźwiękiem', async ({ page }) => {
-  await expect(page.locator('#btn-sound')).toHaveText('🔊');
+  await expect(page.locator('#btn-sound')).toHaveAttribute('aria-label', 'Dźwięk włączony');
   await page.click('#btn-solo');
   await page.click('#btn-cats-start');
   await page.locator('#dial-range').fill('80');
   await page.click('#btn-confirm');
   await page.click('#btn-sound');
-  await expect(page.locator('#btn-sound')).toHaveText('🔇');
+  await expect(page.locator('#btn-sound')).toHaveAttribute('aria-label', 'Dźwięk wyłączony');
   await page.reload();
-  await expect(page.locator('#btn-sound')).toHaveText('🔇');
+  await expect(page.locator('#btn-sound')).toHaveAttribute('aria-label', 'Dźwięk wyłączony');
   expect(await page.evaluate(() => SFX.enabled)).toBe(false);
 });
 
@@ -233,6 +233,81 @@ test('zasady: zakładki', async ({ page }) => {
   await page.click('.tab[data-tab=coop]');
   await expect(page.locator('[data-page=coop]')).toBeVisible();
   await expect(page.locator('[data-page=basics]')).toBeHidden();
+});
+
+test('suwak pod tarczą: zablokowany po odpowiedzi, odblokowany w nowej rundzie', async ({ page }) => {
+  await page.click('#btn-solo');
+  await page.click('#btn-cats-start');
+  await expect(page.locator('#dial-range')).toBeEnabled();
+  await page.locator('#dial-range').fill('30');
+  await page.click('#btn-confirm');
+  await expect(page.locator('#dial-range')).toBeDisabled();
+  // przeciąganie suwaka i tarczy myszą niczego nie zmienia
+  const r = await page.locator('#dial-range').boundingBox();
+  await page.mouse.move(r.x + r.width - 4, r.y + r.height / 2);
+  await page.mouse.down();
+  await page.mouse.move(r.x + 4, r.y + r.height / 2, { steps: 5 });
+  await page.mouse.up();
+  const d = await page.locator('#dial').boundingBox();
+  await page.mouse.click(d.x + d.width * 0.95, d.y + d.height * 0.9);
+  expect(await page.evaluate(() => [dial.value, Number(document.querySelector('#dial-range').value)])).toEqual([30, 30]);
+  await page.click('#btn-next');
+  await expect(page.locator('#dial-range')).toBeEnabled();
+});
+
+test('drużyny: suwak zablokowany u psychika i przy „lewo/prawo”', async ({ page }) => {
+  await page.click('#btn-teams');
+  await page.click('#btn-start-teams');
+  await page.click('#btn-cats-start');
+  await page.click('#btn-psychic-ready');
+  await expect(page.locator('#dial-range')).toBeDisabled();
+  await page.click('#btn-hide');
+  await expect(page.locator('#dial-range')).toBeEnabled();
+  await page.click('#btn-confirm');
+  await expect(page.locator('#dial-range')).toBeDisabled();
+});
+
+test('odsłonięcie: świeci pole, w które trafiła wskazówka (na granicy – lepsze)', async ({ page }) => {
+  const hit = async (offset) => {
+    await page.goto('/');
+    await page.click('#btn-solo');
+    await page.click('#btn-cats-start');
+    await page.evaluate((o) => { state.target = 50; state.game.rounds[state.game.index].target = 50; dial.set(50 + o); }, offset);
+    await page.click('#btn-confirm');
+    return page.evaluate(() => {
+      const h = document.querySelector('#dial .band.hit');
+      return [h ? h.getAttribute('class').match(/band-(\d)/)[1] : null, state.last.pts];
+    });
+  };
+  expect(await hit(0)).toEqual(['4', 4]);
+  expect(await hit(2)).toEqual(['4', 4]); // granica środka i pola 3
+  expect(await hit(-5)).toEqual(['3', 3]);
+  expect(await hit(9)).toEqual(['2', 2]);
+  expect(await hit(20)).toEqual([null, 0]);
+});
+
+test('koniec gry: podsumowanie z kropkami rund i paskami drużyn', async ({ page }) => {
+  await page.click('#btn-solo');
+  await page.click('#btn-cats-start');
+  for (let i = 0; i < 10; i++) {
+    await page.evaluate((k) => dial.set(state.target + (k % 2) * 5), i);
+    await page.click('#btn-confirm');
+    await page.click('#btn-next');
+  }
+  await expect(page.locator('#end-summary .sum-dots i')).toHaveCount(10);
+  // statystyka zgadza się z kropkami i z historią rund
+  const centres = await page.evaluate(() => state.history.filter((h) => h.pts === 4).length);
+  await expect(page.locator('#end-summary .sum-dots i.p4')).toHaveCount(centres);
+  await expect(page.locator('#end-summary .sum-stats')).toContainText(`trafienia w sam środek: ${centres}`);
+  const sum = await page.evaluate(() => state.history.reduce((a, h) => a + h.pts, 0));
+  await expect(page.locator('#end-title')).toHaveText(`${sum} / 40 pkt`);
+  await page.click('#btn-menu');
+  await page.click('#btn-teams');
+  await page.click('#btn-start-teams');
+  await page.click('#btn-cats-start');
+  await page.evaluate(() => { state.game.teams[0].score = 9; state.game.winner = 0; endGame(); });
+  await expect(page.locator('#end-summary .sum-team')).toHaveCount(2);
+  await expect(page.locator('#end-summary .sum-team.win')).toContainText('Drużyna A');
 });
 
 test('tarcza reaguje na przeciąganie', async ({ page }) => {

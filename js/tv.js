@@ -25,34 +25,28 @@ function confetti(n = 90) {
 }
 
 function renderScores(scores) {
-  const box = $('#tv-scores');
-  box.textContent = '';
-  for (const s of scores || []) {
-    const d = document.createElement('div');
-    d.className = `score${s.active ? ' active' : ''}${s.team ? ` team-${s.team}` : ''}`;
-    const n = document.createElement('span'), v = document.createElement('b');
-    n.textContent = s.name;
-    v.textContent = String(s.score);
-    d.append(n, v);
-    box.append(d);
-  }
+  renderScoreboard($('#tv-scores'), scores || []);
 }
 
-function overlay(icon, title, text) {
-  show('#tv-overlay', !!icon);
-  if (!icon) return;
-  $('#tv-ov-icon').textContent = icon;
-  $('#tv-ov-icon').className = `big-icon ${icon === '🔮' ? 'orb' : 'trophy'}`;
+// Komunikat na cały ekran (menu, przekazanie telefonu, koniec gry); artName: orb | trophy | target.
+function overlay(artName, title, text, summary) {
+  show('#tv-overlay', !!artName);
+  if (!artName) return;
+  const ic = $('#tv-ov-icon');
+  if (ic.dataset.art !== artName) { ic.innerHTML = art(artName); ic.dataset.art = artName; }
+  ic.className = `big-icon ${artName === 'trophy' ? 'trophy' : 'orb'}`;
   $('#tv-ov-title').textContent = title;
   $('#tv-ov-text').textContent = text || '';
+  renderSummary($('#tv-ov-summary'), summary || null);
 }
 
 // Napis nad tarczą – zależny od etapu tury.
 function statusFor(s) {
-  const who = s.mode === 'teams' ? `Drużyna „${s.team}”` : 'Wszyscy oprócz psychika';
   switch (s.phase) {
-    case 'psychic': return `🔮 ${s.psychic} patrzy na cel i wymyśla hasło…`;
-    case 'guess': return s.mode === 'solo' ? 'Gdzie na tej skali leży hasło?' : `${who} ustawia wskazówkę. Psychik milczy!`;
+    case 'psychic': return `${s.psychic} patrzy na cel i wymyśla hasło…`;
+    case 'guess':
+      if (s.mode === 'solo') return 'Gdzie na tej skali leży hasło?';
+      return s.mode === 'teams' ? `„${s.team}” ustawia wskazówkę. Psychik milczy!` : 'Wszyscy oprócz psychika ustawiają wskazówkę.';
     case 'lr': return `„${s.other}”: środek celu jest na lewo czy na prawo od wskazówki?`;
     default: return '';
   }
@@ -74,17 +68,18 @@ function render(s) {
 
   if (s.phase === 'menu') {
     renderScores([]);
-    overlay('🔮', 'Krąg obfitości', 'Wybierzcie tryb gry na telefonie.');
+    overlay('orb', 'Krąg obfitości', 'Wybierzcie tryb gry na telefonie.');
     return;
   }
   if (s.phase === 'pass') {
-    overlay('🔮', `Psychik: ${s.psychic}`, `${s.sudden ? 'Dogrywka! ' : ''}${s.mode === 'teams' ? `Tura drużyny „${s.team}”. ` : ''}Przekażcie telefon psychikowi – tylko on patrzy na cel.`);
+    overlay('orb', `Psychik: ${s.psychic}`, `${s.sudden ? 'Dogrywka! ' : ''}${s.mode === 'teams' ? `Tura drużyny „${s.team}”. ` : ''}Przekażcie telefon psychikowi – tylko on patrzy na cel.`);
     return;
   }
   if (s.phase === 'end' && s.end) {
-    overlay(s.end.icon || '🏆', s.end.title, s.end.text);
+    const name = ['trophy', 'orb', 'target'].includes(s.end.icon) ? s.end.icon : 'trophy';
+    overlay(name, s.end.title, s.end.text, s.end.summary);
     if (prev !== 'end') {
-      if (s.end.icon === '🏆') { confetti(); SFX.win(); } else SFX.end();
+      if (name === 'trophy') { confetti(); SFX.win(); } else SFX.end();
     }
     return;
   }
@@ -95,30 +90,18 @@ function render(s) {
   $('#tv-status').textContent = statusFor(s);
   dialApi.set(s.dial != null ? s.dial : 50);
 
-  const clue = $('#tv-clue');
   show('#tv-clue', s.clue != null);
-  if (s.clue != null) {
-    clue.textContent = '';
-    if (s.clue) {
-      clue.append('Hasło: ');
-      const b = document.createElement('b');
-      b.textContent = s.clue;
-      clue.append(b);
-    } else {
-      clue.textContent = 'Hasło podane na głos';
-    }
-  }
+  if (s.clue != null) renderClue($('#tv-clue'), s.clue, s.psychic);
 
-  const res = $('#tv-result');
-  if (s.phase === 'reveal' && s.target != null) {
+  if (s.phase === 'reveal' && s.target != null && s.result) {
     if (prev !== 'reveal') {
       dialApi.showTarget(s.target, s.coop);
-      dialApi.showLR(s.lr || null);
+      dialApi.markHit(dialApi.value);
+      dialApi.showLR(s.lr || null, s.lrTeam);
       SFX.points(s.result.pts);
       if (s.result.pts === 4) confetti(50);
     }
-    res.className = `result pts-${s.result.pts}`;
-    res.textContent = s.result.text;
+    renderResult($('#tv-result'), s.result);
     show('#tv-result', true);
   } else {
     if (prev === 'reveal' || prev == null || s.phase === 'psychic') { dialApi.hideTarget(); dialApi.showLR(null); }
@@ -158,6 +141,7 @@ async function hostRoom() {
 }
 
 function init() {
+  fillIcons(document);
   dialApi = createDial($('#tv-dial'), $('#tv-dial-range'));
   dialApi.locked = true;
   const hero = createDial($('#tv-hero'), $('#tv-hero-range'));
@@ -168,7 +152,11 @@ function init() {
 
   // dźwięk na dużym ekranie wymaga jednego kliknięcia (zasada przeglądarek)
   const soundBtn = $('#tv-sound');
-  const soundLabel = () => { soundBtn.textContent = SFX.enabled && tv.soundOn ? '🔊' : '🔇 Włącz dźwięk'; };
+  const soundLabel = () => {
+    const on = SFX.enabled && tv.soundOn;
+    soundBtn.innerHTML = icon(on ? 'soundOn' : 'soundOff') + (on ? '' : '<span>Włącz dźwięk</span>');
+    soundBtn.setAttribute('aria-label', on ? 'Dźwięk włączony' : 'Włącz dźwięk');
+  };
   soundBtn.addEventListener('click', () => {
     if (!tv.soundOn) { tv.soundOn = true; if (!SFX.enabled) SFX.toggle(); else SFX.click(); } else { SFX.toggle(); }
     soundLabel();

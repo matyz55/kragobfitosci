@@ -76,3 +76,23 @@
 
 - 282 nowe karty: w każdej z 22 kategorii jest teraz co najmniej 32 karty i 15 haseł dla jednego gracza, więc każdą
   kategorię można wybrać osobno i grać bez powtórek (razem 721 kart i 648 haseł).
+
+## 1.7.0 – 28.10.2026 – nowy ekran tury i blokada suwaka
+
+- Suwak pod tarczą jest zablokowany i wyszarzony, gdy wskazówki nie wolno ruszać: u psychika, po zatwierdzeniu
+  odpowiedzi, przy „lewo/prawo” i po odsłonięciu (wcześniej po odpowiedzi dało się go przesunąć, choć wskazówka
+  stała w miejscu).
+- Nowy ekran tury: duża karta z hasłem i imieniem psychika w miejscu, które wcześniej było puste; u psychika karty do
+  wyboru jako mini-skale i pole „Twoje hasło”; wynik rundy jako karta z odznaką punktów.
+- Tarcza: po odsłonięciu świeci pole, w które trafiła wskazówka (pozostałe są przygaszone), liczby pól leżą nad
+  wskazówką, nowe zdobienia (przerywany pierścień, napis „Krąg obfitości”, połysk obręczy), znacznik „lewo/prawo”
+  w kolorze zgadującej drużyny.
+- Tablica wyników z paskami postępu drużyn i kropkami rund; na kafelkach kategorii liczba kart (lub haseł w grze
+  jednoosobowej).
+- Ekran przekazania urządzenia jako karta z informacją, czyja tura; koniec gry z podsumowaniem: paski drużyn albo
+  kropki rund, licznik do wygranej we współpracy, średnia i trafienia w sam środek.
+- Własne ikony i ilustracje zamiast emotek (górny pasek, menu, kula, puchar, tarcza strzelnicza) – wyglądają tak samo
+  na każdym urządzeniu. Nowa ikona trybu „Dwie drużyny”.
+- Poprawione teksty (np. „„Drużyna A” ustawia wskazówkę” zamiast „Drużyna „Drużyna A”: ustawcie…”).
+- Duży ekran pokazuje te same karty hasła i wyniku, wyróżnione pole oraz podsumowanie gry; po odsłonięciu hasło jest
+  podpisane imieniem właściwego psychika (wcześniej – następnego).
