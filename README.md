@@ -44,8 +44,8 @@ animacje i konfetti są wyłączone.
 
 Na telefonach, które obsługują wibracje w przeglądarce (Android), wskazówka „klika” przy każdej kresce podziałki –
 mocniej na dłuższych kreskach i na końcach skali. Wibracje są też przy odsłonięciu i zasłonięciu celu, wyniku
-(inne dla 4, 3, 2 i 0 pkt), trafionym „lewo/prawo”, końcu gry i przyciskach. Przycisk 📳 w menu je wyłącza
-(widoczny tylko na urządzeniach dotykowych). Safari na iPhonie nie obsługuje wibracji ze stron – tam ich nie ma.
+(inne dla 4, 3, 2 i 0 pkt), trafionym „lewo/prawo”, końcu gry i przyciskach. Przycisk 📳 w górnym pasku (obok 🔊) je wyłącza –
+wyłączone pokazują 📴 (przycisk widoczny tylko na urządzeniach dotykowych). Safari na iPhonie nie obsługuje wibracji ze stron – tam ich nie ma.
 
 ## Dźwięk
 

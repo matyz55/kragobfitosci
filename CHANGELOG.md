@@ -65,3 +65,9 @@
 - Poprawione polskie litery: czcionka nagłówków i przycisków (Fredoka) nie miała liter ą, ć, ę, ń, ś, ź, ż, więc
   były brane z innej czcionki i wyglądały inaczej. Zastąpiona czcionką Baloo 2, która ma wszystkie polskie znaki.
 - Mniejsze odstępy między wierszami w dużych nagłówkach.
+
+## 1.5.1 – 28.10.2026 – przycisk wibracji w górnym pasku
+
+- Przycisk wibracji jest teraz ikoną w górnym pasku, obok dźwięku: 📳 – włączone, 📴 – wyłączone
+  (wcześniej był na dole menu).
+- Na wąskich telefonach przyciski w górnym pasku są węższe, żeby zmieściły się obok nazwy gry.

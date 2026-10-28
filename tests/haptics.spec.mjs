@@ -27,7 +27,7 @@ test('wskazówka „klika” na kreskach podziałki, mocniej na dłuższych i na
   expect(vib[vib.length - 1]).toBe(28); // koniec skali
 });
 
-test('wibracje przy wyniku i przełącznik w menu', async ({ page }) => {
+test('wibracje przy wyniku i przełącznik obok dźwięku', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('#btn-haptics')).toBeVisible();
   await page.click('#btn-solo');
@@ -41,6 +41,7 @@ test('wibracje przy wyniku i przełącznik w menu', async ({ page }) => {
   await page.click('#btn-home');
   await page.click('#btn-haptics');
   await expect(page.locator('#btn-haptics')).toHaveClass(/off/);
+  await expect(page.locator('#btn-haptics')).toHaveText('📴');
   await page.reload();
   await expect(page.locator('#btn-haptics')).toHaveClass(/off/);
   await page.click('#btn-solo');
@@ -51,11 +52,27 @@ test('wibracje przy wyniku i przełącznik w menu', async ({ page }) => {
   expect(await page.evaluate(() => window.__vib)).toEqual([]);
 });
 
-test('menu z przyciskiem wibracji mieści się na wąskim telefonie', async ({ page }) => {
-  await page.setViewportSize({ width: 320, height: 568 });
-  await page.goto('/');
-  const bad = await page.$$eval('.menu-row button:not(.hidden)', (bs) => bs.filter((b) => b.scrollWidth > b.clientWidth + 1).map((b) => b.innerText));
-  expect(bad).toEqual([]);
-  const right = await page.$$eval('.menu-row button:not(.hidden)', (bs) => Math.max(...bs.map((b) => b.getBoundingClientRect().right)));
-  expect(right).toBeLessThanOrEqual(320);
+test('przycisk wibracji jest w górnym pasku obok dźwięku i wszystko mieści się na wąskim telefonie', async ({ page }) => {
+  for (const [w, h] of [[320, 568], [360, 640], [390, 844]]) {
+    await page.setViewportSize({ width: w, height: h });
+    await page.goto('/');
+    const ids = await page.$$eval('.top-btns button:not(.hidden)', (bs) => bs.map((b) => b.id));
+    expect(ids.slice(0, 2)).toEqual(['btn-tv', 'btn-haptics']);
+    expect(ids).toContain('btn-sound');
+    expect(await page.locator('.menu-row #btn-haptics').count()).toBe(0);
+    // w trakcie gry (z przyciskiem ✕) też się mieści
+    await page.click('#btn-solo');
+    const r = await page.evaluate(() => {
+      const top = document.querySelector('.topbar');
+      const els = [...top.querySelectorAll('h1, button:not(.hidden)')];
+      const overlap = els.some((a, i) => els.slice(i + 1).some((b) => {
+        const x = a.getBoundingClientRect(), y = b.getBoundingClientRect();
+        return x.right > y.left + 1 && y.right > x.left + 1;
+      }));
+      return { right: Math.max(...els.map((e) => e.getBoundingClientRect().right)), scroll: document.scrollingElement.scrollWidth, overlap };
+    });
+    expect(r.right, `${w}px`).toBeLessThanOrEqual(w);
+    expect(r.scroll, `${w}px`).toBeLessThanOrEqual(w);
+    expect(r.overlap, `${w}px`).toBe(false);
+  }
 });

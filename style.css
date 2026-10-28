@@ -381,4 +381,9 @@ button.lr { font-size: 1.05em; padding: .8em; font-weight: 600; }
 @media (max-width: 380px) { .logo-icon { display: none; } }
 @media (max-width: 499px) { .topbar .wide { display: none; } }
 @media (max-width: 430px) { .logo-icon { display: none; } }
-#btn-haptics.off { opacity: .55; text-decoration: line-through; }
+#btn-haptics.off { opacity: .6; }
+/* wąskie telefony: węższe przyciski w górnym pasku, żeby zmieściły się obok nazwy gry */
+@media (max-width: 400px) {
+  .top-btns { gap: 4px; }
+  .top-btns button.small { padding: .35em .55em; }
+}

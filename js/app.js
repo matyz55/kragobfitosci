@@ -475,8 +475,10 @@ function init() {
   const hapticBtn = $('#btn-haptics');
   const hapticLabel = () => {
     hapticBtn.classList.toggle('off', !Haptics.enabled);
+    hapticBtn.textContent = Haptics.enabled ? '📳' : '📴';
     hapticBtn.setAttribute('aria-pressed', String(Haptics.enabled));
     hapticBtn.title = Haptics.enabled ? 'Wibracje włączone' : 'Wibracje wyłączone';
+    hapticBtn.setAttribute('aria-label', hapticBtn.title);
   };
   hapticBtn.classList.toggle('hidden', !(Haptics.supported && window.matchMedia('(pointer: coarse)').matches));
   hapticBtn.addEventListener('click', () => { Haptics.toggle(); hapticLabel(); });
