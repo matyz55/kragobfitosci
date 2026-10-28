@@ -62,6 +62,9 @@ for (const [w, h] of VIEWPORTS) {
     await page.click('#btn-install');
     await fits(page, 'instalacja');
     await page.click('#btn-install-close');
+    await page.click('#btn-tv');
+    await fits(page, 'duży ekran – okno');
+    await page.click('#btn-tv-close');
 
     await page.click('#btn-solo');
     await fits(page, 'kategorie');
@@ -103,5 +106,43 @@ for (const [w, h] of VIEWPORTS) {
 
     await page.click('#btn-coop');
     await fits(page, 'ustawienia współpracy');
+  });
+}
+
+// sam duży ekran: telewizory i monitory
+for (const [w, h] of [[1280, 720], [1920, 1080], [3840, 2160], [1366, 768], [1024, 768]]) {
+  test(`duży ekran mieści się: ${w}×${h}`, async ({ context }) => {
+    const phone = await context.newPage();
+    const tvPage = await context.newPage();
+    await tvPage.setViewportSize({ width: w, height: h });
+    await tvPage.goto('/tv.html?local=1');
+    const over = () => tvPage.evaluate(() => {
+      const out = [];
+      for (const el of document.querySelectorAll('body *')) {
+        if (!el.getClientRects().length || el.closest('.fx, .bg')) continue;
+        const r = el.getBoundingClientRect();
+        if (r.width && r.height && (r.bottom > innerHeight + 1 || r.right > innerWidth + 1)) out.push(`${el.tagName}#${el.id}.${el.className?.baseVal ?? el.className}`);
+      }
+      return out.slice(0, 6);
+    });
+    expect(await over()).toEqual([]);
+    await phone.goto('/');
+    await phone.click('#btn-teams');
+    await phone.fill('#team-a-name', 'Bardzo długa nazwa drużyny');
+    await phone.click('#btn-start-teams');
+    await phone.click('#btn-cats-start');
+    await phone.click('#btn-psychic-ready');
+    await phone.evaluate(() => {
+      const all = CATEGORIES.flatMap((c) => c.cards.map((k) => ({ left: k[0], right: k[1] })));
+      all.sort((a, b) => (b.left + b.right).length - (a.left + a.right).length);
+      state.choices = [all[0], all[1]];
+      psychicPhase();
+    });
+    await phone.fill('#clue-input', 'Długie hasło psychika');
+    await phone.click('#btn-hide');
+    await phone.click('#btn-confirm');
+    await phone.click('#btn-left');
+    await expect(tvPage.locator('#tv-result')).toBeVisible();
+    expect(await over()).toEqual([]);
   });
 }

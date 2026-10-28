@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Krąg obfitości – duży ekran</title>
+  <meta name="theme-color" content="#120c22">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="preload" href="fonts/fredoka-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="tv.css">
+</head>
+<body class="tv">
+  <div class="bg" aria-hidden="true"><i></i><i></i><i></i></div>
+  <header class="tv-top">
+    <h1 class="tv-logo"><img src="icons/icon.svg" alt="" class="logo-icon">Krąg <span>obfitości</span></h1>
+    <div id="tv-scores" class="scores tv-scores"></div>
+    <div class="tv-corner">
+      <span id="tv-room" class="tv-room hidden"></span>
+      <button id="tv-sound" class="ghost small" title="Dźwięk na dużym ekranie">🔇 Włącz dźwięk</button>
+      <button id="tv-full" class="ghost small" title="Pełny ekran">⛶</button>
+    </div>
+  </header>
+
+  <!-- oczekiwanie na telefon -->
+  <main id="tv-lobby" class="tv-lobby">
+    <div class="tv-lobby-dial"><svg id="tv-hero" class="hero-dial" aria-hidden="true"></svg><input type="range" id="tv-hero-range" class="hidden" min="0" max="100"></div>
+    <div class="tv-lobby-info">
+      <h2>Duży ekran</h2>
+      <p class="lead" id="tv-lobby-text">Na telefonie otwórz grę, stuknij 📺 i zeskanuj kod QR albo wpisz kod.</p>
+      <div id="tv-code-box" class="tv-code-box hidden">
+        <div id="tv-qr" class="tv-qr"></div>
+        <div><div class="muted">Kod</div><div id="tv-code" class="tv-code"></div></div>
+      </div>
+      <p class="muted" id="tv-net-status"></p>
+      <button class="primary hidden" id="tv-host">📶 Połącz z telefonem przez sieć</button>
+    </div>
+  </main>
+
+  <!-- rozgrywka -->
+  <main id="tv-game" class="tv-game hidden">
+    <p id="tv-status" class="tv-status"></p>
+    <div class="dial-wrap tv-dial-wrap">
+      <svg id="tv-dial" role="img" aria-label="Tarcza"></svg>
+      <section class="spectrum">
+        <div class="spec spec-left" id="tv-left"></div>
+        <div class="spec spec-right" id="tv-right"></div>
+      </section>
+      <input type="range" id="tv-dial-range" class="hidden" min="0" max="100" step="0.5">
+    </div>
+    <div class="tv-bottom">
+      <div id="tv-clue" class="clue-box hidden"></div>
+      <div id="tv-result" class="result hidden"></div>
+    </div>
+  </main>
+
+  <!-- komunikaty na cały ekran: przekazanie telefonu, koniec gry, menu -->
+  <div id="tv-overlay" class="tv-overlay hidden">
+    <div id="tv-ov-icon" class="big-icon"></div>
+    <h2 id="tv-ov-title"></h2>
+    <p id="tv-ov-text" class="lead"></p>
+  </div>
+
+  <div id="fx" class="fx" aria-hidden="true"></div>
+
+  <script src="js/game.js"></script>
+  <script src="js/dial.js"></script>
+  <script src="js/sound.js"></script>
+  <script src="js/net.js"></script>
+  <script src="js/tv.js"></script>
+</body>
+</html>

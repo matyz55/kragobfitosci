@@ -47,6 +47,7 @@ function setActions(...btns) {
   const a = $('#actions');
   a.textContent = '';
   a.append(...btns);
+  tvSync();
 }
 
 // ---------- wybór kategorii (po wyborze trybu) ----------
@@ -295,6 +296,7 @@ function passDevice(extra) {
     if (g.suddenDeath) text = 'Dogrywka! ' + text;
   }
   $('#pass-text').textContent = text;
+  tvSync();
 }
 
 function psychicPhase() {
@@ -318,6 +320,7 @@ function psychicPhase() {
   function pick(i) {
     setCard(state.choices[i]);
     box.querySelectorAll('.choice').forEach((b, j) => b.classList.toggle('on', i === j));
+    tvSync();
   }
   pick(0);
   $('#clue-input-box').classList.remove('hidden');
@@ -427,6 +430,7 @@ function endGame() {
     if (record || g.score >= 30) { SFX.win(); confetti(); } else SFX.end();
     $('#end-icon').textContent = record || g.score >= 30 ? '🏆' : '🎯';
   }
+  tvSync();
 }
 
 function again() {
@@ -444,13 +448,14 @@ function home() {
   state.game = null;
   state.phase = 'menu';
   show('screen-menu');
+  tvSync();
 }
 
 // ---------- start ----------
 
 function init() {
   $('#version').textContent = GAME_VERSION;
-  dial = createDial($('#dial'), $('#dial-range'), (v, user) => { if (user) SFX.tick(v); });
+  dial = createDial($('#dial'), $('#dial-range'), (v, user) => { if (user) SFX.tick(v); tvDial(v); });
   const hero = createDial($('#hero-dial'), $('#hero-range'));
   hero.locked = true;
   hero.showTarget(68);
@@ -489,6 +494,7 @@ function init() {
   $('#logo').addEventListener('click', home);
   $('#clue-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') guessPhase(); });
 
+  initRemote();
   if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
 }
 

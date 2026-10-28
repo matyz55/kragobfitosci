@@ -372,3 +372,12 @@ button.lr { font-size: 1.05em; padding: .8em; font-weight: 600; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
   .fx { display: none; }
 }
+
+/* ---------- okno dużego ekranu (na telefonie) ---------- */
+.tv-join { display: flex; gap: 8px; }
+.tv-join input { text-transform: uppercase; letter-spacing: .3em; font-family: var(--font-head); font-size: 1.2em; text-align: center; }
+.tv-join button { flex: 0 0 auto; }
+#btn-tv.on { border-color: var(--team-a); box-shadow: 0 0 12px rgba(63, 224, 208, .35); }
+@media (max-width: 380px) { .logo-icon { display: none; } }
+@media (max-width: 499px) { .topbar .wide { display: none; } }
+@media (max-width: 430px) { .logo-icon { display: none; } }

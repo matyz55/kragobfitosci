@@ -46,3 +46,13 @@
   na ekranie psychika, puchar na koniec gry.
 - Nowa ikona aplikacji.
 - Przy systemowym ustawieniu „ogranicz ruch” animacje są wyłączone.
+
+## 1.4.0 – 28.10.2026 – duży ekran
+
+- Nowy tryb dużego ekranu (`tv.html`) dla telewizora, rzutnika albo drugiego monitora: duża tarcza, końce skali,
+  hasło, wyniki, konfetti i dźwięki. Telefon zostaje pilotem – przycisk 📺 w górnym pasku.
+- Łączenie: w nowym oknie na tym samym urządzeniu albo przez sieć – duży ekran pokazuje kod i kod QR, telefon go
+  skanuje albo wpisuje kod. Telefon pamięta duży ekran i łączy się ponownie po odświeżeniu.
+- Położenie celu trafia na duży ekran dopiero przy odsłonięciu – nikt go nie podejrzy na telewizorze.
+- Przycisk pełnego ekranu i włączania dźwięku na dużym ekranie; starszy duży ekran odświeża się sam.
+- Na wąskich telefonach górny pasek jest krótszy (sama ikona ✕ zamiast „✕ Menu”).

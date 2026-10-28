@@ -1,7 +1,7 @@
 'use strict';
 // Service worker: działanie bez sieci. Najpierw sieć (zawsze najnowsza wersja), a gdy jej brak – kopia z pamięci.
-const CACHE = 'krag-v4';
-const CORE = ['./', 'index.html', 'style.css', 'js/data.js', 'js/game.js', 'js/dial.js', 'js/sound.js', 'js/app.js',
+const CACHE = 'krag-v5';
+const CORE = ['./', 'index.html', 'style.css', 'js/data.js', 'js/game.js', 'js/dial.js', 'js/sound.js', 'js/net.js', 'js/remote.js', 'js/app.js', 'tv.html', 'tv.css', 'js/tv.js',
   'manifest.webmanifest', 'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png',
   'fonts/fredoka-latin.woff2', 'fonts/fredoka-latin-ext.woff2', 'fonts/nunito-latin.woff2', 'fonts/nunito-latin-ext.woff2'];
 

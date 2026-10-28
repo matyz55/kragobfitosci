@@ -1,0 +1,46 @@
+/* Duży ekran (tv.html): wszystko skaluje się z wysokością okna – od laptopa po telewizor 4K. */
+body.tv { --fs: clamp(15px, 2.3vh, 64px); --gap: clamp(8px, 1.6vh, 40px); }
+.tv-top {
+  flex: 0 0 auto; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 2vh;
+  padding: 1.6vh 2.4vw;
+}
+.tv-logo { margin: 0; font-family: var(--font-head); font-weight: 600; font-size: 3.4vh; display: flex; align-items: center; gap: .4em; }
+.tv-logo span { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.tv-scores { justify-content: center; max-width: 70vw; margin: 0 auto; }
+.tv-scores .score { flex: 0 1 18vh; padding: .5vh 1.2vh; }
+.tv-scores .score b { font-size: 4.2vh; }
+.tv-scores .score span { font-size: 1.7vh; }
+.tv-corner { display: flex; align-items: center; gap: 1vh; }
+.tv-room { font-family: var(--font-head); font-size: 2.2vh; color: var(--muted); letter-spacing: .1em; }
+
+.tv-lobby { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: 1.1fr 1fr; align-items: center; gap: 4vw; padding: 2vh 5vw 5vh; }
+.tv-lobby-dial { height: 100%; min-height: 0; display: flex; }
+.tv-lobby-dial .hero-dial { max-width: none; width: 100%; height: 100%; }
+.tv-lobby-info { display: flex; flex-direction: column; gap: 2.4vh; }
+.tv-lobby-info h2 { font-size: 5vh; }
+.tv-code-box { display: flex; align-items: center; gap: 3vh; background: var(--glass); border: 1px solid var(--line); border-radius: 2vh; padding: 2vh; width: max-content; }
+.tv-qr { width: 24vh; height: 24vh; background: #fff; border-radius: 1.4vh; padding: 1vh; }
+.tv-qr svg { width: 100%; height: 100%; display: block; }
+.tv-code { font-family: var(--font-head); font-weight: 700; font-size: 9vh; letter-spacing: .12em; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+.tv-game { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 1.6vh; padding: 0 5vw 3vh; }
+.tv-status { flex: 0 0 auto; text-align: center; font-family: var(--font-head); font-weight: 500; font-size: 3.4vh; min-height: 1.3em; margin: 0; }
+.tv-dial-wrap { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; align-items: center; }
+#tv-dial { flex: 1 1 0; min-height: 0; width: 100%; display: block; }
+.tv-dial-wrap .spectrum { width: min(100%, 112vh); }
+.tv-dial-wrap .spec { font-size: 3.6vh; padding: 1vh 2.4vh; }
+.tv-bottom { flex: 0 0 auto; display: flex; gap: 2vw; justify-content: center; }
+.tv-bottom .clue-box, .tv-bottom .result { font-size: 3.4vh; padding: 1.2vh 3vh; min-width: 30vw; }
+
+.tv-overlay {
+  position: fixed; inset: 0; z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3vh;
+  text-align: center; padding: 5vh 8vw; background: radial-gradient(circle at 50% 40%, rgba(58, 31, 115, .92), rgba(18, 12, 34, .97));
+}
+.tv-overlay .big-icon { font-size: 16vh; }
+.tv-overlay h2 { font-size: 7vh; }
+.tv-overlay .lead { font-size: 3.4vh; max-width: 60vw; color: var(--muted); }
+
+@media (max-aspect-ratio: 1/1) {
+  .tv-lobby { grid-template-columns: 1fr; }
+  .tv-lobby-dial { height: 30vh; }
+}

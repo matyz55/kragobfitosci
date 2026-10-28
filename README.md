@@ -46,6 +46,24 @@ Efekty dźwiękowe są tworzone w przeglądarce (Web Audio API, `js/sound.js`) �
 tykanie tarczy przy przesuwaniu wskazówki, odsłonięcie i zasłonięcie celu, fanfara zależna od punktów, sygnał
 za trafione „lewo/prawo” i melodia na koniec gry. Przycisk 🔊/🔇 w górnym pasku wyłącza dźwięk (zapamiętywane).
 
+## Duży ekran (📺)
+
+Strona `tv.html` dla telewizora, rzutnika albo drugiego monitora – duża tarcza, końce skali, hasło, wyniki, konfetti
+i dźwięki. Telefon (albo komputer), na którym toczy się gra, jest pilotem: przycisk 📺 w górnym pasku.
+
+- **To samo urządzenie** (np. laptop podłączony do telewizora): „Otwórz w nowym oknie” – połączenie przez
+  BroadcastChannel, bez internetu.
+- **Telewizor lub inny komputer**: otwórz na nim `tv.html` – pokaże 4-znakowy kod i kod QR. Telefon skanuje QR
+  (otwiera grę z `?tv=KOD` i łączy się sam) albo w oknie 📺 wpisuje kod. Połączenie jak w Songsterze (`js/net.js`):
+  naraz bezpośrednio (WebRTC przez PeerJS) i przez publiczny serwer MQTT (shiftr.io) – wygrywa szybszy; opcjonalnie
+  własny serwer pośredniczący (Cloudflare Workers) – adres w `window.KRAG_RELAY`. Telefon pamięta kod i po
+  odświeżeniu łączy się ponownie.
+- **Cel jest tajny**: duży ekran dostaje położenie celu dopiero przy odsłonięciu (sprawdza to test `tests/tv.spec.mjs`).
+  Gdy psychik patrzy na cel, telewizor pokazuje tylko kartę i napis „… patrzy na cel”.
+- Dźwięk na dużym ekranie włącza się jednym kliknięciem (przeglądarki nie pozwalają na dźwięk bez kliknięcia),
+  ⛶ – pełny ekran. Starszy duży ekran sam się odświeża, gdy telefon ma nowszą wersję gry.
+- Przez sieć przesyłany jest tylko stan gry (bez kodu HTML) – kanały publicznego MQTT są jawne.
+
 ## Ekran i instalacja
 
 - Każdy ekran mieści się w oknie bez przewijania – na telefonach (pionowo i poziomo), tabletach i komputerach.
@@ -62,6 +80,7 @@ za trafione „lewo/prawo” i melodia na koniec gry. Przycisk 🔊/🔇 w górn
 - `js/game.js` – zasady (punktacja, tury, dogrywka, współpraca, tryb jednoosobowy)
 - `js/dial.js` – tarcza SVG (przeciąganie palcem/myszą i suwak)
 - `js/sound.js` – efekty dźwiękowe
+- `tv.html`, `tv.css`, `js/tv.js` – duży ekran; `js/remote.js` – pilot (wysyłanie stanu); `js/net.js` – połączenia sieciowe
 - `js/app.js` – ekrany i przebieg gry
 - `sw.js`, `manifest.webmanifest`, `icons/` – instalacja jako aplikacja i działanie bez sieci
 - `fonts/` – czcionki Fredoka i Nunito (SIL OFL 1.1)
