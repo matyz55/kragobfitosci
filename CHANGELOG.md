@@ -11,7 +11,7 @@
   Polskie klimaty, Internet i gry; wybór kategorii zapamiętywany.
 - Zasady gry w aplikacji, instalacja jako aplikacja i działanie bez sieci.
 
-## 1.1.0 – 28.10.2026 – więcej kart, cały ekran bez przewijania, instalacja
+## 1.1.0 – 28.10.2026 (`542142e`) – więcej kart, cały ekran bez przewijania, instalacja
 
 - 10 nowych kategorii: Zwierzęta i natura, Ludzie i charaktery, Szkoła i praca, Podróże, Moda i wygląd, Historia,
   Miłość i przyjaźń, Dom i codzienność, Książki i język, Imprezowe. Nowe karty także w dotychczasowych kategoriach –
