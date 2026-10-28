@@ -26,8 +26,19 @@ Gra jest „na jednym urządzeniu”: przed każdą turą ekran prosi o przekaza
 
 ## Kategorie
 
-Ogólne, Muzyka, Film i seriale, Jedzenie i picie, Sport, Nauka i technika, Polskie klimaty, Internet i gry –
-wybór w menu (zapamiętywany). Karty i przykłady: `js/data.js`.
+18 kategorii, 292 karty: Ogólne, Muzyka, Film i seriale, Jedzenie i picie, Sport, Nauka i technika, Polskie klimaty,
+Internet i gry, Zwierzęta i natura, Ludzie i charaktery, Szkoła i praca, Podróże, Moda i wygląd, Historia,
+Miłość i przyjaźń, Dom i codzienność, Książki i język, Imprezowe. Wybór na ekranie „Kategorie” (zapamiętywany).
+Karty i przykłady: `js/data.js`.
+
+## Ekran i instalacja
+
+- Każdy ekran mieści się w oknie bez przewijania – na telefonach (pionowo i poziomo), tabletach i komputerach.
+  Tarcza dopasowuje się do wolnego miejsca, a przy telefonie trzymanym poziomo stoi obok przycisków.
+  Sprawdza to test `tests/layout.spec.mjs` na 19 rozmiarach ekranu.
+- Przycisk **Zainstaluj** w menu: w Chrome, Edge i innych przeglądarkach opartych na Chromium otwiera okno instalacji
+  (gdy przeglądarka je udostępni), w pozostałych pokazuje instrukcję (iPhone/iPad – menu „Udostępnij”, Safari na
+  Macu – menu „Plik”, Firefox na komputerze nie instaluje aplikacji ze stron). Po instalacji przycisk znika.
 
 ## Pliki
 
@@ -36,7 +47,7 @@ wybór w menu (zapamiętywany). Karty i przykłady: `js/data.js`.
 - `js/game.js` – zasady (punktacja, tury, dogrywka, współpraca, tryb jednoosobowy)
 - `js/dial.js` – tarcza SVG (przeciąganie palcem/myszą i suwak)
 - `js/app.js` – ekrany i przebieg gry
-- `sw.js`, `manifest.webmanifest` – instalacja jako aplikacja i działanie bez sieci
+- `sw.js`, `manifest.webmanifest`, `icons/` – instalacja jako aplikacja i działanie bez sieci
 
 ## Uruchomienie lokalne i testy
 
@@ -50,3 +61,5 @@ npm test           # testy Playwright
 ## Źródła
 
 - Zasady, karty (skale), grafika i opisy wyników – opracowanie własne.
+- Wymagania instalacji (ikony 192 i 512 px, HTTPS, manifest): https://web.dev/articles/install-criteria oraz
+  https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Making_PWAs_installable

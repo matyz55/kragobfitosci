@@ -2,6 +2,7 @@
   --bg: #14101f;
   --panel: #1f1930;
   --panel-2: #2b2342;
+  --line: #463b63;
   --text: #f5f1ff;
   --muted: #a99fc4;
   --accent: #ff8a3d;
@@ -11,127 +12,151 @@
   --band-2: #f6c945;
   --band-3: #ff8a3d;
   --band-4: #e8424f;
-  --ok: #4fdc8a;
   --bad: #ff5c5c;
   --face: #f3e9d2;
-  --radius: 16px;
+  --radius: 14px;
+  /* odstępy i czcionki rosną i maleją razem z wysokością okna */
+  --gap: clamp(6px, 1.4vh, 14px);
+  --fs: clamp(14px, 2.1vh, 17px);
 }
 
 * { box-sizing: border-box; }
-html { -webkit-text-size-adjust: 100%; }
+html { -webkit-text-size-adjust: 100%; height: 100%; }
 
+/* Cała gra mieści się w oknie – bez przewijania strony. */
 body {
-  margin: 0;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  margin: 0; height: 100vh; height: 100dvh; overflow: hidden;
+  display: flex; flex-direction: column;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-size: var(--fs);
   background: radial-gradient(circle at 50% -10%, #3a2154 0%, var(--bg) 60%);
   background-color: var(--bg);
   color: var(--text);
-  min-height: 100vh;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  overscroll-behavior: none;
 }
 
 .topbar {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 16px; max-width: 760px; margin: 0 auto;
+  flex: 0 0 auto; display: flex; align-items: center; justify-content: space-between;
+  width: 100%; max-width: 820px; margin: 0 auto; padding: var(--gap) 16px;
 }
-.topbar h1 { margin: 0; font-size: 1.5rem; cursor: pointer; letter-spacing: .3px; }
+.topbar h1 { margin: 0; font-size: clamp(1.1rem, 3vh, 1.5rem); cursor: pointer; letter-spacing: .3px; }
 .topbar h1 span { color: var(--accent); }
 
-.screen { max-width: 760px; margin: 0 auto; padding: 0 16px 40px; }
+.screen {
+  flex: 1 1 auto; min-height: 0; overflow: hidden;
+  display: flex; flex-direction: column; gap: var(--gap);
+  width: 100%; max-width: 820px; margin: 0 auto; padding: 0 16px var(--gap);
+}
 .hidden { display: none !important; }
 
-.card {
-  background: var(--panel); border-radius: var(--radius);
-  padding: 16px; margin-bottom: 16px;
-  box-shadow: 0 8px 24px rgba(0,0,0,.25);
-}
-.card h2 { margin: 0 0 12px; font-size: 1.2rem; }
-.card h3 { margin: 18px 0 6px; font-size: 1rem; color: var(--accent); }
+h2 { margin: 0; font-size: 1.2em; }
+.screen-title { flex: 0 0 auto; }
 .center { text-align: center; }
-.muted { color: var(--muted); font-size: .9rem; }
-.lead { font-size: 1.05rem; line-height: 1.45; }
-.error { color: var(--bad); }
-.app-version { font-size: .75rem; opacity: .7; }
+.muted { color: var(--muted); font-size: .9em; }
+.lead { font-size: 1.05em; line-height: 1.4; margin: 0; }
+.error { color: var(--bad); margin: 0; }
+.app-version { font-size: .72em; opacity: .7; margin: 0; }
+p { margin: 0; }
 
 button {
-  font: inherit; border: 0; border-radius: 12px; padding: 10px 16px;
+  font: inherit; border: 0; border-radius: 12px; padding: .6em 1em;
   cursor: pointer; color: var(--text); background: var(--panel-2);
   transition: transform .08s, background .2s, opacity .2s;
+  -webkit-tap-highlight-color: transparent;
 }
 button:active:not(:disabled) { transform: scale(.97); }
 button:disabled { opacity: .45; cursor: not-allowed; }
 button.primary { background: var(--accent); color: #241000; font-weight: 700; }
-button.ghost { background: transparent; border: 1px solid #463b63; }
-button.small { padding: 6px 12px; font-size: .9rem; }
-button.big { width: 100%; padding: 16px; font-size: 1.15rem; }
+button.ghost { background: transparent; border: 1px solid var(--line); }
+button.small { padding: .35em .8em; font-size: .88em; }
+button.big { width: 100%; padding: .85em; font-size: 1.1em; }
 
 input[type=text], select {
   font: inherit; color: var(--text); background: var(--panel-2);
-  border: 1px solid #463b63; border-radius: 10px; padding: 10px 12px; width: 100%;
+  border: 1px solid var(--line); border-radius: 10px; padding: .55em .7em; width: 100%;
 }
 select { width: auto; }
-label { display: block; margin-bottom: 12px; color: var(--muted); font-size: .9rem; }
-label input { margin-top: 4px; }
-label.row { display: flex; align-items: center; gap: 8px; color: var(--text); font-size: 1rem; }
+label { display: block; color: var(--muted); font-size: .9em; }
+label input { margin-top: 3px; }
+label.row { display: flex; align-items: center; gap: 8px; color: var(--text); font-size: 1em; flex: 0 0 auto; }
 
-.actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 12px; }
-.actions > button { flex: 1 1 140px; }
+.actions { flex: 0 0 auto; display: flex; gap: 10px; justify-content: center; margin-top: auto; }
+.actions > button { flex: 1 1 0; min-width: 0; }
 
-/* menu */
-.hero { padding-bottom: 8px; }
-.hero-dial { width: min(100%, 320px); display: block; margin: 0 auto 4px; }
-.modes { display: grid; gap: 12px; margin-bottom: 16px; }
+/* ---------- menu ---------- */
+.hero { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--gap); }
+.hero-dial { flex: 1 1 0; min-height: 0; width: 100%; max-width: 420px; }
+.hero .lead { text-align: center; color: var(--muted); max-width: 30em; }
+.modes { flex: 0 0 auto; display: grid; gap: var(--gap); }
 .mode {
-  text-align: left; padding: 16px; background: var(--panel); border: 1px solid #352b4f;
-  display: flex; flex-direction: column; gap: 4px; border-radius: var(--radius);
+  text-align: left; padding: .7em 1em; background: var(--panel); border: 1px solid #352b4f;
+  display: flex; flex-direction: column; gap: 2px; border-radius: var(--radius);
 }
-.mode b { font-size: 1.15rem; }
-.mode span { color: var(--muted); font-size: .92rem; }
+.mode b { font-size: 1.1em; }
+.mode span { color: var(--muted); font-size: .88em; }
 .mode:hover { border-color: var(--accent); }
+.menu-row { flex: 0 0 auto; display: flex; gap: 8px; }
+.menu-row button { flex: 1 1 0; min-width: 0; padding: .55em .4em; font-size: .92em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-.chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.chip { border-radius: 999px; padding: 8px 14px; border: 1px solid #463b63; background: transparent; color: var(--muted); }
+/* ---------- kategorie ---------- */
+.screen-head { flex: 0 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.head-btns { display: flex; gap: 6px; }
+.cats-grid {
+  flex: 1 1 auto; min-height: 0; display: grid; gap: clamp(4px, 1vh, 8px);
+  grid-template-columns: repeat(auto-fill, minmax(min(150px, 45%), 1fr)); align-content: start;
+}
+.chip {
+  border-radius: 12px; padding: clamp(4px, 1.1vh, 10px) 8px; border: 1px solid var(--line); background: transparent;
+  color: var(--muted); font-size: clamp(12px, 1.8vh, 15px); text-align: left; line-height: 1.2;
+}
 .chip.on { background: var(--accent-2); color: #062421; border-color: var(--accent-2); font-weight: 600; }
 
-/* ustawienia drużyn */
-.teams-setup { display: grid; gap: 12px; grid-template-columns: 1fr; margin-bottom: 8px; }
-@media (min-width: 600px) { .teams-setup { grid-template-columns: 1fr 1fr; } }
-.team-box { border-radius: 12px; padding: 12px 12px 2px; background: var(--panel-2); border-left: 4px solid var(--team-a); }
+/* ---------- ustawienia ---------- */
+.teams-setup { flex: 0 1 auto; min-height: 0; display: grid; gap: var(--gap); grid-template-columns: 1fr; }
+.team-box {
+  border-radius: 12px; padding: var(--gap) 12px; background: var(--panel); border-left: 4px solid var(--team-a);
+  display: flex; flex-direction: column; gap: var(--gap);
+}
 .team-box.team-b { border-left-color: var(--team-b); }
 
-/* przekazanie urządzenia */
-.pass { padding: 32px 16px; }
-.pass-icon, .end-icon { font-size: 3rem; }
+/* ---------- przekazanie, koniec ---------- */
+.pass, .end { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: calc(var(--gap) * 1.5); }
+.pass .big { max-width: 420px; }
+.big-icon { font-size: clamp(2rem, 8vh, 3.5rem); }
+.end h2 { font-size: clamp(1.4rem, 5vh, 2.2rem); }
 
-/* rozgrywka */
-.scores { display: flex; gap: 8px; margin-bottom: 8px; }
+/* ---------- rozgrywka ---------- */
+#screen-play { gap: calc(var(--gap) * .8); }
+.play-side, .play-bottom { flex: 0 0 auto; display: flex; flex-direction: column; gap: calc(var(--gap) * .8); }
+.play-main { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: calc(var(--gap) * .6); }
+.play-bottom .actions { margin-top: 0; }
+
+.scores { display: flex; gap: 8px; }
 .score {
-  flex: 1; background: var(--panel); border-radius: 12px; padding: 8px 10px;
+  flex: 1; background: var(--panel); border-radius: 12px; padding: 4px 8px;
   display: flex; flex-direction: column; align-items: center; min-width: 0; border: 2px solid transparent;
 }
-.score span { font-size: .8rem; color: var(--muted); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.score b { font-size: 1.5rem; }
+.score span { font-size: .75em; color: var(--muted); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.score b { font-size: 1.3em; line-height: 1.2; }
 .score.active { border-color: var(--accent); }
 .score.team-a.active { border-color: var(--team-a); }
 .score.team-b.active { border-color: var(--team-b); }
-.score.goal { flex: 0 0 70px; }
+.score.goal { flex: 0 0 64px; }
 
-.status { text-align: center; min-height: 1.4em; margin: 8px 0; font-size: 1.02rem; }
+.status { text-align: center; min-height: 1.3em; line-height: 1.3; }
 
-.card-choice { display: grid; gap: 8px; grid-template-columns: 1fr 1fr; margin-bottom: 8px; }
-.choice { font-size: .92rem; border: 2px solid transparent; }
+.card-choice { display: grid; gap: 8px; grid-template-columns: 1fr 1fr; }
+.choice { font-size: .85em; border: 2px solid transparent; padding: .45em .6em; line-height: 1.2; }
 .choice.on { border-color: var(--accent); background: #3a2d55; }
 
-.spectrum { display: flex; justify-content: space-between; gap: 12px; margin-top: 4px; }
-.spec {
-  flex: 1; padding: 10px 12px; border-radius: 12px; font-weight: 700; font-size: 1.05rem;
-  background: #2f6e9e; line-height: 1.2;
-}
+.spectrum { flex: 0 0 auto; display: flex; justify-content: space-between; gap: 10px; }
+.spec { flex: 1; padding: .45em .7em; border-radius: 12px; font-weight: 700; font-size: 1em; line-height: 1.2; }
 .spec-left { background: linear-gradient(90deg, #3268a8, #2a4f7d); }
 .spec-right { background: linear-gradient(90deg, #a13a5b, #c94a4a); text-align: right; }
 
-.dial-wrap { position: relative; }
-#dial { width: 100%; display: block; touch-action: none; user-select: none; -webkit-user-select: none; cursor: grab; }
-#dial-range { width: 100%; margin: 4px 0 0; accent-color: var(--accent); }
+.dial-wrap { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+#dial { flex: 1 1 0; min-height: 0; width: 100%; display: block; touch-action: none; user-select: none; -webkit-user-select: none; cursor: grab; }
+#dial-range { flex: 0 0 auto; width: 100%; margin: 2px 0 0; accent-color: var(--accent); }
 
 .dial-face { fill: var(--face); stroke: #c9b98f; stroke-width: 3; }
 .dial-tick { stroke: #b9a77a; stroke-width: 2; }
@@ -143,22 +168,61 @@ label.row { display: flex; align-items: center; gap: 8px; color: var(--text); fo
 .dial-needle { stroke: #2b1d3c; stroke-width: 6; stroke-linecap: round; }
 .dial-hub { fill: #2b1d3c; }
 .lr-label { fill: #2b1d3c; font-size: 26px; text-anchor: middle; dominant-baseline: middle; }
-
 .psychic-view .dial-face { fill: #fff5dc; }
 
-.clue-box {
-  text-align: center; font-size: 1.25rem; padding: 12px; margin-top: 8px;
-  background: var(--panel); border-radius: 12px;
-}
-.clue-input { margin-top: 8px; }
-
-.result { text-align: center; font-size: 1.15rem; padding: 12px; margin-top: 8px; border-radius: 12px; background: var(--panel); line-height: 1.5; }
+.clue-box { text-align: center; font-size: 1.15em; padding: .45em; background: var(--panel); border-radius: 12px; }
+.result { text-align: center; font-size: 1em; padding: .45em; border-radius: 12px; background: var(--panel); line-height: 1.35; }
 .result.pts-4 { box-shadow: inset 0 0 0 2px var(--band-4); }
 .result.pts-3 { box-shadow: inset 0 0 0 2px var(--band-3); }
 .result.pts-2 { box-shadow: inset 0 0 0 2px var(--band-2); }
+button.lr { font-size: 1.05em; padding: .8em; font-weight: 700; }
 
-button.lr { font-size: 1.1rem; padding: 16px; font-weight: 700; }
+/* ---------- zasady ---------- */
+.tabs { flex: 0 0 auto; display: flex; gap: 6px; }
+.tab { flex: 1 1 0; min-width: 0; padding: .5em .3em; font-size: .9em; background: transparent; border: 1px solid var(--line); }
+.tab.on { background: var(--accent); color: #241000; border-color: var(--accent); font-weight: 700; }
+.rules { flex: 1 1 auto; min-height: 0; overflow: auto; background: var(--panel); border-radius: var(--radius); padding: var(--gap) 14px; line-height: 1.4; }
+.rules p + p { margin-top: .6em; }
+.rules ul { margin: 0; padding-left: 1.1em; }
+.rules li + li { margin-top: .45em; }
+.rules .muted { margin-top: .6em; }
 
-.rules ul { padding-left: 20px; }
-.rules li { margin-bottom: 6px; line-height: 1.4; }
-.rules p { line-height: 1.45; }
+/* ---------- okno instalacji ---------- */
+.overlay { position: fixed; inset: 0; background: rgba(8,5,15,.75); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 10; }
+.dialog { background: var(--panel); border-radius: var(--radius); padding: 18px; max-width: 420px; width: 100%; display: flex; flex-direction: column; gap: 12px; line-height: 1.4; }
+
+/* ---------- szersze ekrany ---------- */
+@media (min-width: 600px) {
+  .teams-setup { grid-template-columns: 1fr 1fr; }
+  .modes { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* ---------- niskie ekrany (małe telefony) ---------- */
+@media (max-height: 620px) {
+  .mode span { display: none; }
+  .note { display: none; }
+}
+@media (max-height: 520px) {
+  .hero .lead { display: none; }
+}
+
+/* ---------- telefon poziomo i inne bardzo niskie okna: tarcza obok przycisków ---------- */
+@media (orientation: landscape) and (max-height: 560px) {
+  .topbar { padding-top: 4px; padding-bottom: 4px; }
+  .modes { grid-template-columns: repeat(3, 1fr); }
+  #screen-play {
+    display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr); column-gap: 14px;
+  }
+  .play-main { grid-column: 1; grid-row: 1 / span 2; }
+  .play-side { grid-column: 2; grid-row: 1; }
+  .play-bottom { grid-column: 2; grid-row: 2; justify-content: flex-end; }
+  .teams-setup { grid-template-columns: 1fr 1fr; }
+  .team-box { flex-direction: row; }
+  .team-box label { flex: 1 1 0; min-width: 0; }
+}
+
+/* bardzo wąskie telefony: przyciski pod menu bez ikon i licznika */
+.menu-row i { font-style: normal; }
+@media (max-width: 560px) { #cats-count { display: none; } }
+@media (max-width: 400px) { .menu-row i { display: none; } }

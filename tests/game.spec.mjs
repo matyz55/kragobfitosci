@@ -147,14 +147,51 @@ test('współpraca: wymaga dwóch graczy, potem gra do końca talii', async ({ p
 });
 
 test('kategorie: wybór zapamiętany, co najmniej jedna zostaje', async ({ page }) => {
-  for (const id of ['general', 'movies', 'food', 'sport', 'science', 'poland', 'games']) await page.click(`.chip[data-cat=${id}]`);
+  await page.click('#btn-cats');
+  await page.click('#btn-cats-none');
+  const first = await page.$$eval('.chip.on', (x) => x.map((y) => y.dataset.cat));
+  expect(first).toEqual(['general']);
+  await page.click('.chip[data-cat=music]');
+  await page.click('.chip[data-cat=general]');
   await page.click('.chip[data-cat=music]'); // ostatniej nie da się wyłączyć
   await page.reload();
+  await expect(page.locator('#cats-count')).toHaveText(`1/${await page.evaluate(() => CATEGORIES.length)}`);
+  await page.click('#btn-cats');
   const on = await page.$$eval('.chip.on', (x) => x.map((y) => y.dataset.cat));
   expect(on).toEqual(['music']);
+  await page.click('#screen-cats .back');
   await page.click('#btn-solo');
   const cats = await page.evaluate(() => [...new Set(state.game.rounds.map((r) => r.cat))]);
   expect(cats).toEqual(['music']);
+});
+
+test('instalacja: bez okna przeglądarki pokazuje instrukcję', async ({ page }) => {
+  await expect(page.locator('#btn-install')).toBeVisible();
+  await page.click('#btn-install');
+  await expect(page.locator('#install-dialog')).toBeVisible();
+  await expect(page.locator('#install-text')).not.toBeEmpty();
+  await page.click('#btn-install-close');
+  await expect(page.locator('#install-dialog')).toBeHidden();
+});
+
+test('instalacja: przycisk wywołuje okno instalacji przeglądarki', async ({ page }) => {
+  await page.evaluate(() => {
+    const e = new Event('beforeinstallprompt', { cancelable: true });
+    e.prompt = () => { window.prompted = true; };
+    e.userChoice = Promise.resolve({ outcome: 'accepted' });
+    window.dispatchEvent(e);
+  });
+  await page.click('#btn-install');
+  expect(await page.evaluate(() => window.prompted)).toBe(true);
+  await expect(page.locator('#install-dialog')).toBeHidden();
+});
+
+test('zasady: zakładki', async ({ page }) => {
+  await page.click('#btn-rules');
+  await expect(page.locator('[data-page=basics]')).toBeVisible();
+  await page.click('.tab[data-tab=coop]');
+  await expect(page.locator('[data-page=coop]')).toBeVisible();
+  await expect(page.locator('[data-page=basics]')).toBeHidden();
 });
 
 test('tarcza reaguje na przeciąganie', async ({ page }) => {

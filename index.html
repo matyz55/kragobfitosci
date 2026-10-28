@@ -6,8 +6,11 @@
   <title>Krąg obfitości</title>
   <meta name="description" content="Krąg obfitości – gra w zgadywanie myśli na skali, w przeglądarce. Jeden gracz, drużyny albo współpraca.">
   <meta name="theme-color" content="#14101f">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Krąg obfitości">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -18,67 +21,73 @@
 
   <!-- MENU -->
   <main id="screen-menu" class="screen">
-    <section class="card center hero">
+    <section class="hero">
       <svg id="hero-dial" class="hero-dial" aria-hidden="true"></svg>
       <input type="range" id="hero-range" class="hidden" min="0" max="100" step="0.5" aria-hidden="true" tabindex="-1">
-      <p class="lead">Jedna osoba zna ukryty cel na skali i podaje hasło.<br>Reszta próbuje odgadnąć, gdzie ten cel leży.</p>
+      <p class="lead">Psychik zna ukryty cel na skali i podaje hasło. Reszta zgaduje, gdzie ten cel leży.</p>
     </section>
     <section class="modes">
       <button class="mode" id="btn-solo" data-mode="solo">
-        <b>👤 Jeden gracz</b><span>Trening: ustaw wskazówkę dla gotowych haseł – 10 rund, do 40 pkt.</span>
+        <b>👤 Jeden gracz</b><span>10 rund z gotowymi hasłami, do 40 pkt</span>
       </button>
       <button class="mode" id="btn-teams" data-mode="teams">
-        <b>⚔️ Dwie drużyny</b><span>Klasyczna rozgrywka: psychik, hasło, punkty 4/3/2 i „lewo czy prawo?”. Gra do 10 pkt.</span>
+        <b>⚔️ Dwie drużyny</b><span>Psychik, hasło, 4/3/2 pkt i „lewo czy prawo?”</span>
       </button>
       <button class="mode" id="btn-coop" data-mode="coop">
-        <b>🤝 Współpraca</b><span>2+ graczy razem: 7 kart, trafienie w środek dokłada kartę. Ile zdobędziecie?</span>
+        <b>🤝 Współpraca</b><span>2+ graczy razem przeciw talii kart</span>
       </button>
     </section>
-    <section class="card">
-      <h2>Kategorie</h2>
-      <div id="cats" class="chips"></div>
-      <p class="muted" id="cats-info"></p>
-    </section>
-    <p class="center"><button id="btn-rules" class="ghost">📖 Zasady</button></p>
+    <nav class="menu-row">
+      <button id="btn-cats" class="ghost"><i>🗂️ </i>Kategorie <span id="cats-count"></span></button>
+      <button id="btn-rules" class="ghost"><i>📖 </i>Zasady</button>
+      <button id="btn-install" class="ghost hidden"><i>📲 </i>Zainstaluj</button>
+    </nav>
     <p class="center muted app-version">Wersja <span id="version"></span></p>
+  </main>
+
+  <!-- KATEGORIE -->
+  <main id="screen-cats" class="screen hidden">
+    <div class="screen-head">
+      <h2>Kategorie</h2>
+      <div class="head-btns"><button class="ghost small" id="btn-cats-all">Wszystkie</button><button class="ghost small" id="btn-cats-none">Wyczyść</button></div>
+    </div>
+    <div id="cats" class="cats-grid"></div>
+    <p class="muted center" id="cats-info"></p>
+    <div class="actions"><button class="primary back">Gotowe</button></div>
   </main>
 
   <!-- USTAWIENIA: DRUŻYNY -->
   <main id="screen-setup-teams" class="screen hidden">
-    <section class="card">
-      <h2>Dwie drużyny</h2>
-      <div class="teams-setup">
-        <div class="team-box team-a">
-          <label>Nazwa drużyny <input type="text" id="team-a-name" value="Drużyna A" maxlength="24"></label>
-          <label>Gracze (po przecinku) <input type="text" id="team-a-players" placeholder="np. Ania, Bartek" maxlength="200"></label>
-        </div>
-        <div class="team-box team-b">
-          <label>Nazwa drużyny <input type="text" id="team-b-name" value="Drużyna B" maxlength="24"></label>
-          <label>Gracze (po przecinku) <input type="text" id="team-b-players" placeholder="np. Celina, Darek" maxlength="200"></label>
-        </div>
+    <h2 class="screen-title">Dwie drużyny</h2>
+    <div class="teams-setup">
+      <div class="team-box team-a">
+        <label>Nazwa drużyny <input type="text" id="team-a-name" value="Drużyna A" maxlength="24"></label>
+        <label>Gracze (po przecinku) <input type="text" id="team-a-players" placeholder="np. Ania, Bartek" maxlength="200"></label>
       </div>
-      <label class="row">Gra do <select id="team-goal"><option>5</option><option>7</option><option selected>10</option><option>15</option></select> pkt</label>
-      <p class="muted">Psychikiem zostają po kolei gracze drużyny, która ma turę. Druga drużyna zaczyna z 1 pkt.</p>
-    </section>
+      <div class="team-box team-b">
+        <label>Nazwa drużyny <input type="text" id="team-b-name" value="Drużyna B" maxlength="24"></label>
+        <label>Gracze (po przecinku) <input type="text" id="team-b-players" placeholder="np. Celina, Darek" maxlength="200"></label>
+      </div>
+    </div>
+    <label class="row">Gra do <select id="team-goal"><option>5</option><option>7</option><option selected>10</option><option>15</option></select> pkt</label>
+    <p class="muted note">Psychikiem zostają po kolei gracze drużyny, która ma turę. Druga drużyna zaczyna z 1 pkt.</p>
     <div class="actions"><button class="ghost back">Wróć</button><button class="primary" id="btn-start-teams">Zaczynamy</button></div>
   </main>
 
   <!-- USTAWIENIA: WSPÓŁPRACA -->
   <main id="screen-setup-coop" class="screen hidden">
-    <section class="card">
-      <h2>Współpraca</h2>
-      <label>Gracze (po przecinku, co najmniej 2) <input type="text" id="coop-players" placeholder="np. Ania, Bartek, Celina" maxlength="300"></label>
-      <label class="row">Liczba kart <select id="coop-cards"><option>5</option><option selected>7</option><option>10</option></select></label>
-      <p class="muted">Psychik zmienia się co rundę. Środek celu daje 3 pkt i dodatkową kartę.</p>
-      <p class="error hidden" id="coop-error">Wpisz co najmniej dwóch graczy.</p>
-    </section>
+    <h2 class="screen-title">Współpraca</h2>
+    <label>Gracze (po przecinku, co najmniej 2) <input type="text" id="coop-players" placeholder="np. Ania, Bartek, Celina" maxlength="300"></label>
+    <label class="row">Liczba kart <select id="coop-cards"><option>5</option><option selected>7</option><option>10</option></select></label>
+    <p class="muted note">Psychik zmienia się co rundę. Środek celu daje 3 pkt i dodatkową kartę.</p>
+    <p class="error hidden" id="coop-error">Wpisz co najmniej dwóch graczy.</p>
     <div class="actions"><button class="ghost back">Wróć</button><button class="primary" id="btn-start-coop">Zaczynamy</button></div>
   </main>
 
   <!-- PRZEKAZANIE URZĄDZENIA -->
   <main id="screen-pass" class="screen hidden">
-    <section class="card center pass">
-      <div class="pass-icon">🔮</div>
+    <section class="pass center">
+      <div class="big-icon">🔮</div>
       <h2 id="pass-title"></h2>
       <p id="pass-text" class="lead"></p>
       <button class="primary big" id="btn-psychic-ready">Jestem psychikiem – pokaż cel</button>
@@ -87,74 +96,93 @@
 
   <!-- ROZGRYWKA -->
   <main id="screen-play" class="screen hidden">
-    <div id="scores" class="scores"></div>
-    <p id="status" class="status"></p>
-    <div id="card-choice" class="card-choice hidden"></div>
-    <section class="spectrum">
-      <div class="spec spec-left" id="spec-left"></div>
-      <div class="spec spec-right" id="spec-right"></div>
-    </section>
-    <div class="dial-wrap">
-      <svg id="dial" role="img" aria-label="Tarcza"></svg>
-      <input type="range" id="dial-range" min="0" max="100" step="0.5" value="50" aria-label="Położenie wskazówki">
+    <div class="play-side">
+      <div id="scores" class="scores"></div>
+      <p id="status" class="status"></p>
+      <div id="card-choice" class="card-choice hidden"></div>
     </div>
-    <div id="clue-box" class="clue-box hidden"></div>
-    <div id="clue-input-box" class="clue-input hidden">
-      <input type="text" id="clue-input" maxlength="60" placeholder="Hasło (wpisz albo powiedz na głos)">
+    <div class="play-main">
+      <section class="spectrum">
+        <div class="spec spec-left" id="spec-left"></div>
+        <div class="spec spec-right" id="spec-right"></div>
+      </section>
+      <div class="dial-wrap">
+        <svg id="dial" role="img" aria-label="Tarcza"></svg>
+        <input type="range" id="dial-range" min="0" max="100" step="0.5" value="50" aria-label="Położenie wskazówki">
+      </div>
     </div>
-    <div id="result" class="result hidden"></div>
-    <div id="actions" class="actions"></div>
+    <div class="play-bottom">
+      <div id="clue-box" class="clue-box hidden"></div>
+      <div id="clue-input-box" class="clue-input hidden">
+        <input type="text" id="clue-input" maxlength="60" placeholder="Hasło (wpisz albo powiedz na głos)">
+      </div>
+      <div id="result" class="result hidden"></div>
+      <div id="actions" class="actions"></div>
+    </div>
   </main>
 
   <!-- KONIEC -->
   <main id="screen-end" class="screen hidden">
-    <section class="card center">
-      <div class="end-icon">🏆</div>
+    <section class="center end">
+      <div class="big-icon">🏆</div>
       <h2 id="end-title"></h2>
       <p id="end-text" class="lead"></p>
-      <div id="end-table"></div>
     </section>
     <div class="actions"><button class="ghost" id="btn-menu">Menu</button><button class="primary" id="btn-again">Jeszcze raz</button></div>
   </main>
 
   <!-- ZASADY -->
   <main id="screen-rules" class="screen hidden">
-    <section class="card rules">
-      <h2>Jak grać</h2>
-      <p>Każda karta to skala między dwoma przeciwieństwami, np. <b>Zimne ↔ Gorące</b>. Gdzieś na tej skali
-        ukryty jest cel. Widzi go tylko <b>psychik</b> – podaje hasło, które według niego leży dokładnie w tym miejscu
-        (np. „herbata” – trochę na prawo od środka). Pozostali ustawiają wskazówkę tam, gdzie ich zdaniem jest cel.</p>
-      <h3>Punkty</h3>
-      <p>Cel ma pięć pól: <b>2 · 3 · 4 · 3 · 2</b>. Wskazówka w środku daje 4 pkt, obok 3, na brzegu 2, poza celem 0.
-        Wskazówka na granicy dwóch pól – liczy się lepsze.</p>
-      <h3>Dwie drużyny</h3>
-      <ul>
-        <li>Drużyny grają na zmianę, psychik zmienia się co turę. Drużyna, która zaczyna, ma 0 pkt, druga – 1 pkt.</li>
-        <li>Po ustawieniu wskazówki druga drużyna mówi, czy środek celu jest <b>na lewo czy na prawo</b> od wskazówki –
-          trafienie to 1 pkt. Nie dostaje go, gdy psychik i jego drużyna trafili w środek (4 pkt).</li>
-        <li>Drużyna, która zdobyła 4 pkt, a nadal przegrywa, od razu gra jeszcze jedną turę (z innym psychikiem).</li>
-        <li>Gra kończy się, gdy któraś drużyna ma 10 pkt (lub inny wybrany próg). Przy remisie każda drużyna gra jeszcze
-          jedną turę – wygrywa ta, która zdobędzie w niej więcej punktów (razem z „lewo/prawo”).</li>
-      </ul>
-      <h3>Współpraca</h3>
-      <ul>
-        <li>Wszyscy grają razem. Talia ma 7 kart, psychik zmienia się co rundę, bez „lewo/prawo”.</li>
-        <li>Środek celu daje tylko 3 pkt, ale za to dokłada jedną kartę do talii (dodatkowa runda).</li>
-        <li>Wynik 16 pkt i więcej to wygrana.</li>
-      </ul>
-      <h3>Jeden gracz</h3>
-      <p>Gra pokazuje kartę i gotowe hasło – ustaw wskazówkę tam, gdzie twoim zdaniem pasuje. Miejsca haseł to
-        szacunki autorów gry, nie jedyna słuszna odpowiedź.</p>
-      <h3>Zasady podawania hasła</h3>
-      <ul>
-        <li>Jedna myśl – bez łączenia kilku pomysłów.</li>
-        <li>Hasło musi istnieć naprawdę – nie wymyślaj go na poczekaniu.</li>
-        <li>Bez słów z karty i ich odmian, bez liczb i procentów, które zdradzają położenie.</li>
-        <li>Po podaniu hasła psychik już nic nie mówi – nawet wyjaśnień – i zachowuje kamienną twarz.</li>
-      </ul>
+    <div class="tabs" role="tablist">
+      <button class="tab on" data-tab="basics" role="tab">Podstawy</button>
+      <button class="tab" data-tab="teams" role="tab">Drużyny</button>
+      <button class="tab" data-tab="coop" role="tab">Razem</button>
+      <button class="tab" data-tab="clues" role="tab">Hasła</button>
+    </div>
+    <section class="rules">
+      <div class="tab-page" data-page="basics">
+        <p>Karta to skala między przeciwieństwami, np. <b>Zimne ↔ Gorące</b>. Ukryty cel widzi tylko <b>psychik</b> –
+          podaje hasło, które według niego leży w tym miejscu. Pozostali ustawiają wskazówkę.</p>
+        <p>Cel ma pola <b>2 · 3 · 4 · 3 · 2</b>: środek 4 pkt, obok 3, brzeg 2, poza celem 0. Na granicy pól liczy się lepsze.</p>
+        <p><b>Jeden gracz:</b> gra pokazuje gotowe hasło. Jego miejsce to szacunek autorów gry, nie jedyna słuszna odpowiedź.</p>
+      </div>
+      <div class="tab-page hidden" data-page="teams">
+        <ul>
+          <li>Drużyny grają na zmianę, psychik zmienia się co turę. Druga drużyna zaczyna z 1 pkt.</li>
+          <li>Po ustawieniu wskazówki przeciwnicy mówią, czy środek celu jest <b>na lewo czy na prawo</b> – trafienie to 1 pkt
+            (nie przy 4 pkt drużyny psychika).</li>
+          <li>Drużyna z 4 pkt, która nadal przegrywa, od razu gra kolejną turę.</li>
+          <li>Koniec przy 10 pkt (lub innym progu). Remis – każda drużyna gra jeszcze jedną turę, wygrywa ta z większą liczbą punktów w tej rundzie.</li>
+        </ul>
+      </div>
+      <div class="tab-page hidden" data-page="coop">
+        <ul>
+          <li>Wszyscy grają razem, psychik zmienia się co rundę, bez „lewo/prawo”.</li>
+          <li>Talia ma 7 kart (można wybrać 5 lub 10).</li>
+          <li>Środek celu daje tylko 3 pkt, ale dokłada kartę do talii – dodatkowa runda.</li>
+          <li>16 pkt i więcej to wygrana.</li>
+        </ul>
+      </div>
+      <div class="tab-page hidden" data-page="clues">
+        <ul>
+          <li>Jedna myśl – bez łączenia kilku pomysłów.</li>
+          <li>Hasło musi istnieć naprawdę.</li>
+          <li>Bez słów z karty i ich odmian, bez liczb i procentów.</li>
+          <li>Po podaniu hasła psychik milczy i zachowuje kamienną twarz.</li>
+        </ul>
+      </div>
     </section>
     <div class="actions"><button class="primary back">Wróć</button></div>
   </main>
+
+  <!-- INSTALACJA -->
+  <div id="install-dialog" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="install-title">
+    <div class="dialog">
+      <h2 id="install-title">Zainstaluj grę</h2>
+      <p id="install-text"></p>
+      <div class="actions"><button class="primary" id="btn-install-close">OK</button></div>
+    </div>
+  </div>
 
   <script src="js/data.js"></script>
   <script src="js/game.js"></script>

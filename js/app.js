@@ -24,7 +24,6 @@ let dial;
 function show(id) {
   document.querySelectorAll('.screen').forEach((s) => s.classList.toggle('hidden', s.id !== id));
   $('#btn-home').classList.toggle('hidden', id === 'screen-menu');
-  window.scrollTo(0, 0);
 }
 
 function esc(s) {
@@ -59,17 +58,62 @@ function renderCats() {
     const on = settings.cats.includes(c.id);
     const b = button(`${c.icon} ${c.name}`, 'chip' + (on ? ' on' : ''), () => {
       if (on && settings.cats.length === 1) return; // co najmniej jedna kategoria
-      settings.cats = on ? settings.cats.filter((x) => x !== c.id) : settings.cats.concat(c.id);
-      saveJSON(SETTINGS_KEY, settings);
-      renderCats();
+      setCats(on ? settings.cats.filter((x) => x !== c.id) : settings.cats.concat(c.id));
     });
     b.dataset.cat = c.id;
     b.setAttribute('aria-pressed', String(on));
     box.append(b);
   }
   const cards = CATEGORIES.filter((c) => settings.cats.includes(c.id)).reduce((n, c) => n + c.cards.length, 0);
-  const solo = soloRounds(settings.cats, 999).length;
-  $('#cats-info').textContent = `Wybrane karty: ${cards}. Haseł do gry jednoosobowej: ${solo}.`;
+  const solo = soloRounds(settings.cats, 9999).length;
+  $('#cats-info').textContent = `Kart: ${cards} · haseł dla jednego gracza: ${solo}`;
+  $('#cats-count').textContent = `${settings.cats.length}/${CATEGORIES.length}`;
+}
+
+function setCats(ids) {
+  settings.cats = CATEGORIES.map((c) => c.id).filter((id) => ids.includes(id));
+  saveJSON(SETTINGS_KEY, settings);
+  renderCats();
+}
+
+function showRulesTab(tab) {
+  document.querySelectorAll('#screen-rules .tab').forEach((t) => t.classList.toggle('on', t.dataset.tab === tab));
+  document.querySelectorAll('#screen-rules .tab-page').forEach((p) => p.classList.toggle('hidden', p.dataset.page !== tab));
+}
+
+// ---------- instalacja ----------
+
+let installEvent = null;
+
+function isStandalone() {
+  return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+}
+
+function updateInstallButton() {
+  $('#btn-install').classList.toggle('hidden', isStandalone());
+}
+
+// Instrukcja dla przeglądarek bez okna instalacji (iOS, Safari, Firefox) albo gdy przeglądarka jeszcze go nie udostępniła.
+function installHelp() {
+  const ua = navigator.userAgent;
+  const ios = /iPad|iPhone|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+  if (ios) return 'Stuknij przycisk „Udostępnij” (kwadrat ze strzałką w górę) i wybierz dodanie do ekranu początkowego.';
+  if (/Firefox/.test(ua) && !/Android/.test(ua)) return 'Firefox na komputerze nie instaluje aplikacji ze stron. Otwórz grę w Chrome albo Edge i kliknij „Zainstaluj” jeszcze raz.';
+  if (/Macintosh/.test(ua) && /Safari/.test(ua) && !/Chrome|Chromium|Edg/.test(ua)) return 'W Safari otwórz menu „Plik” i wybierz dodanie do Docka (macOS Sonoma lub nowszy).';
+  return 'Otwórz menu przeglądarki (⋮ albo …) i wybierz instalację aplikacji albo dodanie do ekranu głównego.';
+}
+
+async function install() {
+  if (installEvent) {
+    const e = installEvent;
+    installEvent = null;
+    e.prompt();
+    try { await e.userChoice; } catch {}
+    updateInstallButton();
+    return;
+  }
+  $('#install-text').textContent = installHelp();
+  $('#install-dialog').classList.remove('hidden');
 }
 
 // ---------- wspólne elementy rozgrywki ----------
@@ -300,7 +344,6 @@ function endGame() {
   const g = state.game;
   state.phase = 'end';
   show('screen-end');
-  $('#end-table').innerHTML = '';
   if (g.mode === 'teams') {
     const w = g.teams[g.winner];
     $('#end-title').textContent = `Wygrywa „${w.name}”!`;
@@ -348,7 +391,16 @@ function init() {
   $('#btn-solo').addEventListener('click', startSolo);
   $('#btn-teams').addEventListener('click', () => show('screen-setup-teams'));
   $('#btn-coop').addEventListener('click', () => show('screen-setup-coop'));
-  $('#btn-rules').addEventListener('click', () => show('screen-rules'));
+  $('#btn-rules').addEventListener('click', () => { showRulesTab('basics'); show('screen-rules'); });
+  $('#btn-cats').addEventListener('click', () => show('screen-cats'));
+  $('#btn-cats-all').addEventListener('click', () => setCats(CATEGORIES.map((c) => c.id)));
+  $('#btn-cats-none').addEventListener('click', () => setCats([settings.cats[0]]));
+  document.querySelectorAll('#screen-rules .tab').forEach((t) => t.addEventListener('click', () => showRulesTab(t.dataset.tab)));
+  $('#btn-install').addEventListener('click', install);
+  $('#btn-install-close').addEventListener('click', () => $('#install-dialog').classList.add('hidden'));
+  window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); installEvent = e; updateInstallButton(); });
+  window.addEventListener('appinstalled', () => { installEvent = null; updateInstallButton(); });
+  updateInstallButton();
   document.querySelectorAll('.back').forEach((b) => b.addEventListener('click', () => show('screen-menu')));
   $('#btn-start-teams').addEventListener('click', startTeams);
   $('#btn-start-coop').addEventListener('click', startCoop);
