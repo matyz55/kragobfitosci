@@ -57,7 +57,7 @@
 - Przycisk pełnego ekranu i włączania dźwięku na dużym ekranie; starszy duży ekran odświeża się sam.
 - Na wąskich telefonach górny pasek jest krótszy (sama ikona ✕ zamiast „✕ Menu”).
 
-## 1.5.0 – 28.10.2026 – wibracje i poprawione polskie litery
+## 1.5.0 – 28.10.2026 (`2fa1ed2`) – wibracje i poprawione polskie litery
 
 - Wibracje (telefony z Androidem): wskazówka „klika” na każdej kresce podziałki, mocniej na dłuższych kreskach
   i na końcach skali; wibracje przy odsłonięciu i zasłonięciu celu, wyniku (inne dla 4, 3, 2 i 0 pkt), trafionym
