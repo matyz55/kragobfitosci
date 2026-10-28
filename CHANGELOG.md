@@ -47,7 +47,7 @@
 - Nowa ikona aplikacji.
 - Przy systemowym ustawieniu „ogranicz ruch” animacje są wyłączone.
 
-## 1.4.0 – 28.10.2026 – duży ekran
+## 1.4.0 – 28.10.2026 (`3cf6144`) – duży ekran
 
 - Nowy tryb dużego ekranu (`tv.html`) dla telewizora, rzutnika albo drugiego monitora: duża tarcza, końce skali,
   hasło, wyniki, konfetti i dźwięki. Telefon zostaje pilotem – przycisk 📺 w górnym pasku.
