@@ -77,7 +77,7 @@
 - 282 nowe karty: w każdej z 22 kategorii jest teraz co najmniej 32 karty i 15 haseł dla jednego gracza, więc każdą
   kategorię można wybrać osobno i grać bez powtórek (razem 721 kart i 648 haseł).
 
-## 1.7.0 – 28.10.2026 – nowy ekran tury i blokada suwaka
+## 1.7.0 – 28.10.2026 (`dc3a5d1`) – nowy ekran tury i blokada suwaka
 
 - Suwak pod tarczą jest zablokowany i wyszarzony, gdy wskazówki nie wolno ruszać: u psychika, po zatwierdzeniu
   odpowiedzi, przy „lewo/prawo” i po odsłonięciu (wcześniej po odpowiedzi dało się go przesunąć, choć wskazówka
