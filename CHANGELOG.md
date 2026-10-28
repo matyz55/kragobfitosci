@@ -103,7 +103,7 @@
   trybach i podpisany „3+” – 3 pkt i dodatkowa karta; po trafieniu odznaka wyniku też jest czerwona.
 - Psychik we współpracy widzi wyjaśnienie „Środek „3+” to 3 pkt i dodatkowa karta”, a zasady opisują oznaczenie na tarczy.
 
-## 1.7.2 – 29.10.2026 – „wyrocznia” zamiast „psychika”
+## 1.7.2 – 29.10.2026 (`bd3415d`) – „wyrocznia” zamiast „psychika”
 
 - Osoba, która widzi cel i podaje hasło, nazywa się teraz „wyrocznia” (np. „Wyrocznia: Ania”, „Jestem wyrocznią –
   pokaż cel”, „Wyrocznia milczy!”) – na wszystkich ekranach, na dużym ekranie, w zasadach i w opisie gry.
