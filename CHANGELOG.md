@@ -34,7 +34,7 @@
   ma teraz hasła dla jednego gracza.
 - Lista kategorii zawsze mieści się na ekranie (wcześniej przy wielu kategoriach nachodziła na napis pod spodem).
 
-## 1.3.0 – 28.10.2026 – nowa grafika
+## 1.3.0 – 28.10.2026 (`fc1702f`) – nowa grafika
 
 - Nowy wygląd całej gry: ciemne tło z animowaną zorzą, szklane panele, przyciski z gradientem i własne czcionki
   (Fredoka i Nunito – dołączone do gry, działają bez sieci).
