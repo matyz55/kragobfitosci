@@ -3,7 +3,7 @@
 // Tryb drużynowy: punkty 4/3/2, zgadywanie „lewo/prawo”, gra do 10 pkt, dogrywka, nadrabianie straty;
 // tryb współpracy: 7 kart, środek celu dokłada kartę.
 
-const GAME_VERSION = '1.5.1';
+const GAME_VERSION = '1.6.0';
 
 // Szerokość jednego pola celu na skali 0–100. Cel ma pięć pól: 2 | 3 | 4 | 3 | 2.
 const BAND = 4;

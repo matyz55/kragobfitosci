@@ -26,7 +26,7 @@ Gra jest „na jednym urządzeniu”: przed każdą turą ekran prosi o przekaza
 
 ## Kategorie
 
-22 kategorie, 439 kart (297 haseł dla jednego gracza): Ogólne, Muzyka, Film i seriale, Jedzenie i picie, Sport,
+22 kategorie, 721 kart (648 haseł dla jednego gracza; w każdej kategorii co najmniej 32 karty i 15 haseł, więc każdą da się grać osobno): Ogólne, Muzyka, Film i seriale, Jedzenie i picie, Sport,
 Nauka i technika, Polskie klimaty, Internet i gry, Zwierzęta i natura, Ludzie i charaktery, Szkoła i praca, Podróże,
 Moda i wygląd, Historia, Miłość i przyjaźń, Dom i codzienność, Książki i język, Imprezowe, Dzieciństwo i bajki,
 Motoryzacja, Pory roku i święta, Zdrowie i ciało. Kategorie wybiera się po wyborze trybu (i ustawień graczy) –

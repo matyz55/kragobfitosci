@@ -174,17 +174,23 @@ test('kategorie: wybierane po trybie, zapamiętane, co najmniej jedna zostaje', 
   expect(cats).toEqual(['music']);
 });
 
-test('każda kategoria ma hasła dla jednego gracza i brak powtórzonych kart', async ({ page }) => {
+test('każdą kategorię da się grać osobno: min. 32 karty i 15 haseł, bez powtórzeń i obcych liter', async ({ page }) => {
   const r = await page.evaluate(() => {
-    const seen = new Set(), dup = [];
-    for (const c of CATEGORIES) for (const k of c.cards) {
-      const key = `${k[0]}|${k[1]}`;
-      if (seen.has(key)) dup.push(key);
-      seen.add(key);
+    const seen = new Set(), dup = [], small = [], foreign = [];
+    for (const c of CATEGORIES) {
+      const hasla = soloRounds([c.id], 9999).length;
+      if (c.cards.length < 32 || hasla < 15) small.push(`${c.id}: ${c.cards.length} kart, ${hasla} haseł`);
+      for (const k of c.cards) {
+        const key = `${k[0]}|${k[1]}`.toLowerCase();
+        if (seen.has(key)) dup.push(key);
+        seen.add(key);
+        // cyrylica i greka wyglądają jak polskie litery, ale psują wyszukiwanie i czcionki
+        for (const t of [k[0], k[1], ...(k[2] || []).map((e) => e[0])]) if (/[\u0370-\u03FF\u0400-\u04FF]/.test(t)) foreign.push(t);
+      }
     }
-    return { empty: CATEGORIES.filter((c) => !soloRounds([c.id], 1).length).map((c) => c.id), dup };
+    return { small, dup, foreign };
   });
-  expect(r).toEqual({ empty: [], dup: [] });
+  expect(r).toEqual({ small: [], dup: [], foreign: [] });
 });
 
 test('dźwięk: przełącznik zapamiętany, gra działa z dźwiękiem', async ({ page }) => {

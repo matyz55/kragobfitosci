@@ -71,3 +71,8 @@
 - Przycisk wibracji jest teraz ikoną w górnym pasku, obok dźwięku: 📳 – włączone, 📴 – wyłączone
   (wcześniej był na dole menu).
 - Na wąskich telefonach przyciski w górnym pasku są węższe, żeby zmieściły się obok nazwy gry.
+
+## 1.6.0 – 28.10.2026 – więcej kart w każdej kategorii
+
+- 282 nowe karty: w każdej z 22 kategorii jest teraz co najmniej 32 karty i 15 haseł dla jednego gracza, więc każdą
+  kategorię można wybrać osobno i grać bez powtórek (razem 721 kart i 648 haseł).
