@@ -23,7 +23,7 @@
 - Przycisk „Zainstaluj” w menu: okno instalacji przeglądarki albo instrukcja dla iPhone’a/iPada, Safari i Firefoksa.
   Nowe ikony aplikacji (także na ekran początkowy iPhone’a).
 
-## 1.2.0 – 28.10.2026 – kategorie po wyborze trybu, dźwięki, więcej kart
+## 1.2.0 – 28.10.2026 (`970be02`) – kategorie po wyborze trybu, dźwięki, więcej kart
 
 - Kategorie wybiera się teraz po wybraniu trybu gry (w drużynach i współpracy – po wpisaniu graczy), tuż przed
   startem. Przycisk „Kategorie” zniknął z menu.
