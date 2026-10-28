@@ -97,7 +97,7 @@
 - Duży ekran pokazuje te same karty hasła i wyniku, wyróżnione pole oraz podsumowanie gry; po odsłonięciu hasło jest
   podpisane imieniem właściwego psychika (wcześniej – następnego).
 
-## 1.7.1 – 29.10.2026 – wyraźny środek celu we współpracy
+## 1.7.1 – 29.10.2026 (`dbac544`) – wyraźny środek celu we współpracy
 
 - We współpracy środek celu wyglądał jak zwykłe pole za 3 pkt (tarcza „2 3 3 3 2”). Teraz jest czerwony jak w innych
   trybach i podpisany „3+” – 3 pkt i dodatkowa karta; po trafieniu odznaka wyniku też jest czerwona.
