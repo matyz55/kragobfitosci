@@ -33,3 +33,16 @@
   dotychczasowych kategoriach – razem 439 kart w 22 kategoriach i 297 haseł dla jednego gracza. Każda kategoria
   ma teraz hasła dla jednego gracza.
 - Lista kategorii zawsze mieści się na ekranie (wcześniej przy wielu kategoriach nachodziła na napis pod spodem).
+
+## 1.3.0 – 28.10.2026 – nowa grafika
+
+- Nowy wygląd całej gry: ciemne tło z animowaną zorzą, szklane panele, przyciski z gradientem i własne czcionki
+  (Fredoka i Nunito – dołączone do gry, działają bez sieci).
+- Nowa tarcza: obudowa z obręczą w kolorach skali (od niebieskiego do czerwonego), gradientowe pola celu,
+  które przy odsłonięciu rozkładają się jak wachlarz, smukła wskazówka obracająca się płynnie, gęstsza podziałka.
+- Końce skali w kształcie strzałek stoją teraz tuż pod tarczą; kolorowy suwak.
+- Kafelki trybów z kolorowymi ikonami, wyróżnione wybrane kategorie, zakładki zasad i karty z kolorowymi akcentami.
+- Konfetti przy trafieniu w sam środek i przy wygranej, podskakujący wynik po zdobyciu punktów, pulsująca kula
+  na ekranie psychika, puchar na koniec gry.
+- Nowa ikona aplikacji.
+- Przy systemowym ustawieniu „ogranicz ruch” animacje są wyłączone.

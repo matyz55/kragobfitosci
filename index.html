@@ -5,17 +5,20 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Krąg obfitości</title>
   <meta name="description" content="Krąg obfitości – gra w zgadywanie myśli na skali, w przeglądarce. Jeden gracz, drużyny albo współpraca.">
-  <meta name="theme-color" content="#14101f">
+  <meta name="theme-color" content="#120c22">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Krąg obfitości">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="preload" href="fonts/fredoka-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/nunito-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div class="bg" aria-hidden="true"><i></i><i></i><i></i></div>
   <header class="topbar">
-    <h1 id="logo">Krąg <span>obfitości</span></h1>
+    <h1 id="logo"><img src="icons/icon.svg" alt="" class="logo-icon">Krąg <span>obfitości</span></h1>
     <div class="top-btns">
       <button id="btn-sound" class="ghost small" title="Dźwięk" aria-label="Dźwięk włączony">🔊</button>
       <button id="btn-home" class="ghost small hidden" title="Menu główne">✕ Menu</button>
@@ -31,13 +34,13 @@
     </section>
     <section class="modes">
       <button class="mode" id="btn-solo" data-mode="solo">
-        <b>👤 Jeden gracz</b><span>10 rund z gotowymi hasłami, do 40 pkt</span>
+        <span class="mode-icon">👤</span><span class="mode-txt"><b>Jeden gracz</b><span class="mode-desc">10 rund z gotowymi hasłami, do 40 pkt</span></span>
       </button>
       <button class="mode" id="btn-teams" data-mode="teams">
-        <b>⚔️ Dwie drużyny</b><span>Psychik, hasło, 4/3/2 pkt i „lewo czy prawo?”</span>
+        <span class="mode-icon">⚔️</span><span class="mode-txt"><b>Dwie drużyny</b><span class="mode-desc">Psychik, hasło, 4/3/2 pkt i „lewo czy prawo?”</span></span>
       </button>
       <button class="mode" id="btn-coop" data-mode="coop">
-        <b>🤝 Współpraca</b><span>2+ graczy razem przeciw talii kart</span>
+        <span class="mode-icon">🤝</span><span class="mode-txt"><b>Współpraca</b><span class="mode-desc">2+ graczy razem przeciw talii kart</span></span>
       </button>
     </section>
     <nav class="menu-row">
@@ -90,7 +93,7 @@
   <!-- PRZEKAZANIE URZĄDZENIA -->
   <main id="screen-pass" class="screen hidden">
     <section class="pass center">
-      <div class="big-icon">🔮</div>
+      <div class="big-icon orb">🔮</div>
       <h2 id="pass-title"></h2>
       <p id="pass-text" class="lead"></p>
       <button class="primary big" id="btn-psychic-ready">Jestem psychikiem – pokaż cel</button>
@@ -105,12 +108,12 @@
       <div id="card-choice" class="card-choice hidden"></div>
     </div>
     <div class="play-main">
-      <section class="spectrum">
-        <div class="spec spec-left" id="spec-left"></div>
-        <div class="spec spec-right" id="spec-right"></div>
-      </section>
       <div class="dial-wrap">
         <svg id="dial" role="img" aria-label="Tarcza"></svg>
+        <section class="spectrum">
+          <div class="spec spec-left" id="spec-left"></div>
+          <div class="spec spec-right" id="spec-right"></div>
+        </section>
         <input type="range" id="dial-range" min="0" max="100" step="0.5" value="50" aria-label="Położenie wskazówki">
       </div>
     </div>
@@ -127,7 +130,7 @@
   <!-- KONIEC -->
   <main id="screen-end" class="screen hidden">
     <section class="center end">
-      <div class="big-icon">🏆</div>
+      <div class="big-icon trophy" id="end-icon">🏆</div>
       <h2 id="end-title"></h2>
       <p id="end-text" class="lead"></p>
     </section>
@@ -186,6 +189,8 @@
       <div class="actions"><button class="primary" id="btn-install-close">OK</button></div>
     </div>
   </div>
+
+  <div id="fx" class="fx" aria-hidden="true"></div>
 
   <script src="js/data.js"></script>
   <script src="js/game.js"></script>

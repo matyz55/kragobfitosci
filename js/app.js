@@ -143,6 +143,25 @@ function setCard(card) {
   $('#spec-right').textContent = card.right;
 }
 
+// Konfetti (przy trafieniu w środek i na koniec wygranej gry).
+function confetti(n = 70) {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const fx = $('#fx'), colors = ['#ffd166', '#ff8a3d', '#ff4f7b', '#a66bff', '#4f7cff', '#3fe0d0'];
+  for (let i = 0; i < n; i++) {
+    const c = document.createElement('i');
+    c.style.left = `${Math.random() * 100}%`;
+    c.style.background = colors[i % colors.length];
+    c.style.animationDelay = `${Math.random() * 0.4}s`;
+    c.style.setProperty('--dx', `${(Math.random() - 0.5) * 40}vw`);
+    c.style.setProperty('--r', `${(Math.random() - 0.5) * 1440}deg`);
+    c.style.setProperty('--t', `${1.4 + Math.random() * 1.2}s`);
+    fx.append(c);
+  }
+  setTimeout(() => { fx.textContent = ''; }, 3200);
+}
+
+let shownScores = [];
+
 function renderScores() {
   const g = state.game, box = $('#scores');
   if (g.mode === 'teams') {
@@ -158,6 +177,15 @@ function renderScores() {
       `<div class="score"><span>Runda</span><b>${Math.min(g.index + 1, g.rounds.length)}/${g.rounds.length}</b></div>` +
       `<div class="score"><span>Rekord</span><b>${best}</b></div>`;
   }
+  // podskok liczby, która właśnie wzrosła (tylko wyniki, nie runda ani karty)
+  const vals = [...box.querySelectorAll('.score b')].map((b) => Number(b.textContent.split('/')[0]));
+  box.querySelectorAll('.score b').forEach((b, i) => {
+    const label = b.previousElementSibling.textContent;
+    if (/Wynik|wynik/.test(label) || b.parentElement.matches('.team-a, .team-b')) {
+      if (shownScores[i] != null && vals[i] > shownScores[i]) b.classList.add('bump');
+    }
+  });
+  shownScores = vals;
 }
 
 function resetPlayView() {
@@ -194,6 +222,7 @@ function startSolo() {
 }
 
 function soloRound() {
+  if (state.game.index === 0) shownScores = [];
   const g = state.game, r = g.rounds[g.index];
   show('screen-play');
   resetPlayView();
@@ -217,6 +246,7 @@ function soloReveal() {
   renderScores();
   showResult(`${pointsText(res.pts)}`, res.pts);
   SFX.points(res.pts);
+  if (res.pts === 4) confetti(40);
   $('#status').textContent = '';
   setActions(button(g.done ? 'Podsumowanie' : 'Dalej', 'primary big', () => (g.done ? endGame() : soloRound()), 'btn-next'));
 }
@@ -249,6 +279,7 @@ function startCoop() {
 }
 
 function passDevice(extra) {
+  if (state.game.turn === 0 && !extra) shownScores = [];
   const g = state.game;
   state.phase = 'pass';
   state.choices = [state.deck.draw(), state.deck.draw()];
@@ -352,6 +383,7 @@ function reveal(lr) {
     showResult(html, res.pts);
     SFX.points(res.pts);
     SFX.bonus(res.lrOk);
+    if (res.pts === 4) confetti(40);
     $('#status').textContent = '';
     setActions(button(done ? 'Wyniki' : 'Następna tura', 'primary big', () => (done ? endGame() : passDevice(res.extra)), 'btn-next'));
   } else {
@@ -362,6 +394,7 @@ function reveal(lr) {
     renderScores();
     showResult(html, res.pts);
     SFX.points(res.pts);
+    if (res.bonus) confetti(40);
     $('#status').textContent = '';
     setActions(button(done ? 'Wyniki' : 'Następna runda', 'primary big', () => (done ? endGame() : passDevice()), 'btn-next'));
   }
@@ -375,20 +408,24 @@ function endGame() {
   show('screen-end');
   if (g.mode === 'teams') {
     const w = g.teams[g.winner];
+    $('#end-icon').textContent = '🏆';
     $('#end-title').textContent = `Wygrywa „${w.name}”!`;
     $('#end-text').textContent = `${g.teams[0].name} ${g.teams[0].score} : ${g.teams[1].score} ${g.teams[1].name}`;
     SFX.win();
+    confetti();
   } else if (g.mode === 'coop') {
     $('#end-title').textContent = `${g.score} pkt`;
     $('#end-text').textContent = `${coopRank(g.score)} (rozegrane karty: ${g.turn})`;
-    if (g.score >= 16) SFX.win(); else SFX.end();
+    if (g.score >= 16) { SFX.win(); confetti(); } else SFX.end();
+    $('#end-icon').textContent = g.score >= 16 ? '🏆' : '🔮';
   } else {
     const best = loadJSON(BEST_KEY, 0);
     const record = g.score > best;
     if (record) saveJSON(BEST_KEY, g.score);
     $('#end-title').textContent = `${g.score} / ${g.rounds.length * 4} pkt`;
     $('#end-text').textContent = record ? 'Nowy rekord!' : `Rekord: ${best} pkt`;
-    if (record || g.score >= 30) SFX.win(); else SFX.end();
+    if (record || g.score >= 30) { SFX.win(); confetti(); } else SFX.end();
+    $('#end-icon').textContent = record || g.score >= 30 ? '🏆' : '🎯';
   }
 }
 

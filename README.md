@@ -32,6 +32,14 @@ Moda i wygląd, Historia, Miłość i przyjaźń, Dom i codzienność, Książki
 Motoryzacja, Pory roku i święta, Zdrowie i ciało. Kategorie wybiera się po wyborze trybu (i ustawień graczy) –
 tuż przed startem gry; wybór jest zapamiętywany. Karty i przykłady: `js/data.js`.
 
+## Wygląd
+
+Ciemny motyw z animowaną „zorzą” w tle, tarcza z gradientami (obręcz od niebieskiego do czerwonego jak końce skali,
+wachlarz celu rozkładający się przy odsłonięciu, wskazówka obracająca się płynnie), konfetti przy trafieniu w środek
+i przy wygranej. Czcionki Fredoka (nagłówki, przyciski) i Nunito (tekst) są dołączone w `fonts/` (licencja SIL Open
+Font License 1.1 – pliki `fonts/OFL-*.txt`), więc działają także bez sieci. Przy ustawieniu systemu „ogranicz ruch”
+animacje i konfetti są wyłączone.
+
 ## Dźwięk
 
 Efekty dźwiękowe są tworzone w przeglądarce (Web Audio API, `js/sound.js`) – bez plików audio: stuknięcia przycisków,
@@ -56,6 +64,7 @@ za trafione „lewo/prawo” i melodia na koniec gry. Przycisk 🔊/🔇 w górn
 - `js/sound.js` – efekty dźwiękowe
 - `js/app.js` – ekrany i przebieg gry
 - `sw.js`, `manifest.webmanifest`, `icons/` – instalacja jako aplikacja i działanie bez sieci
+- `fonts/` – czcionki Fredoka i Nunito (SIL OFL 1.1)
 
 ## Uruchomienie lokalne i testy
 
@@ -69,5 +78,7 @@ npm test           # testy Playwright
 ## Źródła
 
 - Zasady, karty (skale), grafika i opisy wyników – opracowanie własne.
+- Czcionki: Google Fonts – Fredoka (https://fonts.google.com/specimen/Fredoka) i Nunito
+  (https://fonts.google.com/specimen/Nunito), licencja SIL OFL 1.1 (tekst licencji w `fonts/`).
 - Wymagania instalacji (ikony 192 i 512 px, HTTPS, manifest): https://web.dev/articles/install-criteria oraz
   https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Making_PWAs_installable

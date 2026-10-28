@@ -1,8 +1,9 @@
 'use strict';
 // Service worker: działanie bez sieci. Najpierw sieć (zawsze najnowsza wersja), a gdy jej brak – kopia z pamięci.
-const CACHE = 'krag-v3';
+const CACHE = 'krag-v4';
 const CORE = ['./', 'index.html', 'style.css', 'js/data.js', 'js/game.js', 'js/dial.js', 'js/sound.js', 'js/app.js',
-  'manifest.webmanifest', 'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png'];
+  'manifest.webmanifest', 'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png',
+  'fonts/fredoka-latin.woff2', 'fonts/fredoka-latin-ext.woff2', 'fonts/nunito-latin.woff2', 'fonts/nunito-latin-ext.woff2'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(CACHE).then((c) => c.addAll(CORE)).then(() => self.skipWaiting()));
