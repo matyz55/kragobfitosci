@@ -124,14 +124,16 @@ function createDial(svg, range, onChange) {
         const d = wedgePath(t + a * BAND, t + b * BAND, r - 1);
         if (!d) { bandPaths.push(null); continue; }
         const centre = a === -0.5;
-        const path = el('path', { d, fill: url(centre && coop ? 'b3' : `b${p}`), class: `band band-${p}${centre ? ' band-center' : ''}` });
+        // środek celu zawsze wyróżniony (czerwony); we współpracy daje 3 pkt i dodatkową kartę – podpis „3+”
+        const path = el('path', { d, fill: url(centre ? 'b4' : `b${p}`), class: `band band-${p}${centre ? ' band-center' : ''}${centre && coop ? ' band-bonus' : ''}` });
         targetG.append(path);
         bandPaths.push(path);
         const mid = (Math.max(0, t + a * BAND) + Math.min(100, t + b * BAND)) / 2;
         const [lx, ly] = dialPoint(mid, r - 30);
         if (mid > 0 && mid < 100 && Math.min(100, t + b * BAND) - Math.max(0, t + a * BAND) >= BAND * 0.6) {
-          const txt = el('text', { x: lx.toFixed(1), y: ly.toFixed(1), class: 'band-label' });
-          txt.textContent = String(p);
+          const bonus = centre && coop;
+          const txt = el('text', { x: lx.toFixed(1), y: ly.toFixed(1), class: `band-label${bonus ? ' bonus' : ''}` });
+          txt.textContent = bonus ? '3+' : String(p);
           labelsG.append(txt);
         }
       }

@@ -364,6 +364,10 @@ h2.with-icon { display: flex; justify-content: flex-start; }
 .result.pts-2 { border-color: rgba(255, 209, 102, .5); background: rgba(255, 209, 102, .07); }
 .result.pts-2 .res-badge { background: linear-gradient(135deg, #ffe7a0, #f2b62f); color: #3a2600; }
 .result.pts-0 { border-color: rgba(255, 107, 107, .45); }
+/* współpraca: trafienie w środek („3+”) wygląda jak środek w innych trybach */
+.result.bonus { border-color: rgba(255, 209, 102, .7); background: linear-gradient(135deg, rgba(255, 209, 102, .2), rgba(255, 79, 123, .14)); box-shadow: 0 0 26px rgba(255, 209, 102, .25); }
+.result.bonus .res-eyebrow { color: var(--gold); }
+.result.bonus .res-badge { background: linear-gradient(135deg, #ff6f86, #c81d45); }
 .result.pts-0 .res-badge { color: var(--muted); }
 button.lr { font-size: 1.05em; padding: .8em; font-weight: 600; }
 #btn-left { background: var(--cool); box-shadow: 0 6px 18px rgba(79, 124, 255, .35); }
@@ -413,6 +417,7 @@ button.lr { font-size: 1.05em; padding: .8em; font-weight: 600; }
   fill: #fff; font-family: var(--font-head); font-weight: 700; font-size: 17px; text-anchor: middle; dominant-baseline: central;
   paint-order: stroke; stroke: rgba(70, 10, 30, .6); stroke-width: 3.5px;
 }
+.band-label.bonus { font-size: 14px; letter-spacing: -.5px; }
 .dial-target path, .dial-target text { transform-box: view-box; transform-origin: 200px 200px; }
 .dial-target.reveal path { animation: fan .5s cubic-bezier(.2, 1.2, .4, 1) both; }
 .dial-target.reveal text { animation: fade .4s .25s both; }

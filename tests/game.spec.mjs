@@ -310,6 +310,29 @@ test('koniec gry: podsumowanie z kropkami rund i paskami drużyn', async ({ page
   await expect(page.locator('#end-summary .sum-team.win')).toContainText('Drużyna A');
 });
 
+test('środek celu zawsze wyróżniony: „4” w drużynach, czerwone „3+” we współpracy', async ({ page }) => {
+  const look = () => page.evaluate(() => ({
+    fill: document.querySelector('#dial .band-center').getAttribute('fill'),
+    labels: [...document.querySelectorAll('#dial .band-label')].map((t) => t.textContent),
+  }));
+  await page.click('#btn-teams');
+  await page.click('#btn-start-teams');
+  await page.click('#btn-cats-start');
+  await page.evaluate(() => { state.target = 50; });
+  await page.click('#btn-psychic-ready');
+  expect(await look()).toEqual({ fill: 'url(#dial-b4)', labels: ['2', '3', '4', '3', '2'] });
+  page.on('dialog', (d) => d.accept());
+  await page.click('#btn-home');
+  await page.click('#btn-coop');
+  await page.fill('#coop-players', 'Ania, Bartek');
+  await page.click('#btn-start-coop');
+  await page.click('#btn-cats-start');
+  await page.evaluate(() => { state.target = 50; });
+  await page.click('#btn-psychic-ready');
+  expect(await look()).toEqual({ fill: 'url(#dial-b4)', labels: ['2', '3', '3+', '3', '2'] });
+  await expect(page.locator('#dial .band-center.band-bonus')).toHaveCount(1);
+});
+
 test('tarcza reaguje na przeciąganie', async ({ page }) => {
   await page.click('#btn-solo');
   await page.click('#btn-cats-start');

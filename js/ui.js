@@ -117,7 +117,7 @@ function renderClue(el, clue, psychic) {
 // Karta wyniku rundy: odznaka z punktami, nazwa trafienia, punkty, dodatkowa informacja.
 const HIT_NAMES = { 4: 'Sam środek!', 3: 'Bardzo blisko', 2: 'Na brzegu celu', 0: 'Pudło' };
 function renderResult(el, r) {
-  el.className = `result pts-${r.pts}`;
+  el.className = `result pts-${r.pts}${r.bonus ? ' bonus' : ''}`;
   el.textContent = '';
   el.append(mk('div', 'res-badge', r.pts ? `+${r.pts}` : '0'));
   const txt = mk('div', 'res-txt');

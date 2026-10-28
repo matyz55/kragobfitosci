@@ -324,7 +324,9 @@ function psychicPhase() {
   dial.locked = true;
   dial.showTarget(state.target, state.game.mode === 'coop');
   SFX.mystic(); Haptics.mystic();
-  $('#status').textContent = 'Tylko Ty widzisz cel. Wybierz kartę i wymyśl hasło.';
+  $('#status').textContent = state.game.mode === 'coop'
+    ? 'Tylko Ty widzisz cel. Środek „3+” to 3 pkt i dodatkowa karta.'
+    : 'Tylko Ty widzisz cel. Wybierz kartę i wymyśl hasło.';
   const box = $('#card-choice');
   box.classList.remove('hidden');
   box.textContent = '';
@@ -420,7 +422,7 @@ function reveal(lr) {
     state.history.push({ pts: res.pts, centre: res.bonus });
     done = g.done;
     renderScores();
-    showResult({ pts: res.pts, title: `${res.pts} pkt`, eyebrow: res.bonus ? 'Sam środek!' : undefined, sub: res.bonus ? '+1 karta do talii' : undefined });
+    showResult({ pts: res.pts, bonus: res.bonus, title: `${res.pts} pkt`, eyebrow: res.bonus ? 'Sam środek!' : undefined, sub: res.bonus ? '+1 karta do talii' : undefined });
     SFX.points(res.pts); Haptics.points(res.pts);
     if (res.bonus) confetti(40);
     $('#status').textContent = '';
