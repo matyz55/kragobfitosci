@@ -23,13 +23,13 @@ test('duży ekran pokazuje grę, a cel dopiero po odsłonięciu', async ({ conte
   await phone.fill('#team-b-players', 'Celina');
   await phone.click('#btn-start-teams');
   await phone.click('#btn-cats-start');
-  await expect(tvPage.locator('#tv-ov-title')).toHaveText('Psychik: Ania');
+  await expect(tvPage.locator('#tv-ov-title')).toHaveText('Wyrocznia: Ania');
 
   await phone.click('#btn-psychic-ready');
   const card = await phone.evaluate(() => state.card);
   await expect(tvPage.locator('#tv-left')).toHaveText(card.left);
   await expect(tvPage.locator('#tv-status')).toContainText('Ania patrzy na cel');
-  // telefon psychika pokazuje cel, duży ekran – nie
+  // telefon wyroczni pokazuje cel, duży ekran – nie
   await expect(phone.locator('#dial .band')).not.toHaveCount(0);
   await expect(tvPage.locator('#tv-dial .band')).toHaveCount(0);
 

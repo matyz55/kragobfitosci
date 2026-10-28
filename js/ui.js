@@ -107,10 +107,10 @@ function renderScoreboard(box, scores) {
   box._prev = now;
 }
 
-// Karta hasła: duży cytat i podpis (kto jest psychikiem).
+// Karta hasła: duży cytat i podpis (kto jest wyrocznią).
 function renderClue(el, clue, psychic) {
   el.textContent = '';
-  el.append(mk('div', 'clue-label', psychic ? `Hasło · psychik ${psychic}` : 'Hasło'));
+  el.append(mk('div', 'clue-label', psychic ? `Hasło · wyrocznia ${psychic}` : 'Hasło'));
   el.append(mk('div', `clue-text${clue ? '' : ' none'}`, clue ? `„${clue}”` : 'podane na głos'));
 }
 

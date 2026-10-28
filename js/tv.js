@@ -43,10 +43,10 @@ function overlay(artName, title, text, summary) {
 // Napis nad tarczą – zależny od etapu tury.
 function statusFor(s) {
   switch (s.phase) {
-    case 'psychic': return `${s.psychic} patrzy na cel i wymyśla hasło…`;
+    case 'psychic': return `Wyrocznia ${s.psychic} patrzy na cel i wymyśla hasło…`;
     case 'guess':
       if (s.mode === 'solo') return 'Gdzie na tej skali leży hasło?';
-      return s.mode === 'teams' ? `„${s.team}” ustawia wskazówkę. Psychik milczy!` : 'Wszyscy oprócz psychika ustawiają wskazówkę.';
+      return s.mode === 'teams' ? `„${s.team}” ustawia wskazówkę. Wyrocznia milczy!` : 'Wszyscy oprócz wyroczni ustawiają wskazówkę.';
     case 'lr': return `„${s.other}”: środek celu jest na lewo czy na prawo od wskazówki?`;
     default: return '';
   }
@@ -72,7 +72,7 @@ function render(s) {
     return;
   }
   if (s.phase === 'pass') {
-    overlay('orb', `Psychik: ${s.psychic}`, `${s.sudden ? 'Dogrywka! ' : ''}${s.mode === 'teams' ? `Tura drużyny „${s.team}”. ` : ''}Przekażcie telefon psychikowi – tylko on patrzy na cel.`);
+    overlay('orb', `Wyrocznia: ${s.psychic}`, `${s.sudden ? 'Dogrywka! ' : ''}${s.mode === 'teams' ? `Tura drużyny „${s.team}”. ` : ''}Przekażcie telefon wyroczni – tylko ona patrzy na cel.`);
     return;
   }
   if (s.phase === 'end' && s.end) {

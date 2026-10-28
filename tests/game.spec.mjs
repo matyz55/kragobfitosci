@@ -52,7 +52,7 @@ test('drużyny: druga drużyna zaczyna z 1 pkt, zmiana tury i dodatkowa tura prz
   expect(r.after2).toEqual([0, 6, 0]);
   expect(r.extra).toBe(true);
   expect(r.active).toBe(0);
-  expect(r.psychic).toBe('a1'); // trzecia tura drużyny A – psychik wraca do pierwszego gracza
+  expect(r.psychic).toBe('a1'); // trzecia tura drużyny A – wyrocznią znów jest pierwszy gracz
 });
 
 test('drużyny: remis przy progu – dogrywka', async ({ page }) => {
@@ -111,7 +111,7 @@ test('dwie drużyny: pełna tura w interfejsie', async ({ page }) => {
   await page.click('#btn-start-teams');
   await expect(page.locator('#cats-mode')).toHaveText('Dwie drużyny');
   await page.click('#btn-cats-start');
-  await expect(page.locator('#pass-title')).toHaveText('Psychik: Ania');
+  await expect(page.locator('#pass-title')).toHaveText('Wyrocznia: Ania');
   await page.click('#btn-psychic-ready');
   await expect(page.locator('#dial .band-center')).toHaveCount(1);
   await page.click('#card-choice .choice[data-i="1"]');
@@ -128,7 +128,7 @@ test('dwie drużyny: pełna tura w interfejsie', async ({ page }) => {
   await expect(page.locator('#result')).toContainText('+1 pkt');
   await expect(page.locator('#scores .team-b b')).toHaveText('2');
   await page.click('#btn-next');
-  await expect(page.locator('#pass-title')).toHaveText('Psychik: Celina');
+  await expect(page.locator('#pass-title')).toHaveText('Wyrocznia: Celina');
 });
 
 test('współpraca: wymaga dwóch graczy, potem gra do końca talii', async ({ page }) => {
@@ -255,7 +255,7 @@ test('suwak pod tarczą: zablokowany po odpowiedzi, odblokowany w nowej rundzie'
   await expect(page.locator('#dial-range')).toBeEnabled();
 });
 
-test('drużyny: suwak zablokowany u psychika i przy „lewo/prawo”', async ({ page }) => {
+test('drużyny: suwak zablokowany u wyroczni i przy „lewo/prawo”', async ({ page }) => {
   await page.click('#btn-teams');
   await page.click('#btn-start-teams');
   await page.click('#btn-cats-start');

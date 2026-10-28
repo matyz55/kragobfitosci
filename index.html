@@ -32,14 +32,14 @@
     <section class="hero">
       <svg id="hero-dial" class="hero-dial" aria-hidden="true"></svg>
       <input type="range" id="hero-range" class="hidden" min="0" max="100" step="0.5" aria-hidden="true" tabindex="-1">
-      <p class="lead">Psychik zna ukryty cel na skali i podaje hasło. Reszta zgaduje, gdzie ten cel leży.</p>
+      <p class="lead">Wyrocznia zna ukryty cel na skali i podaje hasło. Reszta zgaduje, gdzie ten cel leży.</p>
     </section>
     <section class="modes">
       <button class="mode" id="btn-solo" data-mode="solo">
         <span class="mode-icon" data-icon="solo"></span><span class="mode-txt"><b>Jeden gracz</b><span class="mode-desc">10 rund z gotowymi hasłami, do 40 pkt</span></span>
       </button>
       <button class="mode" id="btn-teams" data-mode="teams">
-        <span class="mode-icon" data-icon="teams"></span><span class="mode-txt"><b>Dwie drużyny</b><span class="mode-desc">Psychik, hasło, 4/3/2 pkt i „lewo czy prawo?”</span></span>
+        <span class="mode-icon" data-icon="teams"></span><span class="mode-txt"><b>Dwie drużyny</b><span class="mode-desc">Wyrocznia, hasło, 4/3/2 pkt i „lewo czy prawo?”</span></span>
       </button>
       <button class="mode" id="btn-coop" data-mode="coop">
         <span class="mode-icon" data-icon="coop"></span><span class="mode-txt"><b>Współpraca</b><span class="mode-desc">2+ graczy razem przeciw talii kart</span></span>
@@ -78,7 +78,7 @@
       </div>
     </div>
     <label class="row">Gra do <select id="team-goal"><option>5</option><option>7</option><option selected>10</option><option>15</option></select> pkt</label>
-    <p class="muted note">Psychikiem zostają po kolei gracze drużyny, która ma turę. Druga drużyna zaczyna z 1 pkt.</p>
+    <p class="muted note">Wyrocznią zostają po kolei gracze drużyny, która ma turę. Druga drużyna zaczyna z 1 pkt.</p>
     <div class="actions"><button class="ghost back">Wróć</button><button class="primary" id="btn-start-teams">Dalej: kategorie ▸</button></div>
   </main>
 
@@ -87,7 +87,7 @@
     <h2 class="screen-title">Współpraca</h2>
     <label>Gracze (po przecinku, co najmniej 2) <input type="text" id="coop-players" placeholder="np. Ania, Bartek, Celina" maxlength="300"></label>
     <label class="row">Liczba kart <select id="coop-cards"><option>5</option><option selected>7</option><option>10</option></select></label>
-    <p class="muted note">Psychik zmienia się co rundę. Środek celu daje 3 pkt i dodatkową kartę.</p>
+    <p class="muted note">Wyrocznia zmienia się co rundę. Środek celu daje 3 pkt i dodatkową kartę.</p>
     <p class="error hidden" id="coop-error">Wpisz co najmniej dwóch graczy.</p>
     <div class="actions"><button class="ghost back">Wróć</button><button class="primary" id="btn-start-coop">Dalej: kategorie ▸</button></div>
   </main>
@@ -102,7 +102,7 @@
         <p id="pass-text" class="lead"></p>
         <p class="pass-hint">Pozostali – nie patrzcie na ekran!</p>
       </div>
-      <button class="primary big" id="btn-psychic-ready">Jestem psychikiem – pokaż cel</button>
+      <button class="primary big" id="btn-psychic-ready">Jestem wyrocznią – pokaż cel</button>
     </section>
   </main>
 
@@ -157,23 +157,23 @@
     </div>
     <section class="rules">
       <div class="tab-page" data-page="basics">
-        <p>Karta to skala między przeciwieństwami, np. <b>Zimne ↔ Gorące</b>. Ukryty cel widzi tylko <b>psychik</b> –
-          podaje hasło, które według niego leży w tym miejscu. Pozostali ustawiają wskazówkę.</p>
+        <p>Karta to skala między przeciwieństwami, np. <b>Zimne ↔ Gorące</b>. Ukryty cel widzi tylko <b>wyrocznia</b> –
+          podaje hasło, które według niej leży w tym miejscu. Pozostali ustawiają wskazówkę.</p>
         <p>Cel ma pola <b>2 · 3 · 4 · 3 · 2</b>: środek 4 pkt, obok 3, brzeg 2, poza celem 0. Na granicy pól liczy się lepsze.</p>
         <p><b>Jeden gracz:</b> gra pokazuje gotowe hasło. Jego miejsce to szacunek autorów gry, nie jedyna słuszna odpowiedź.</p>
       </div>
       <div class="tab-page hidden" data-page="teams">
         <ul>
-          <li>Drużyny grają na zmianę, psychik zmienia się co turę. Druga drużyna zaczyna z 1 pkt.</li>
+          <li>Drużyny grają na zmianę, wyrocznia zmienia się co turę. Druga drużyna zaczyna z 1 pkt.</li>
           <li>Po ustawieniu wskazówki przeciwnicy mówią, czy środek celu jest <b>na lewo czy na prawo</b> – trafienie to 1 pkt
-            (nie przy 4 pkt drużyny psychika).</li>
+            (nie przy 4 pkt drużyny wyroczni).</li>
           <li>Drużyna z 4 pkt, która nadal przegrywa, od razu gra kolejną turę.</li>
           <li>Koniec przy 10 pkt (lub innym progu). Remis – każda drużyna gra jeszcze jedną turę, wygrywa ta z większą liczbą punktów w tej rundzie.</li>
         </ul>
       </div>
       <div class="tab-page hidden" data-page="coop">
         <ul>
-          <li>Wszyscy grają razem, psychik zmienia się co rundę, bez „lewo/prawo”.</li>
+          <li>Wszyscy grają razem, wyrocznia zmienia się co rundę, bez „lewo/prawo”.</li>
           <li>Talia ma 7 kart (można wybrać 5 lub 10).</li>
           <li>Środek celu (na tarczy czerwony, z podpisem „3+”) daje tylko 3 pkt, ale dokłada kartę do talii – dodatkowa runda.</li>
           <li>16 pkt i więcej to wygrana.</li>
@@ -184,7 +184,7 @@
           <li>Jedna myśl – bez łączenia kilku pomysłów.</li>
           <li>Hasło musi istnieć naprawdę.</li>
           <li>Bez słów z karty i ich odmian, bez liczb i procentów.</li>
-          <li>Po podaniu hasła psychik milczy i zachowuje kamienną twarz.</li>
+          <li>Po podaniu hasła wyrocznia milczy i zachowuje kamienną twarz.</li>
         </ul>
       </div>
     </section>
@@ -205,7 +205,7 @@
     <div class="dialog">
       <h2 id="tv-title" class="with-icon" data-icon="tv">Duży ekran</h2>
       <p class="muted">Tarcza, karty i wyniki na telewizorze, rzutniku albo drugim monitorze. Ten telefon zostaje pilotem.
-        Cel widzi tylko psychik – na dużym ekranie pojawia się dopiero przy odsłonięciu.</p>
+        Cel widzi tylko wyrocznia – na dużym ekranie pojawia się dopiero przy odsłonięciu.</p>
       <button class="primary" id="btn-tv-window">Otwórz w nowym oknie na tym urządzeniu</button>
       <p class="muted">Telewizor lub inny komputer: otwórz w przeglądarce <b id="tv-url"></b>, zeskanuj kod QR
         albo wpisz kod z ekranu:</p>

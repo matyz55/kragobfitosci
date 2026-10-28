@@ -81,7 +81,7 @@ const SFX = (() => {
       lastTick = now;
       tone(300 + v * 6, 0, 0.035, { type: 'square', vol: 0.05 });
     },
-    // odsłonięcie celu dla psychika – tajemniczy akord
+    // odsłonięcie celu dla wyroczni – tajemniczy akord
     mystic() { [440, 554, 659, 880].forEach((f, i) => tone(f, i * 0.07, 0.6, { vol: 0.12 })); },
     // zasłonięcie tarczy
     hide() { noise(0, 0.35, 0.25); },

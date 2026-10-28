@@ -261,7 +261,7 @@ function soloReveal() {
   setActions(button(g.done ? 'Podsumowanie' : 'Dalej', 'primary big', () => (g.done ? endGame() : soloRound()), 'btn-next'));
 }
 
-// ---------- tryby z psychikiem (drużyny i współpraca) ----------
+// ---------- tryby z wyrocznią (drużyny i współpraca) ----------
 
 function startTeams() {
   const names = [$('#team-a-name').value.trim() || 'Drużyna A', $('#team-b-name').value.trim() || 'Drużyna B'];
@@ -300,9 +300,9 @@ function passDevice(extra) {
   show('screen-pass');
   const who = currentPsychic();
   state.psychic = who;
-  $('#pass-title').textContent = `Psychik: ${who}`;
+  $('#pass-title').textContent = `Wyrocznia: ${who}`;
   const chip = $('#pass-chip');
-  let text = 'Przekaż urządzenie psychikowi.';
+  let text = 'Przekaż urządzenie wyroczni.';
   if (g.mode === 'teams') {
     chip.textContent = g.suddenDeath ? `Dogrywka · ${g.teams[g.active].name}` : `Tura: ${g.teams[g.active].name}`;
     chip.className = `turn-chip team-${g.active ? 'b' : 'a'}`;
@@ -361,8 +361,8 @@ function guessPhase() {
   renderScores();
   showClue();
   $('#status').textContent = g.mode === 'teams'
-    ? `„${g.teams[g.active].name}” ustawia wskazówkę. Psychik milczy!`
-    : 'Wszyscy oprócz psychika ustawiają wskazówkę.';
+    ? `„${g.teams[g.active].name}” ustawia wskazówkę. Wyrocznia milczy!`
+    : 'Wszyscy oprócz wyroczni ustawiają wskazówkę.';
   setActions(button('Zatwierdź wskazówkę', 'primary big', afterGuess, 'btn-confirm'));
 }
 

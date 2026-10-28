@@ -90,10 +90,10 @@ for (const [w, h] of VIEWPORTS) {
       state.choices = [all[0], all[1]];
       psychicPhase();
     });
-    await fits(page, 'psychik');
+    await fits(page, 'wyrocznia');
     const dialH = await page.evaluate(() => document.querySelector('#dial').getBoundingClientRect().height);
     expect(dialH, 'wysokość tarczy').toBeGreaterThan(90);
-    await page.fill('#clue-input', 'Bardzo długie hasło psychika');
+    await page.fill('#clue-input', 'Bardzo długie hasło wyroczni');
     await page.click('#btn-hide');
     await fits(page, 'zgadywanie');
     await page.click('#btn-confirm');
@@ -138,7 +138,7 @@ for (const [w, h] of [[1280, 720], [1920, 1080], [3840, 2160], [1366, 768], [102
       state.choices = [all[0], all[1]];
       psychicPhase();
     });
-    await phone.fill('#clue-input', 'Długie hasło psychika');
+    await phone.fill('#clue-input', 'Długie hasło wyroczni');
     await phone.click('#btn-hide');
     await phone.click('#btn-confirm');
     await phone.click('#btn-left');

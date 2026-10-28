@@ -98,7 +98,7 @@ function createDial(svg, range, onChange) {
   let bandPaths = [];
   let curTarget = null;
 
-  // zablokowana tarcza: wskazówka i suwak pod nią nie reagują (po odpowiedzi, u psychika, na dużym ekranie)
+  // zablokowana tarcza: wskazówka i suwak pod nią nie reagują (po odpowiedzi, u wyroczni, na dużym ekranie)
   let locked = false;
   const api = {
     value: 50,

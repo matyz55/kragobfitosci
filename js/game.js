@@ -3,7 +3,7 @@
 // Tryb drużynowy: punkty 4/3/2, zgadywanie „lewo/prawo”, gra do 10 pkt, dogrywka, nadrabianie straty;
 // tryb współpracy: 7 kart, środek celu dokłada kartę.
 
-const GAME_VERSION = '1.7.1';
+const GAME_VERSION = '1.7.2';
 
 // Szerokość jednego pola celu na skali 0–100. Cel ma pięć pól: 2 | 3 | 4 | 3 | 2.
 const BAND = 4;
@@ -128,7 +128,7 @@ function finishTeamTurn(g, guess, target, lr) {
     }
     return res;
   }
-  // nadrabianie straty: 4 pkt, a drużyna nadal przegrywa – od razu kolejna tura (z innym psychikiem)
+  // nadrabianie straty: 4 pkt, a drużyna nadal przegrywa – od razu kolejna tura (z inną wyrocznią)
   if (pts === 4 && me.score < other.score) {
     res.extra = true;
   } else {

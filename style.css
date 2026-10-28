@@ -329,7 +329,7 @@ h2.with-icon { display: flex; justify-content: flex-start; }
 .clue-card.compact { padding: .35em .9em .45em; animation: none; }
 .clue-card.compact .clue-text { font-size: clamp(1.1rem, 3.2vh, 1.7rem); }
 
-/* wybór karty przez psychika: dwie mini-skale */
+/* wybór karty przez wyrocznię: dwie mini-skale */
 .card-choice { display: grid; gap: 8px; grid-template-columns: minmax(0, 1fr); }
 .choice {
   display: grid; grid-template-columns: minmax(0, 1fr) 34px minmax(0, 1fr); align-items: center; gap: 8px; text-align: left;
@@ -476,7 +476,7 @@ svg.instant .dial-needle { transition: none; }
 @media (max-height: 520px) {
   .hero .lead { display: none; }
 }
-/* niski ekran u psychika: więcej miejsca na tarczę z celem (karty i pole hasła mówią same za siebie) */
+/* niski ekran u wyroczni: więcej miejsca na tarczę z celem (karty i pole hasła mówią same za siebie) */
 @media (max-height: 700px) and (orientation: portrait) {
   .psychic-view .status { display: none; }
   .psychic-view .choice { padding: .4em .7em; }

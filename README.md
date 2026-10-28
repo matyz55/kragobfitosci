@@ -8,21 +8,21 @@ Statyczna strona (HTML + CSS + JavaScript, bez serwera), działa na telefonie, t
 ## Jak to działa
 
 Każda karta to skala między dwoma przeciwieństwami, np. *Zimne ↔ Gorące*. Na skali ukryty jest cel, który widzi
-tylko **psychik**. Psychik podaje hasło, a pozostali ustawiają wskazówkę na tarczy tam, gdzie ich zdaniem leży cel.
+tylko **wyrocznia**. Wyrocznia podaje hasło, a pozostali ustawiają wskazówkę na tarczy tam, gdzie ich zdaniem leży cel.
 Cel ma pięć pól: 2 · 3 · 4 · 3 · 2 pkt.
 
 ## Tryby gry
 
 - **Jeden gracz** – trening: gra pokazuje kartę i gotowe hasło, ustawiasz wskazówkę. 10 rund, do 40 pkt, rekord
   zapamiętywany w przeglądarce. Miejsca haseł na skali to szacunki autorów (pole przykładów w `js/data.js`).
-- **Dwie drużyny** – klasyczne zasady: psychik wybiera jedną z dwóch kart, podaje hasło (wpisuje albo mówi na głos),
+- **Dwie drużyny** – klasyczne zasady: wyrocznia wybiera jedną z dwóch kart, podaje hasło (wpisuje albo mówi na głos),
   jego drużyna ustawia wskazówkę, druga drużyna zgaduje „lewo czy prawo” (1 pkt, nie przy trafieniu w środek).
   Druga drużyna zaczyna z 1 pkt, drużyna z 4 pkt, która nadal przegrywa, gra dodatkową turę, przy remisie na progu –
   dogrywka. Gra do 5/7/10/15 pkt.
 - **Współpraca** – 2+ graczy razem, 5/7/10 kart, środek celu daje 3 pkt i dodatkową kartę, bez „lewo/prawo”.
   16 pkt i więcej to wygrana.
 
-Gra jest „na jednym urządzeniu”: przed każdą turą ekran prosi o przekazanie urządzenia psychikowi.
+Gra jest „na jednym urządzeniu”: przed każdą turą ekran prosi o przekazanie urządzenia wyroczni.
 
 ## Kategorie
 
@@ -38,7 +38,7 @@ Ciemny motyw z animowaną „zorzą” w tle i tarcza z gradientami: obręcz od 
 przerywany pierścień i napis „Krąg obfitości” na tarczy, wachlarz celu rozkładający się przy odsłonięciu. Po odpowiedzi
 świeci pole, w które trafiła wskazówka (pozostałe są przygaszone), a liczby pól leżą nad wskazówką.
 
-- **Ekran tury**: nad tarczą duża karta z hasłem (i imieniem psychika), u psychika dwie karty do wyboru jako
+- **Ekran tury**: nad tarczą duża karta z hasłem (i imieniem wyroczni), u wyroczni dwie karty do wyboru jako
   mini-skale i pole „Twoje hasło”, po odsłonięciu karta wyniku z odznaką punktów. Gdy brakuje wysokości, zmniejsza się
   tarcza, nie hasło.
 - **Tablica wyników**: paski postępu drużyn do progu wygranej, kropki rund (kolor = zdobyte punkty).
@@ -46,7 +46,7 @@ przerywany pierścień i napis „Krąg obfitości” na tarczy, wachlarz celu r
   rund, licznik do wygranej we współpracy i statystyki (średnia, trafienia w sam środek).
 - **Ikony** w górnym pasku, menu i na dużym ekranie to własne ikony SVG (`js/ui.js`) – wyglądają tak samo na każdym
   urządzeniu.
-- **Suwak pod tarczą** jest zablokowany i wyszarzony, gdy wskazówki nie wolno ruszać (u psychika, po zatwierdzeniu
+- **Suwak pod tarczą** jest zablokowany i wyszarzony, gdy wskazówki nie wolno ruszać (u wyroczni, po zatwierdzeniu
   odpowiedzi, przy „lewo/prawo” i po odsłonięciu).
 
 Czcionki Baloo 2 (nagłówki, przyciski) i Nunito (tekst) są dołączone w `fonts/` (licencja SIL Open
@@ -79,7 +79,7 @@ i dźwięki. Telefon (albo komputer), na którym toczy się gra, jest pilotem: p
   własny serwer pośredniczący (Cloudflare Workers) – adres w `window.KRAG_RELAY`. Telefon pamięta kod i po
   odświeżeniu łączy się ponownie.
 - **Cel jest tajny**: duży ekran dostaje położenie celu dopiero przy odsłonięciu (sprawdza to test `tests/tv.spec.mjs`).
-  Gdy psychik patrzy na cel, telewizor pokazuje tylko kartę i napis „… patrzy na cel”.
+  Gdy wyrocznia patrzy na cel, telewizor pokazuje tylko kartę i napis „… patrzy na cel”.
 - Dźwięk na dużym ekranie włącza się jednym kliknięciem (przeglądarki nie pozwalają na dźwięk bez kliknięcia),
   ⛶ – pełny ekran. Starszy duży ekran sam się odświeża, gdy telefon ma nowszą wersję gry.
 - Przez sieć przesyłany jest tylko stan gry (bez kodu HTML) – kanały publicznego MQTT są jawne.
