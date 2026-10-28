@@ -41,6 +41,8 @@ body {
 }
 .topbar h1 { margin: 0; font-size: clamp(1.1rem, 3vh, 1.5rem); cursor: pointer; letter-spacing: .3px; }
 .topbar h1 span { color: var(--accent); }
+.top-btns { display: flex; gap: 6px; }
+#cats-mode { font-weight: 400; font-size: .7em; }
 
 .screen {
   flex: 1 1 auto; min-height: 0; overflow: hidden;
@@ -102,12 +104,13 @@ label.row { display: flex; align-items: center; gap: 8px; color: var(--text); fo
 .screen-head { flex: 0 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .head-btns { display: flex; gap: 6px; }
 .cats-grid {
-  flex: 1 1 auto; min-height: 0; display: grid; gap: clamp(4px, 1vh, 8px);
-  grid-template-columns: repeat(auto-fill, minmax(min(150px, 45%), 1fr)); align-content: start;
+  flex: 1 1 auto; min-height: 0; display: grid; gap: clamp(3px, .8vh, 8px);
+  grid-template-columns: repeat(auto-fill, minmax(min(150px, 45%), 1fr));
+  grid-auto-rows: minmax(0, clamp(28px, 6.5vh, 52px)); align-content: start;
 }
 .chip {
-  border-radius: 12px; padding: clamp(4px, 1.1vh, 10px) 8px; border: 1px solid var(--line); background: transparent;
-  color: var(--muted); font-size: clamp(12px, 1.8vh, 15px); text-align: left; line-height: 1.2;
+  border-radius: 10px; padding: 0 8px; border: 1px solid var(--line); background: transparent; min-height: 0; overflow: hidden;
+  color: var(--muted); font-size: clamp(11px, 1.75vh, 15px); text-align: left; line-height: 1.1;
 }
 .chip.on { background: var(--accent-2); color: #062421; border-color: var(--accent-2); font-weight: 600; }
 
@@ -220,9 +223,9 @@ button.lr { font-size: 1.05em; padding: .8em; font-weight: 700; }
   .teams-setup { grid-template-columns: 1fr 1fr; }
   .team-box { flex-direction: row; }
   .team-box label { flex: 1 1 0; min-width: 0; }
+  .cats-grid { grid-template-columns: repeat(auto-fill, minmax(min(130px, 30%), 1fr)); }
 }
 
 /* bardzo wąskie telefony: przyciski pod menu bez ikon i licznika */
 .menu-row i { font-style: normal; }
-@media (max-width: 560px) { #cats-count { display: none; } }
 @media (max-width: 400px) { .menu-row i { display: none; } }

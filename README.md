@@ -26,10 +26,17 @@ Gra jest „na jednym urządzeniu”: przed każdą turą ekran prosi o przekaza
 
 ## Kategorie
 
-18 kategorii, 292 karty: Ogólne, Muzyka, Film i seriale, Jedzenie i picie, Sport, Nauka i technika, Polskie klimaty,
-Internet i gry, Zwierzęta i natura, Ludzie i charaktery, Szkoła i praca, Podróże, Moda i wygląd, Historia,
-Miłość i przyjaźń, Dom i codzienność, Książki i język, Imprezowe. Wybór na ekranie „Kategorie” (zapamiętywany).
-Karty i przykłady: `js/data.js`.
+22 kategorie, 439 kart (297 haseł dla jednego gracza): Ogólne, Muzyka, Film i seriale, Jedzenie i picie, Sport,
+Nauka i technika, Polskie klimaty, Internet i gry, Zwierzęta i natura, Ludzie i charaktery, Szkoła i praca, Podróże,
+Moda i wygląd, Historia, Miłość i przyjaźń, Dom i codzienność, Książki i język, Imprezowe, Dzieciństwo i bajki,
+Motoryzacja, Pory roku i święta, Zdrowie i ciało. Kategorie wybiera się po wyborze trybu (i ustawień graczy) –
+tuż przed startem gry; wybór jest zapamiętywany. Karty i przykłady: `js/data.js`.
+
+## Dźwięk
+
+Efekty dźwiękowe są tworzone w przeglądarce (Web Audio API, `js/sound.js`) – bez plików audio: stuknięcia przycisków,
+tykanie tarczy przy przesuwaniu wskazówki, odsłonięcie i zasłonięcie celu, fanfara zależna od punktów, sygnał
+za trafione „lewo/prawo” i melodia na koniec gry. Przycisk 🔊/🔇 w górnym pasku wyłącza dźwięk (zapamiętywane).
 
 ## Ekran i instalacja
 
@@ -46,6 +53,7 @@ Karty i przykłady: `js/data.js`.
 - `js/data.js` – kategorie i karty
 - `js/game.js` – zasady (punktacja, tury, dogrywka, współpraca, tryb jednoosobowy)
 - `js/dial.js` – tarcza SVG (przeciąganie palcem/myszą i suwak)
+- `js/sound.js` – efekty dźwiękowe
 - `js/app.js` – ekrany i przebieg gry
 - `sw.js`, `manifest.webmanifest`, `icons/` – instalacja jako aplikacja i działanie bez sieci
 

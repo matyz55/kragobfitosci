@@ -30,7 +30,18 @@ async function fits(page, label) {
     // elementy przewijane wewnątrz (np. lista kategorii) też nie mogą się przewijać
     for (const el of els) if (el.scrollHeight > el.clientHeight + 1 && getComputedStyle(el).overflowY !== 'visible' && el.tagName !== 'INPUT') out.push(`przewijanie w ${el.tagName}.${el.className}`);
     // napisy na przyciskach nie mogą być ucięte
-    for (const b of scr.querySelectorAll('button')) if (b.getClientRects().length && b.scrollWidth > b.clientWidth + 1) out.push(`ucięty przycisk: ${b.innerText}`);
+    for (const b of scr.querySelectorAll('button')) {
+      if (b.getClientRects().length && (b.scrollWidth > b.clientWidth + 1 || b.scrollHeight > b.clientHeight + 1)) out.push(`ucięty przycisk: ${b.innerText}`);
+    }
+    // kolejne bloki ekranu nie mogą na siebie nachodzić (ani ich zawartość)
+    const blocks = [...scr.children].filter((c) => c.getClientRects().length);
+    for (let i = 1; i < blocks.length; i++) {
+      const prev = blocks[i - 1], cur = blocks[i];
+      const bottom = Math.max(prev.getBoundingClientRect().bottom, ...[...prev.querySelectorAll('*')].filter((x) => x.getClientRects().length).map((x) => x.getBoundingClientRect().bottom));
+      const top = cur.getBoundingClientRect().top;
+      const sameRow = Math.abs(prev.getBoundingClientRect().top - top) < 2;
+      if (!sameRow && getComputedStyle(scr).display === 'flex' && bottom > top + 1) out.push(`nachodzi: ${prev.className || prev.id} na ${cur.className || cur.id}`);
+    }
     return out.slice(0, 8);
   });
   expect(bad, label).toEqual([]);
@@ -42,9 +53,6 @@ for (const [w, h] of VIEWPORTS) {
     await page.setViewportSize({ width: w, height: h });
     await page.goto('/');
     await fits(page, 'menu');
-    await page.click('#btn-cats');
-    await fits(page, 'kategorie');
-    await page.click('#screen-cats .back');
     await page.click('#btn-rules');
     for (const t of ['basics', 'teams', 'coop', 'clues']) {
       await page.click(`.tab[data-tab=${t}]`);
@@ -56,6 +64,8 @@ for (const [w, h] of VIEWPORTS) {
     await page.click('#btn-install-close');
 
     await page.click('#btn-solo');
+    await fits(page, 'kategorie');
+    await page.click('#btn-cats-start');
     await fits(page, 'solo');
     await page.click('#btn-confirm');
     await fits(page, 'solo – wynik');
@@ -66,6 +76,8 @@ for (const [w, h] of VIEWPORTS) {
     await page.fill('#team-a-players', 'Aleksandra Długonazwiskowa, Bartłomiej');
     await page.fill('#team-b-players', 'Celina');
     await page.click('#btn-start-teams');
+    await fits(page, 'kategorie – drużyny');
+    await page.click('#btn-cats-start');
     await fits(page, 'przekazanie');
     await page.click('#btn-psychic-ready');
     // najdłuższe karty, żeby sprawdzić zawijanie

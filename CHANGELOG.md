@@ -22,3 +22,14 @@
 - Zasady podzielone na zakładki: Podstawy, Drużyny, Razem, Hasła.
 - Przycisk „Zainstaluj” w menu: okno instalacji przeglądarki albo instrukcja dla iPhone’a/iPada, Safari i Firefoksa.
   Nowe ikony aplikacji (także na ekran początkowy iPhone’a).
+
+## 1.2.0 – 28.10.2026 – kategorie po wyborze trybu, dźwięki, więcej kart
+
+- Kategorie wybiera się teraz po wybraniu trybu gry (w drużynach i współpracy – po wpisaniu graczy), tuż przed
+  startem. Przycisk „Kategorie” zniknął z menu.
+- Efekty dźwiękowe: stuknięcia przycisków, tykanie tarczy, odsłonięcie i zasłonięcie celu, fanfara za punkty,
+  sygnał za trafione „lewo/prawo”, melodia na koniec gry. Przycisk 🔊/🔇 w górnym pasku (zapamiętywany).
+- 4 nowe kategorie: Dzieciństwo i bajki, Motoryzacja, Pory roku i święta, Zdrowie i ciało. Nowe karty we wszystkich
+  dotychczasowych kategoriach – razem 439 kart w 22 kategoriach i 297 haseł dla jednego gracza. Każda kategoria
+  ma teraz hasła dla jednego gracza.
+- Lista kategorii zawsze mieści się na ekranie (wcześniej przy wielu kategoriach nachodziła na napis pod spodem).

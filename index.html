@@ -16,7 +16,10 @@
 <body>
   <header class="topbar">
     <h1 id="logo">Krąg <span>obfitości</span></h1>
-    <button id="btn-home" class="ghost small hidden" title="Menu główne">✕ Menu</button>
+    <div class="top-btns">
+      <button id="btn-sound" class="ghost small" title="Dźwięk" aria-label="Dźwięk włączony">🔊</button>
+      <button id="btn-home" class="ghost small hidden" title="Menu główne">✕ Menu</button>
+    </div>
   </header>
 
   <!-- MENU -->
@@ -38,7 +41,6 @@
       </button>
     </section>
     <nav class="menu-row">
-      <button id="btn-cats" class="ghost"><i>🗂️ </i>Kategorie <span id="cats-count"></span></button>
       <button id="btn-rules" class="ghost"><i>📖 </i>Zasady</button>
       <button id="btn-install" class="ghost hidden"><i>📲 </i>Zainstaluj</button>
     </nav>
@@ -48,12 +50,13 @@
   <!-- KATEGORIE -->
   <main id="screen-cats" class="screen hidden">
     <div class="screen-head">
-      <h2>Kategorie</h2>
+      <h2>Kategorie <span class="muted" id="cats-mode"></span></h2>
       <div class="head-btns"><button class="ghost small" id="btn-cats-all">Wszystkie</button><button class="ghost small" id="btn-cats-none">Wyczyść</button></div>
     </div>
     <div id="cats" class="cats-grid"></div>
     <p class="muted center" id="cats-info"></p>
-    <div class="actions"><button class="primary back">Gotowe</button></div>
+    <p class="error center hidden" id="cats-error">W tych kategoriach nie ma haseł dla jednego gracza – dodaj inną.</p>
+    <div class="actions"><button class="ghost" id="btn-cats-back">Wróć</button><button class="primary" id="btn-cats-start">Zaczynamy</button></div>
   </main>
 
   <!-- USTAWIENIA: DRUŻYNY -->
@@ -71,7 +74,7 @@
     </div>
     <label class="row">Gra do <select id="team-goal"><option>5</option><option>7</option><option selected>10</option><option>15</option></select> pkt</label>
     <p class="muted note">Psychikiem zostają po kolei gracze drużyny, która ma turę. Druga drużyna zaczyna z 1 pkt.</p>
-    <div class="actions"><button class="ghost back">Wróć</button><button class="primary" id="btn-start-teams">Zaczynamy</button></div>
+    <div class="actions"><button class="ghost back">Wróć</button><button class="primary" id="btn-start-teams">Dalej: kategorie ▸</button></div>
   </main>
 
   <!-- USTAWIENIA: WSPÓŁPRACA -->
@@ -81,7 +84,7 @@
     <label class="row">Liczba kart <select id="coop-cards"><option>5</option><option selected>7</option><option>10</option></select></label>
     <p class="muted note">Psychik zmienia się co rundę. Środek celu daje 3 pkt i dodatkową kartę.</p>
     <p class="error hidden" id="coop-error">Wpisz co najmniej dwóch graczy.</p>
-    <div class="actions"><button class="ghost back">Wróć</button><button class="primary" id="btn-start-coop">Zaczynamy</button></div>
+    <div class="actions"><button class="ghost back">Wróć</button><button class="primary" id="btn-start-coop">Dalej: kategorie ▸</button></div>
   </main>
 
   <!-- PRZEKAZANIE URZĄDZENIA -->
@@ -187,6 +190,7 @@
   <script src="js/data.js"></script>
   <script src="js/game.js"></script>
   <script src="js/dial.js"></script>
+  <script src="js/sound.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

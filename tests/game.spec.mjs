@@ -92,6 +92,7 @@ test('współpraca: środek daje 3 pkt i dodatkową kartę', async ({ page }) =>
 
 test('jeden gracz: 10 rund i podsumowanie', async ({ page }) => {
   await page.click('#btn-solo');
+  await page.click('#btn-cats-start');
   for (let i = 0; i < 10; i++) {
     await expect(page.locator('#clue-box')).toBeVisible();
     await page.evaluate(() => dial.set(state.target));
@@ -108,6 +109,8 @@ test('dwie drużyny: pełna tura w interfejsie', async ({ page }) => {
   await page.fill('#team-a-players', 'Ania, Bartek');
   await page.fill('#team-b-players', 'Celina');
   await page.click('#btn-start-teams');
+  await expect(page.locator('#cats-mode')).toHaveText('Dwie drużyny');
+  await page.click('#btn-cats-start');
   await expect(page.locator('#pass-title')).toHaveText('Psychik: Ania');
   await page.click('#btn-psychic-ready');
   await expect(page.locator('#dial .band-center')).toHaveCount(1);
@@ -136,6 +139,10 @@ test('współpraca: wymaga dwóch graczy, potem gra do końca talii', async ({ p
   await page.fill('#coop-players', 'Ania, Bartek');
   await page.selectOption('#coop-cards', '5');
   await page.click('#btn-start-coop');
+  await page.click('#btn-cats-back');
+  await expect(page.locator('#screen-setup-coop')).toBeVisible();
+  await page.click('#btn-start-coop');
+  await page.click('#btn-cats-start');
   for (let i = 0; i < 5; i++) {
     await page.click('#btn-psychic-ready');
     await page.click('#btn-hide');
@@ -146,23 +153,51 @@ test('współpraca: wymaga dwóch graczy, potem gra do końca talii', async ({ p
   await expect(page.locator('#end-title')).toHaveText('0 pkt');
 });
 
-test('kategorie: wybór zapamiętany, co najmniej jedna zostaje', async ({ page }) => {
-  await page.click('#btn-cats');
+test('kategorie: wybierane po trybie, zapamiętane, co najmniej jedna zostaje', async ({ page }) => {
+  await expect(page.locator('#btn-cats')).toHaveCount(0); // nie ma ich już w menu
+  await page.click('#btn-solo');
+  await expect(page.locator('#cats-mode')).toHaveText('Jeden gracz');
   await page.click('#btn-cats-none');
   const first = await page.$$eval('.chip.on', (x) => x.map((y) => y.dataset.cat));
   expect(first).toEqual(['general']);
   await page.click('.chip[data-cat=music]');
   await page.click('.chip[data-cat=general]');
   await page.click('.chip[data-cat=music]'); // ostatniej nie da się wyłączyć
+  await page.click('#btn-cats-back');
+  await expect(page.locator('#screen-menu')).toBeVisible();
   await page.reload();
-  await expect(page.locator('#cats-count')).toHaveText(`1/${await page.evaluate(() => CATEGORIES.length)}`);
-  await page.click('#btn-cats');
+  await page.click('#btn-solo');
   const on = await page.$$eval('.chip.on', (x) => x.map((y) => y.dataset.cat));
   expect(on).toEqual(['music']);
-  await page.click('#screen-cats .back');
-  await page.click('#btn-solo');
+  await page.click('#btn-cats-start');
   const cats = await page.evaluate(() => [...new Set(state.game.rounds.map((r) => r.cat))]);
   expect(cats).toEqual(['music']);
+});
+
+test('każda kategoria ma hasła dla jednego gracza i brak powtórzonych kart', async ({ page }) => {
+  const r = await page.evaluate(() => {
+    const seen = new Set(), dup = [];
+    for (const c of CATEGORIES) for (const k of c.cards) {
+      const key = `${k[0]}|${k[1]}`;
+      if (seen.has(key)) dup.push(key);
+      seen.add(key);
+    }
+    return { empty: CATEGORIES.filter((c) => !soloRounds([c.id], 1).length).map((c) => c.id), dup };
+  });
+  expect(r).toEqual({ empty: [], dup: [] });
+});
+
+test('dźwięk: przełącznik zapamiętany, gra działa z dźwiękiem', async ({ page }) => {
+  await expect(page.locator('#btn-sound')).toHaveText('🔊');
+  await page.click('#btn-solo');
+  await page.click('#btn-cats-start');
+  await page.locator('#dial-range').fill('80');
+  await page.click('#btn-confirm');
+  await page.click('#btn-sound');
+  await expect(page.locator('#btn-sound')).toHaveText('🔇');
+  await page.reload();
+  await expect(page.locator('#btn-sound')).toHaveText('🔇');
+  expect(await page.evaluate(() => SFX.enabled)).toBe(false);
 });
 
 test('instalacja: bez okna przeglądarki pokazuje instrukcję', async ({ page }) => {
@@ -196,6 +231,7 @@ test('zasady: zakładki', async ({ page }) => {
 
 test('tarcza reaguje na przeciąganie', async ({ page }) => {
   await page.click('#btn-solo');
+  await page.click('#btn-cats-start');
   const box = await page.locator('#dial').boundingBox();
   // lewy dolny róg tarczy → okolice 0
   await page.mouse.move(box.x + box.width * 0.08, box.y + box.height * 0.9);

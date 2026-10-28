@@ -23,7 +23,7 @@ function el(tag, attrs) {
   return e;
 }
 
-// Tworzy tarczę w kontenerze. onChange(v) wywoływane przy ruszaniu wskazówką.
+// Tworzy tarczę w kontenerze. onChange(v, user) wywoływane przy ruszaniu wskazówką (user – ruch gracza).
 function createDial(svg, range, onChange) {
   svg.setAttribute('viewBox', '0 0 400 215');
   svg.textContent = '';
@@ -42,14 +42,14 @@ function createDial(svg, range, onChange) {
   const api = {
     value: 50,
     locked: false,
-    set(v) {
+    set(v, user) {
       v = Math.max(0, Math.min(100, Math.round(v * 2) / 2));
       api.value = v;
       const [x, y] = dialPoint(v, DIAL.r - 6);
       needle.setAttribute('x2', x.toFixed(2));
       needle.setAttribute('y2', y.toFixed(2));
       range.value = String(v);
-      if (onChange) onChange(v);
+      if (onChange) onChange(v, !!user);
     },
     showTarget(t, coop) {
       targetG.textContent = '';
@@ -93,12 +93,12 @@ function createDial(svg, range, onChange) {
     if (api.locked) return;
     dragging = true;
     svg.setPointerCapture(e.pointerId);
-    api.set(fromEvent(e));
+    api.set(fromEvent(e), true);
   });
-  svg.addEventListener('pointermove', (e) => { if (dragging && !api.locked) api.set(fromEvent(e)); });
+  svg.addEventListener('pointermove', (e) => { if (dragging && !api.locked) api.set(fromEvent(e), true); });
   svg.addEventListener('pointerup', () => { dragging = false; });
   svg.addEventListener('pointercancel', () => { dragging = false; });
-  range.addEventListener('input', () => { if (!api.locked) api.set(Number(range.value)); });
+  range.addEventListener('input', () => { if (!api.locked) api.set(Number(range.value), true); });
 
   api.set(50);
   return api;

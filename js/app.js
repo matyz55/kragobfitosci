@@ -17,7 +17,7 @@ settings.cats = settings.cats.filter((id) => CATEGORIES.some((c) => c.id === id)
 if (!settings.cats.length) settings.cats = CATEGORIES.map((c) => c.id);
 
 // Stan bieżącej gry (dostępny globalnie – także dla testów).
-const state = { game: null, phase: 'menu', deck: null, card: null, choices: null, target: null, clue: '', lr: null, last: null, setup: null };
+const state = { game: null, phase: 'menu', deck: null, card: null, choices: null, target: null, clue: '', lr: null, last: null, setup: null, pending: null };
 
 let dial;
 
@@ -49,7 +49,26 @@ function setActions(...btns) {
   a.append(...btns);
 }
 
-// ---------- menu ----------
+// ---------- wybór kategorii (po wyborze trybu) ----------
+
+const MODE_NAMES = { solo: 'Jeden gracz', teams: 'Dwie drużyny', coop: 'Współpraca' };
+
+function openCats(mode) {
+  state.pending = mode;
+  $('#cats-mode').textContent = MODE_NAMES[mode];
+  $('#cats-error').classList.add('hidden');
+  renderCats();
+  show('screen-cats');
+}
+
+function catsBack() {
+  show({ solo: 'screen-menu', teams: 'screen-setup-teams', coop: 'screen-setup-coop' }[state.pending] || 'screen-menu');
+}
+
+function catsStart() {
+  if (state.pending === 'solo' && !soloRounds(settings.cats, 1).length) { $('#cats-error').classList.remove('hidden'); return; }
+  ({ solo: startSolo, teams: startTeams, coop: startCoop })[state.pending]();
+}
 
 function renderCats() {
   const box = $('#cats');
@@ -65,9 +84,9 @@ function renderCats() {
     box.append(b);
   }
   const cards = CATEGORIES.filter((c) => settings.cats.includes(c.id)).reduce((n, c) => n + c.cards.length, 0);
-  const solo = soloRounds(settings.cats, 9999).length;
-  $('#cats-info').textContent = `Kart: ${cards} · haseł dla jednego gracza: ${solo}`;
-  $('#cats-count').textContent = `${settings.cats.length}/${CATEGORIES.length}`;
+  $('#cats-info').textContent = state.pending === 'solo'
+    ? `Haseł do wylosowania: ${soloRounds(settings.cats, 9999).length} (gra ma 10 rund)`
+    : `Kart w talii: ${cards}`;
 }
 
 function setCats(ids) {
@@ -197,6 +216,7 @@ function soloReveal() {
   dial.showTarget(state.target);
   renderScores();
   showResult(`${pointsText(res.pts)}`, res.pts);
+  SFX.points(res.pts);
   $('#status').textContent = '';
   setActions(button(g.done ? 'Podsumowanie' : 'Dalej', 'primary big', () => (g.done ? endGame() : soloRound()), 'btn-next'));
 }
@@ -213,10 +233,14 @@ function startTeams() {
   passDevice();
 }
 
+function prepareCoop() {
+  if (parseNames($('#coop-players').value).length < 2) { $('#coop-error').classList.remove('hidden'); return; }
+  $('#coop-error').classList.add('hidden');
+  openCats('coop');
+}
+
 function startCoop() {
   const players = parseNames($('#coop-players').value);
-  if (players.length < 2) { $('#coop-error').classList.remove('hidden'); return; }
-  $('#coop-error').classList.add('hidden');
   const cards = Number($('#coop-cards').value);
   state.setup = { mode: 'coop', players, cards };
   state.game = newCoopGame(players, cards);
@@ -250,6 +274,7 @@ function psychicPhase() {
   renderScores();
   dial.locked = true;
   dial.showTarget(state.target, state.game.mode === 'coop');
+  SFX.mystic();
   $('#status').textContent = 'Tylko ty widzisz cel. Wybierz kartę i wymyśl hasło.';
   const box = $('#card-choice');
   box.classList.remove('hidden');
@@ -274,6 +299,7 @@ function guessPhase() {
   state.clue = $('#clue-input').value.trim();
   state.phase = 'guess';
   resetPlayView();
+  SFX.hide();
   renderScores();
   showClue();
   const who = g.mode === 'teams' ? `Drużyna „${g.teams[g.active].name}”` : 'Wszyscy oprócz psychika';
@@ -324,6 +350,8 @@ function reveal(lr) {
     done = g.winner != null;
     renderScores();
     showResult(html, res.pts);
+    SFX.points(res.pts);
+    SFX.bonus(res.lrOk);
     $('#status').textContent = '';
     setActions(button(done ? 'Wyniki' : 'Następna tura', 'primary big', () => (done ? endGame() : passDevice(res.extra)), 'btn-next'));
   } else {
@@ -333,6 +361,7 @@ function reveal(lr) {
     done = g.done;
     renderScores();
     showResult(html, res.pts);
+    SFX.points(res.pts);
     $('#status').textContent = '';
     setActions(button(done ? 'Wyniki' : 'Następna runda', 'primary big', () => (done ? endGame() : passDevice()), 'btn-next'));
   }
@@ -348,15 +377,18 @@ function endGame() {
     const w = g.teams[g.winner];
     $('#end-title').textContent = `Wygrywa „${w.name}”!`;
     $('#end-text').textContent = `${g.teams[0].name} ${g.teams[0].score} : ${g.teams[1].score} ${g.teams[1].name}`;
+    SFX.win();
   } else if (g.mode === 'coop') {
     $('#end-title').textContent = `${g.score} pkt`;
     $('#end-text').textContent = `${coopRank(g.score)} (rozegrane karty: ${g.turn})`;
+    if (g.score >= 16) SFX.win(); else SFX.end();
   } else {
     const best = loadJSON(BEST_KEY, 0);
     const record = g.score > best;
     if (record) saveJSON(BEST_KEY, g.score);
     $('#end-title').textContent = `${g.score} / ${g.rounds.length * 4} pkt`;
     $('#end-text').textContent = record ? 'Nowy rekord!' : `Rekord: ${best} pkt`;
+    if (record || g.score >= 30) SFX.win(); else SFX.end();
   }
 }
 
@@ -381,18 +413,27 @@ function home() {
 
 function init() {
   $('#version').textContent = GAME_VERSION;
-  dial = createDial($('#dial'), $('#dial-range'));
+  dial = createDial($('#dial'), $('#dial-range'), (v, user) => { if (user) SFX.tick(v); });
   const hero = createDial($('#hero-dial'), $('#hero-range'));
   hero.locked = true;
   hero.showTarget(68);
   hero.set(64);
-  renderCats();
 
-  $('#btn-solo').addEventListener('click', startSolo);
+  $('#btn-solo').addEventListener('click', () => openCats('solo'));
+  // dźwięk: stuknięcie każdego przycisku, przełącznik w górnym pasku
+  document.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b && b.id !== 'btn-sound' && !b.disabled) SFX.click(); });
+  const soundBtn = $('#btn-sound');
+  const soundIcon = () => {
+    soundBtn.textContent = SFX.enabled ? '🔊' : '🔇';
+    soundBtn.setAttribute('aria-label', SFX.enabled ? 'Dźwięk włączony' : 'Dźwięk wyłączony');
+  };
+  soundBtn.addEventListener('click', () => { SFX.toggle(); soundIcon(); });
+  soundIcon();
   $('#btn-teams').addEventListener('click', () => show('screen-setup-teams'));
   $('#btn-coop').addEventListener('click', () => show('screen-setup-coop'));
   $('#btn-rules').addEventListener('click', () => { showRulesTab('basics'); show('screen-rules'); });
-  $('#btn-cats').addEventListener('click', () => show('screen-cats'));
+  $('#btn-cats-back').addEventListener('click', catsBack);
+  $('#btn-cats-start').addEventListener('click', catsStart);
   $('#btn-cats-all').addEventListener('click', () => setCats(CATEGORIES.map((c) => c.id)));
   $('#btn-cats-none').addEventListener('click', () => setCats([settings.cats[0]]));
   document.querySelectorAll('#screen-rules .tab').forEach((t) => t.addEventListener('click', () => showRulesTab(t.dataset.tab)));
@@ -402,8 +443,8 @@ function init() {
   window.addEventListener('appinstalled', () => { installEvent = null; updateInstallButton(); });
   updateInstallButton();
   document.querySelectorAll('.back').forEach((b) => b.addEventListener('click', () => show('screen-menu')));
-  $('#btn-start-teams').addEventListener('click', startTeams);
-  $('#btn-start-coop').addEventListener('click', startCoop);
+  $('#btn-start-teams').addEventListener('click', () => openCats('teams'));
+  $('#btn-start-coop').addEventListener('click', prepareCoop);
   $('#btn-psychic-ready').addEventListener('click', psychicPhase);
   $('#btn-menu').addEventListener('click', home);
   $('#btn-again').addEventListener('click', again);
