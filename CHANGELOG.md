@@ -66,7 +66,7 @@
   były brane z innej czcionki i wyglądały inaczej. Zastąpiona czcionką Baloo 2, która ma wszystkie polskie znaki.
 - Mniejsze odstępy między wierszami w dużych nagłówkach.
 
-## 1.5.1 – 28.10.2026 – przycisk wibracji w górnym pasku
+## 1.5.1 – 28.10.2026 (`f6d56a4`) – przycisk wibracji w górnym pasku
 
 - Przycisk wibracji jest teraz ikoną w górnym pasku, obok dźwięku: 📳 – włączone, 📴 – wyłączone
   (wcześniej był na dole menu).
