@@ -1,6 +1,6 @@
 # Historia zmian Krągu obfitości
 
-## 1.0.0 – 28.10.2026 – pierwsza wersja
+## 1.0.0 – 28.10.2026 (`7a52288`) – pierwsza wersja
 
 - Gra towarzyska w przeglądarce: tarcza z ukrytym celem (pola 2/3/4/3/2 pkt),
   przeciąganie wskazówki palcem lub suwakiem.
