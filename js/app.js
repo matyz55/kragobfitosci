@@ -246,7 +246,7 @@ function soloReveal() {
   dial.showTarget(state.target);
   renderScores();
   showResult(`${pointsText(res.pts)}`, res.pts);
-  SFX.points(res.pts);
+  SFX.points(res.pts); Haptics.points(res.pts);
   if (res.pts === 4) confetti(40);
   $('#status').textContent = '';
   setActions(button(g.done ? 'Podsumowanie' : 'Dalej', 'primary big', () => (g.done ? endGame() : soloRound()), 'btn-next'));
@@ -307,7 +307,7 @@ function psychicPhase() {
   renderScores();
   dial.locked = true;
   dial.showTarget(state.target, state.game.mode === 'coop');
-  SFX.mystic();
+  SFX.mystic(); Haptics.mystic();
   $('#status').textContent = 'Tylko ty widzisz cel. Wybierz kartę i wymyśl hasło.';
   const box = $('#card-choice');
   box.classList.remove('hidden');
@@ -333,7 +333,7 @@ function guessPhase() {
   state.clue = $('#clue-input').value.trim();
   state.phase = 'guess';
   resetPlayView();
-  SFX.hide();
+  SFX.hide(); Haptics.hide();
   renderScores();
   showClue();
   const who = g.mode === 'teams' ? `Drużyna „${g.teams[g.active].name}”` : 'Wszyscy oprócz psychika';
@@ -384,8 +384,8 @@ function reveal(lr) {
     done = g.winner != null;
     renderScores();
     showResult(html, res.pts);
-    SFX.points(res.pts);
-    SFX.bonus(res.lrOk);
+    SFX.points(res.pts); Haptics.points(res.pts);
+    SFX.bonus(res.lrOk); Haptics.bonus(res.lrOk);
     if (res.pts === 4) confetti(40);
     $('#status').textContent = '';
     setActions(button(done ? 'Wyniki' : 'Następna tura', 'primary big', () => (done ? endGame() : passDevice(res.extra)), 'btn-next'));
@@ -396,7 +396,7 @@ function reveal(lr) {
     done = g.done;
     renderScores();
     showResult(html, res.pts);
-    SFX.points(res.pts);
+    SFX.points(res.pts); Haptics.points(res.pts);
     if (res.bonus) confetti(40);
     $('#status').textContent = '';
     setActions(button(done ? 'Wyniki' : 'Następna runda', 'primary big', () => (done ? endGame() : passDevice()), 'btn-next'));
@@ -414,12 +414,12 @@ function endGame() {
     $('#end-icon').textContent = '🏆';
     $('#end-title').textContent = `Wygrywa „${w.name}”!`;
     $('#end-text').textContent = `${g.teams[0].name} ${g.teams[0].score} : ${g.teams[1].score} ${g.teams[1].name}`;
-    SFX.win();
+    SFX.win(); Haptics.win();
     confetti();
   } else if (g.mode === 'coop') {
     $('#end-title').textContent = `${g.score} pkt`;
     $('#end-text').textContent = `${coopRank(g.score)} (rozegrane karty: ${g.turn})`;
-    if (g.score >= 16) { SFX.win(); confetti(); } else SFX.end();
+    if (g.score >= 16) { SFX.win(); Haptics.win(); confetti(); } else { SFX.end(); Haptics.end(); }
     $('#end-icon').textContent = g.score >= 16 ? '🏆' : '🔮';
   } else {
     const best = loadJSON(BEST_KEY, 0);
@@ -427,7 +427,7 @@ function endGame() {
     if (record) saveJSON(BEST_KEY, g.score);
     $('#end-title').textContent = `${g.score} / ${g.rounds.length * 4} pkt`;
     $('#end-text').textContent = record ? 'Nowy rekord!' : `Rekord: ${best} pkt`;
-    if (record || g.score >= 30) { SFX.win(); confetti(); } else SFX.end();
+    if (record || g.score >= 30) { SFX.win(); Haptics.win(); confetti(); } else { SFX.end(); Haptics.end(); }
     $('#end-icon').textContent = record || g.score >= 30 ? '🏆' : '🎯';
   }
   tvSync();
@@ -455,7 +455,7 @@ function home() {
 
 function init() {
   $('#version').textContent = GAME_VERSION;
-  dial = createDial($('#dial'), $('#dial-range'), (v, user) => { if (user) SFX.tick(v); tvDial(v); });
+  dial = createDial($('#dial'), $('#dial-range'), (v, user) => { if (user) { SFX.tick(v); Haptics.dial(v); } else Haptics.sync(v); tvDial(v); });
   const hero = createDial($('#hero-dial'), $('#hero-range'));
   hero.locked = true;
   hero.showTarget(68);
@@ -463,7 +463,7 @@ function init() {
 
   $('#btn-solo').addEventListener('click', () => openCats('solo'));
   // dźwięk: stuknięcie każdego przycisku, przełącznik w górnym pasku
-  document.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b && b.id !== 'btn-sound' && !b.disabled) SFX.click(); });
+  document.addEventListener('click', (e) => { const b = e.target.closest('button'); if (b && b.id !== 'btn-sound' && !b.disabled) { SFX.click(); if (b.id !== 'btn-haptics') Haptics.tap(); } });
   const soundBtn = $('#btn-sound');
   const soundIcon = () => {
     soundBtn.textContent = SFX.enabled ? '🔊' : '🔇';
@@ -471,6 +471,16 @@ function init() {
   };
   soundBtn.addEventListener('click', () => { SFX.toggle(); soundIcon(); });
   soundIcon();
+  // wibracje: przycisk tylko na urządzeniach dotykowych, które je obsługują
+  const hapticBtn = $('#btn-haptics');
+  const hapticLabel = () => {
+    hapticBtn.classList.toggle('off', !Haptics.enabled);
+    hapticBtn.setAttribute('aria-pressed', String(Haptics.enabled));
+    hapticBtn.title = Haptics.enabled ? 'Wibracje włączone' : 'Wibracje wyłączone';
+  };
+  hapticBtn.classList.toggle('hidden', !(Haptics.supported && window.matchMedia('(pointer: coarse)').matches));
+  hapticBtn.addEventListener('click', () => { Haptics.toggle(); hapticLabel(); });
+  hapticLabel();
   $('#btn-teams').addEventListener('click', () => show('screen-setup-teams'));
   $('#btn-coop').addEventListener('click', () => show('screen-setup-coop'));
   $('#btn-rules').addEventListener('click', () => { showRulesTab('basics'); show('screen-rules'); });

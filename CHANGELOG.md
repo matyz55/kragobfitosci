@@ -56,3 +56,12 @@
 - Położenie celu trafia na duży ekran dopiero przy odsłonięciu – nikt go nie podejrzy na telewizorze.
 - Przycisk pełnego ekranu i włączania dźwięku na dużym ekranie; starszy duży ekran odświeża się sam.
 - Na wąskich telefonach górny pasek jest krótszy (sama ikona ✕ zamiast „✕ Menu”).
+
+## 1.5.0 – 28.10.2026 – wibracje i poprawione polskie litery
+
+- Wibracje (telefony z Androidem): wskazówka „klika” na każdej kresce podziałki, mocniej na dłuższych kreskach
+  i na końcach skali; wibracje przy odsłonięciu i zasłonięciu celu, wyniku (inne dla 4, 3, 2 i 0 pkt), trafionym
+  „lewo/prawo”, końcu gry i przyciskach. Przycisk 📳 w menu wyłącza wibracje.
+- Poprawione polskie litery: czcionka nagłówków i przycisków (Fredoka) nie miała liter ą, ć, ę, ń, ś, ź, ż, więc
+  były brane z innej czcionki i wyglądały inaczej. Zastąpiona czcionką Baloo 2, która ma wszystkie polskie znaki.
+- Mniejsze odstępy między wierszami w dużych nagłówkach.

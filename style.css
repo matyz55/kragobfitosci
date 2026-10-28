@@ -1,12 +1,12 @@
 /* Czcionki dołączone do gry (SIL Open Font License, pliki w fonts/) – działają też bez sieci. */
 @font-face {
-  font-family: 'Fredoka'; font-style: normal; font-weight: 300 700; font-display: swap;
-  src: url(fonts/fredoka-latin-ext.woff2) format('woff2');
+  font-family: 'Baloo 2'; font-style: normal; font-weight: 400 800; font-display: swap;
+  src: url(fonts/baloo2-latin-ext.woff2) format('woff2');
   unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 @font-face {
-  font-family: 'Fredoka'; font-style: normal; font-weight: 300 700; font-display: swap;
-  src: url(fonts/fredoka-latin.woff2) format('woff2');
+  font-family: 'Baloo 2'; font-style: normal; font-weight: 400 800; font-display: swap;
+  src: url(fonts/baloo2-latin.woff2) format('woff2');
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
@@ -39,7 +39,7 @@
   --bad: #ff6b6b;
   --radius: 16px;
   --shadow: 0 10px 30px rgba(5, 2, 15, .45);
-  --font-head: 'Fredoka', 'Nunito', system-ui, sans-serif;
+  --font-head: 'Baloo 2', 'Nunito', system-ui, sans-serif;
   /* odstępy i czcionki rosną i maleją razem z wysokością okna */
   --gap: clamp(6px, 1.4vh, 14px);
   --fs: clamp(14px, 2.1vh, 17px);
@@ -100,7 +100,7 @@ body {
 @keyframes screen-in { from { opacity: 0; } }
 .hidden { display: none !important; }
 
-h2 { margin: 0; font-family: var(--font-head); font-weight: 600; font-size: 1.3em; letter-spacing: .2px; }
+h2 { margin: 0; font-family: var(--font-head); font-weight: 600; font-size: 1.3em; letter-spacing: .2px; line-height: 1.15; }
 .screen-title { flex: 0 0 auto; }
 .center { text-align: center; }
 .muted { color: var(--muted); font-size: .9em; font-weight: 500; }
@@ -381,3 +381,4 @@ button.lr { font-size: 1.05em; padding: .8em; font-weight: 600; }
 @media (max-width: 380px) { .logo-icon { display: none; } }
 @media (max-width: 499px) { .topbar .wide { display: none; } }
 @media (max-width: 430px) { .logo-icon { display: none; } }
+#btn-haptics.off { opacity: .55; text-decoration: line-through; }

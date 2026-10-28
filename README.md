@@ -36,9 +36,16 @@ tuż przed startem gry; wybór jest zapamiętywany. Karty i przykłady: `js/data
 
 Ciemny motyw z animowaną „zorzą” w tle, tarcza z gradientami (obręcz od niebieskiego do czerwonego jak końce skali,
 wachlarz celu rozkładający się przy odsłonięciu, wskazówka obracająca się płynnie), konfetti przy trafieniu w środek
-i przy wygranej. Czcionki Fredoka (nagłówki, przyciski) i Nunito (tekst) są dołączone w `fonts/` (licencja SIL Open
+i przy wygranej. Czcionki Baloo 2 (nagłówki, przyciski) i Nunito (tekst) są dołączone w `fonts/` (licencja SIL Open
 Font License 1.1 – pliki `fonts/OFL-*.txt`), więc działają także bez sieci. Przy ustawieniu systemu „ogranicz ruch”
 animacje i konfetti są wyłączone.
+
+## Wibracje
+
+Na telefonach, które obsługują wibracje w przeglądarce (Android), wskazówka „klika” przy każdej kresce podziałki –
+mocniej na dłuższych kreskach i na końcach skali. Wibracje są też przy odsłonięciu i zasłonięciu celu, wyniku
+(inne dla 4, 3, 2 i 0 pkt), trafionym „lewo/prawo”, końcu gry i przyciskach. Przycisk 📳 w menu je wyłącza
+(widoczny tylko na urządzeniach dotykowych). Safari na iPhonie nie obsługuje wibracji ze stron – tam ich nie ma.
 
 ## Dźwięk
 
@@ -83,7 +90,8 @@ i dźwięki. Telefon (albo komputer), na którym toczy się gra, jest pilotem: p
 - `tv.html`, `tv.css`, `js/tv.js` – duży ekran; `js/remote.js` – pilot (wysyłanie stanu); `js/net.js` – połączenia sieciowe
 - `js/app.js` – ekrany i przebieg gry
 - `sw.js`, `manifest.webmanifest`, `icons/` – instalacja jako aplikacja i działanie bez sieci
-- `fonts/` – czcionki Fredoka i Nunito (SIL OFL 1.1)
+- `fonts/` – czcionki Baloo 2 i Nunito (SIL OFL 1.1); test `tests/polish.spec.mjs` sprawdza, że mają wszystkie polskie znaki
+- `js/haptics.js` – wibracje
 
 ## Uruchomienie lokalne i testy
 
@@ -97,7 +105,7 @@ npm test           # testy Playwright
 ## Źródła
 
 - Zasady, karty (skale), grafika i opisy wyników – opracowanie własne.
-- Czcionki: Google Fonts – Fredoka (https://fonts.google.com/specimen/Fredoka) i Nunito
+- Czcionki: Google Fonts – Baloo 2 (https://fonts.google.com/specimen/Baloo+2) i Nunito
   (https://fonts.google.com/specimen/Nunito), licencja SIL OFL 1.1 (tekst licencji w `fonts/`).
 - Wymagania instalacji (ikony 192 i 512 px, HTTPS, manifest): https://web.dev/articles/install-criteria oraz
   https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Making_PWAs_installable
