@@ -3,7 +3,7 @@
 // Tryb drużynowy: punkty 4/3/2, zgadywanie „lewo/prawo”, gra do 10 pkt, dogrywka, nadrabianie straty;
 // tryb współpracy: 7 kart, środek celu dokłada kartę.
 
-const GAME_VERSION = '1.9.0';
+const GAME_VERSION = '1.10.0';
 
 // Szerokość jednego pola celu na skali 0–100. Cel ma pięć pól: 2 | 3 | 4 | 3 | 2.
 // Poziom trudności zmienia szerokość pól: łatwy – szersze (np. dla dzieci), trudny – węższe.
@@ -49,7 +49,9 @@ function allCategories() {
 // Talia kart z wybranych kategorii; po wyczerpaniu tasowana od nowa.
 // savedPile – stos zapisany przy wznawianiu gry (kolejność kart zostaje ta sama).
 function makeDeck(categoryIds, savedPile) {
-  const cats = allCategories().filter((c) => categoryIds.includes(c.id));
+  let cats = allCategories().filter((c) => categoryIds.includes(c.id) && c.cards.length);
+  // wybrana własna talia zniknęła (np. usunięta w trakcie przerwanej gry) – grają karty wbudowane
+  if (!cats.length) cats = CATEGORIES;
   const all = [];
   for (const c of cats) for (const k of c.cards) all.push({ left: k[0], right: k[1], examples: k[2] || [], cat: c.id });
   let pile = savedPile ? savedPile.slice() : shuffle(all);

@@ -54,6 +54,7 @@
       </button>
     </section>
     <nav class="menu-row">
+      <button id="btn-decks" class="ghost" data-icon="cards">Moje talie</button>
       <button id="btn-stats" class="ghost" data-icon="chart">Statystyki</button>
       <button id="btn-settings" class="ghost" data-icon="sliders">Ustawienia</button>
       <button id="btn-rules" class="ghost" data-icon="book">Zasady</button>
@@ -122,11 +123,14 @@
   <!-- KATEGORIE -->
   <main id="screen-cats" class="screen hidden">
     <div class="screen-head">
-      <h2>Kategorie <span class="muted" id="cats-mode"></span></h2>
+      <h2>Kategorie</h2>
       <div class="head-btns"><button class="ghost small" id="btn-cats-all">Wszystkie</button><button class="ghost small" id="btn-cats-none">Wyczyść</button></div>
     </div>
     <div id="cats" class="cats-grid"></div>
-    <p class="muted center" id="cats-info"></p>
+    <div class="cats-foot">
+      <p class="muted"><span id="cats-mode"></span> · <span id="cats-info"></span></p>
+      <button class="ghost small" id="btn-cats-decks" data-icon="cards">Moje talie</button>
+    </div>
     <p class="error center hidden" id="cats-error">W tych kategoriach nie ma haseł dla jednego gracza – dodaj inną.</p>
     <div class="actions"><button class="ghost" id="btn-cats-back">Wróć</button><button class="primary" id="btn-cats-start">Zaczynamy</button></div>
   </main>
@@ -232,6 +236,70 @@
     <div class="actions"><button class="ghost" id="btn-menu">Menu</button><button class="primary" id="btn-again">Jeszcze raz</button></div>
   </main>
 
+  <!-- MOJE TALIE -->
+  <main id="screen-decks" class="screen hidden">
+    <div class="screen-head">
+      <h2>Moje talie <span class="muted" id="decks-note"></span></h2>
+      <div class="head-btns"><button class="ghost small" id="btn-deck-paste" data-icon="link">Wklej link</button></div>
+    </div>
+    <div class="decks-empty" id="decks-empty">
+      <div class="big-icon" data-art="cards"></div>
+      <p class="lead">Ułóż własne karty – np. o znajomych, o pracy albo o waszej paczce.</p>
+      <p class="muted">Talie zapisują się w tym telefonie, a linkiem lub kodem QR przekażesz je innym.</p>
+    </div>
+    <div id="decks-list" class="decks-list"></div>
+    <div class="actions"><button class="ghost" id="btn-decks-back">Wróć</button><button class="primary" id="btn-deck-new" data-icon="plus">Nowa talia</button></div>
+  </main>
+
+  <!-- JEDNA TALIA -->
+  <main id="screen-deck" class="screen hidden">
+    <div class="deck-head">
+      <button type="button" class="avatar-btn" id="deck-icon"></button>
+      <label class="deck-name">Nazwa talii <input type="text" id="deck-name" maxlength="30" placeholder="np. Nasza paczka" autocomplete="off"></label>
+    </div>
+    <div class="screen-head">
+      <h2 class="deck-count" id="deck-count"></h2>
+      <div class="head-btns pager hidden" id="deck-pager">
+        <button class="ghost small" id="btn-deck-prev" aria-label="Poprzednie karty">‹</button>
+        <span id="deck-page"></span>
+        <button class="ghost small" id="btn-deck-next" aria-label="Następne karty">›</button>
+      </div>
+    </div>
+    <div id="deck-cards" class="deck-cards"></div>
+    <div class="deck-actions">
+      <button class="ghost" id="btn-deck-delete" data-icon="trash">Usuń talię</button>
+      <button class="ghost" id="btn-deck-share" data-icon="share">Udostępnij</button>
+      <button class="ghost" id="btn-card-new" data-icon="plus">Nowa karta</button>
+      <button class="primary" id="btn-deck-done">Gotowe</button>
+    </div>
+  </main>
+
+  <!-- JEDNA KARTA -->
+  <main id="screen-card" class="screen hidden">
+    <h2 class="screen-title" id="card-title">Nowa karta</h2>
+    <div class="card-form">
+      <label>Lewy koniec skali <input type="text" id="card-left" maxlength="32" placeholder="np. Ranny ptaszek" autocomplete="off"></label>
+      <label>Prawy koniec skali <input type="text" id="card-right" maxlength="32" placeholder="np. Nocny marek" autocomplete="off"></label>
+      <label class="card-clue">Przykładowe hasło <span class="seg-hint">nieobowiązkowe</span>
+        <input type="text" id="card-clue" maxlength="40" placeholder="np. Kasia" autocomplete="off"></label>
+    </div>
+    <div class="dial-wrap card-dial" id="card-dial-wrap">
+      <svg id="card-dial" role="img" aria-label="Miejsce hasła na skali"></svg>
+      <section class="spectrum">
+        <div class="spec spec-left" id="card-spec-left"></div>
+        <div class="spec spec-right" id="card-spec-right"></div>
+      </section>
+      <input type="range" id="card-range" min="0" max="100" step="0.5" value="50" aria-label="Miejsce przykładowego hasła na skali">
+    </div>
+    <p class="muted center card-note" id="card-note" aria-live="polite"></p>
+    <p class="error center hidden" id="card-error" role="alert">Wpisz oba końce skali.</p>
+    <div class="actions">
+      <button class="ghost" id="btn-card-delete">Usuń</button>
+      <button class="ghost" id="btn-card-cancel">Anuluj</button>
+      <button class="primary" id="btn-card-save">Zapisz</button>
+    </div>
+  </main>
+
   <!-- ZASADY -->
   <main id="screen-rules" class="screen hidden">
     <div class="tabs" role="tablist">
@@ -276,6 +344,18 @@
     <div class="actions"><button class="primary back">Wróć</button></div>
   </main>
 
+  <!-- OKNO TALII: udostępnianie, talia z linku, komunikaty -->
+  <div id="deck-dialog" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="deck-dialog-title">
+    <div class="dialog">
+      <div class="dialog-head">
+        <h2 id="deck-dialog-title"></h2>
+        <button class="ghost small icon-btn" id="btn-deck-dialog-close" data-icon="close" title="Zamknij" aria-label="Zamknij"></button>
+      </div>
+      <div id="deck-dialog-body" class="dialog-body"></div>
+      <div class="actions" id="deck-dialog-actions"></div>
+    </div>
+  </div>
+
   <!-- INSTALACJA -->
   <div id="install-dialog" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="install-title">
     <div class="dialog">
@@ -304,6 +384,7 @@
 
   <script src="js/i18n.js"></script>
   <script src="js/data.js"></script>
+  <script src="js/decks.js"></script>
   <script src="js/game.js"></script>
   <script src="js/dial.js"></script>
   <script src="js/ui.js"></script>
@@ -313,5 +394,6 @@
   <script src="js/net.js"></script>
   <script src="js/remote.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/editor.js"></script>
 </body>
 </html>

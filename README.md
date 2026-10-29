@@ -26,11 +26,31 @@ Gra jest „na jednym urządzeniu”: przed każdą turą ekran prosi o przekaza
 
 ## Kategorie
 
-22 kategorie, 721 kart (648 haseł dla jednego gracza; w każdej kategorii co najmniej 32 karty i 15 haseł, więc każdą da się grać osobno): Ogólne, Muzyka, Film i seriale, Jedzenie i picie, Sport,
+28 kategorii, 914 kart (891 haseł dla jednego gracza; w każdej kategorii co najmniej 32 karty i 15 haseł, więc każdą da się grać osobno): Ogólne, Muzyka, Film i seriale, Jedzenie i picie, Sport,
 Nauka i technika, Polskie klimaty, Internet i gry, Zwierzęta i natura, Ludzie i charaktery, Szkoła i praca, Podróże,
 Moda i wygląd, Historia, Miłość i przyjaźń, Dom i codzienność, Książki i język, Imprezowe, Dzieciństwo i bajki,
-Motoryzacja, Pory roku i święta, Zdrowie i ciało. Kategorie wybiera się po wyborze trybu (i ustawień graczy) –
+Motoryzacja, Pory roku i święta, Zdrowie i ciało, Hobby i czas wolny, Pieniądze i zakupy, Emocje i uczucia,
+Kultura i sztuka, Kosmos i niebo, Zmysły i kształty. Kategorie wybiera się po wyborze trybu (i ustawień graczy) –
 tuż przed startem gry; wybór jest zapamiętywany. Karty i przykłady: `js/data.js`.
+
+## Własne talie
+
+Menu → **Moje talie** (albo przycisk „Moje talie” pod listą kategorii): własne karty, np. o znajomych, o rodzinie,
+o klasie albo o firmie.
+
+- **Edytor**: nazwa i ikona talii, karty jako dwa końce skali i (nieobowiązkowo) przykładowe hasło – jego miejsce
+  ustawia się wskazówką na tarczy. Hasła są potrzebne w grze jednoosobowej i w podpowiedziach dla wyroczni.
+  Do 8 talii, do 60 kart w talii; karty pokazują się stronami, bez przewijania.
+- **Zapis tylko w tym telefonie** (pamięć przeglądarki). Talia, która dostała pierwszą kartę albo przyszła w linku,
+  od razu jest wybrana do gry (sama – inne kategorie można dobrać przy wyborze kategorii). Własne talie stoją na
+  początku listy kategorii (przerywana ramka). Wyzwanie dnia zawsze korzysta tylko z kart wbudowanych.
+- **Udostępnianie**: przycisk „Udostępnij” pokazuje kod QR i link (kopiowanie albo „Wyślij” na telefonie).
+  Cała talia jest zapisana w adresie po znaku `#` (skompresowana; w starszych przeglądarkach bez kompresji) –
+  tej części adresu przeglądarka nie wysyła na serwer, więc nie trzeba konta ani serwera.
+- **Dodawanie**: po otwarciu linku albo zeskanowaniu kodu gra proponuje dodanie talii (z podglądem kart).
+  Gdy gra jest zainstalowana jako aplikacja, a link otworzył się w przeglądarce: „Moje talie → Wklej link”.
+  Talia z linku jest sprawdzana i przycinana do limitów (długość tekstów, liczba kart), a jej teksty nigdy nie
+  trafiają na stronę jako kod.
 
 ## Wyzwanie dnia, statystyki, drużyny
 
@@ -115,7 +135,8 @@ i dźwięki. Telefon (albo komputer), na którym toczy się gra, jest pilotem: p
 
 - Każdy ekran mieści się w oknie bez przewijania – na telefonach (pionowo i poziomo), tabletach i komputerach.
   Tarcza dopasowuje się do wolnego miejsca, a przy telefonie trzymanym poziomo stoi obok przycisków.
-  Sprawdza to test `tests/layout.spec.mjs` na 19 rozmiarach ekranu.
+  Gdy nazwy kategorii się nie mieszczą (najmniejsze ekrany, dużo własnych talii), lista przechodzi na zwarty układ.
+  Sprawdzają to testy `tests/layout.spec.mjs` i `tests/layout-decks.spec.mjs` na 19 rozmiarach ekranu.
 - Przycisk **Zainstaluj** w menu: w Chrome, Edge i innych przeglądarkach opartych na Chromium otwiera okno instalacji
   (gdy przeglądarka je udostępni), w pozostałych pokazuje instrukcję (iPhone/iPad – menu „Udostępnij”, Safari na
   Macu – menu „Plik”, Firefox na komputerze nie instaluje aplikacji ze stron). Po instalacji przycisk znika.
@@ -134,6 +155,7 @@ i dźwięki. Telefon (albo komputer), na którym toczy się gra, jest pilotem: p
 - `fonts/` – czcionki Baloo 2 i Nunito (SIL OFL 1.1); test `tests/polish.spec.mjs` sprawdza, że mają wszystkie polskie znaki
 - `js/haptics.js` – wibracje
 - `js/stats.js` – statystyki i wyniki wyzwania dnia (localStorage)
+- `js/decks.js` – własne talie: zapis, sprawdzanie, kodowanie talii w linku; `js/editor.js` – ekrany talii, kod QR, dodawanie z linku
 
 ## Uruchomienie lokalne i testy
 
@@ -151,3 +173,8 @@ npm test           # testy Playwright
   (https://fonts.google.com/specimen/Nunito), licencja SIL OFL 1.1 (tekst licencji w `fonts/`).
 - Wymagania instalacji (ikony 192 i 512 px, HTTPS, manifest): https://web.dev/articles/install-criteria oraz
   https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Guides/Making_PWAs_installable
+- Część adresu po `#` nie jest wysyłana na serwer: https://developer.mozilla.org/en-US/docs/Learn_web_development/Howto/Web_mechanics/What_is_a_URL
+  i https://developer.mozilla.org/en-US/docs/Web/URI/Reference/Fragment
+- Kompresja talii w linku (CompressionStream, format `deflate-raw`: Chrome/Edge 103+, Firefox 113+, Safari 16.4+ według
+  danych zgodności MDN): https://developer.mozilla.org/en-US/docs/Web/API/CompressionStream/CompressionStream
+- Kody QR: biblioteka qrcode-generator (Kazuhiko Arase, licencja MIT) z cdnjs – https://cdnjs.com/libraries/qrcode-generator

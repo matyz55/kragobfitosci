@@ -25,6 +25,10 @@ const ICONS = {
   calendar: '<rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4M8.5 14.8l2.2 2.2 4.6-4.6"/>',
   chart: '<path d="M3 20.5h18"/><rect x="5" y="11" width="3.5" height="7" rx="1"/><rect x="10.25" y="5.5" width="3.5" height="12.5" rx="1"/><rect x="15.5" y="13.5" width="3.5" height="4.5" rx="1"/>',
   share: '<path d="M12 14.5V3.5M7.5 8L12 3.5 16.5 8"/><path d="M5 11.5v8.5h14v-8.5"/>',
+  cards: '<rect x="3.5" y="6.5" width="12" height="14.5" rx="2"/><path d="M8 3.5h10.5a2 2 0 0 1 2 2V17"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  link: '<path d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1.2 1.2"/><path d="M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1.2-1.2"/>',
+  trash: '<path d="M4.5 7h15M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13M10 11v5.5M14 11v5.5"/>',
 };
 
 function icon(name) {
@@ -60,6 +64,24 @@ const ART = {
     <rect x="40" y="86" width="40" height="9" rx="3" fill="url(#art-cup)"/>
     <rect x="33" y="95" width="54" height="13" rx="4" fill="#5b3fd0"/>
     <rect x="44" y="99" width="32" height="5" rx="2" fill="#ffd166" opacity=".8"/>
+  </svg>`,
+  cards: `<svg viewBox="0 0 120 120" aria-hidden="true">
+    <defs>
+      <linearGradient id="art-scale" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#4f7cff"/><stop offset=".5" stop-color="#a66bff"/><stop offset="1" stop-color="#ff5470"/></linearGradient>
+      <linearGradient id="art-face" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#fffdf7"/><stop offset="1" stop-color="#f1e1bd"/></linearGradient>
+    </defs>
+    <ellipse cx="60" cy="111" rx="34" ry="5" fill="#000" opacity=".28"/>
+    <rect x="30" y="24" width="52" height="74" rx="8" fill="#5b3fd0" transform="rotate(-18 56 96)"/>
+    <rect x="38" y="24" width="52" height="74" rx="8" fill="#ff7a45" transform="rotate(14 64 96)"/>
+    <g transform="rotate(-3 60 96)">
+      <rect x="34" y="22" width="52" height="76" rx="8" fill="url(#art-face)" stroke="#2b1d3c" stroke-opacity=".18" stroke-width="1.5"/>
+      <rect x="41" y="31" width="24" height="5" rx="2.5" fill="#4f7cff"/>
+      <rect x="55" y="84" width="24" height="5" rx="2.5" fill="#ff5470"/>
+      <rect x="41" y="56" width="38" height="8" rx="4" fill="url(#art-scale)"/>
+      <circle cx="67" cy="60" r="5.5" fill="#fff" stroke="#2b1d3c" stroke-width="2.5"/>
+    </g>
+    <circle cx="90" cy="30" r="11" fill="#ffd166"/>
+    <path d="M90 24.5v11M84.5 30h11" stroke="#3a2600" stroke-width="2.6" stroke-linecap="round"/>
   </svg>`,
   target: `<svg viewBox="0 0 120 120" aria-hidden="true">
     <ellipse cx="56" cy="111" rx="30" ry="5" fill="#000" opacity=".28"/>

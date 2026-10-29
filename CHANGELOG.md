@@ -130,3 +130,16 @@
 - Drużyny: awatar i kolor do wyboru dla każdej drużyny, widoczne w tablicy wyników, na ekranie przekazania,
   w podsumowaniu i na dużym ekranie. Nazwy drużyn, gracze, awatary, kolory i próg wygranej są zapamiętywane.
 - Menu: cztery tryby w układzie 2×2 i przyciski Statystyki · Ustawienia · Zasady.
+
+## 1.10.0 – 29.10.2026 – własne talie i 6 nowych kategorii
+
+- Własne talie (menu → Moje talie): edytor kart – dwa końce skali i nieobowiązkowe przykładowe hasło, którego miejsce
+  ustawia się wskazówką na tarczy. Do 8 talii po 60 kart, zapis tylko w tym telefonie.
+- Udostępnianie talii kodem QR albo linkiem (cała talia jest w linku – bez konta i serwera). Po otwarciu linku gra
+  proponuje dodanie talii; w zainstalowanej aplikacji można też wkleić link („Moje talie → Wklej link”).
+- Nowa albo otrzymana talia od razu jest wybrana do gry; własne talie są na początku listy kategorii (przerywana
+  ramka), a ich hasła działają w grze jednoosobowej i w podpowiedziach dla wyroczni.
+- 6 nowych kategorii: Hobby i czas wolny, Pieniądze i zakupy, Emocje i uczucia, Kultura i sztuka, Kosmos i niebo,
+  Zmysły i kształty – razem 28 kategorii, 914 kart i 891 haseł dla jednego gracza.
+- Wybór kategorii: tryb gry i liczba kart pod listą, przy małym ekranie zwarty układ nazw (wszystko bez przewijania).
+- Talia z jedną kartą pokazuje wyroczni jedną kartę, a dwie karty do wyboru zawsze są różne.

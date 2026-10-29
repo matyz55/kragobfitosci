@@ -319,9 +319,10 @@
   // biblioteki pobieramy od razu przy starcie strony gracza – oszczędza to sekundę–dwie przy łączeniu
   const preload = () => Promise.allSettled([loadScript(PEERJS), loadScript(MQTTJS)]);
 
-  async function qrSvg(text) {
+  // kod QR jako SVG; ecc – poziom korekcji błędów (L mieści najwięcej danych, np. talię kart w linku)
+  async function qrSvg(text, ecc) {
     await loadScript(QRLIB);
-    const qr = window.qrcode(0, 'M');
+    const qr = window.qrcode(0, ecc || 'M');
     qr.addData(text);
     qr.make();
     return qr.createSvgTag({ cellSize: 6, margin: 2, scalable: true });

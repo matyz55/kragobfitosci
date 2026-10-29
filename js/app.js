@@ -163,8 +163,8 @@ function openCats(mode) {
   state.pending = mode;
   $('#cats-mode').textContent = T(MODE_NAMES[mode]);
   $('#cats-error').classList.add('hidden');
-  renderCats();
   show('screen-cats');
+  renderCats();
 }
 
 function catsBack() {
@@ -181,7 +181,7 @@ function renderCats() {
   box.textContent = '';
   for (const c of allCategories()) {
     const on = settings.cats.includes(c.id);
-    const b = button(`${c.icon} ${c.name}`, 'chip' + (on ? ' on' : ''), () => {
+    const b = button('', `chip${on ? ' on' : ''}${c.custom ? ' custom' : ''}`, () => {
       if (on && settings.cats.length === 1) return; // co najmniej jedna kategoria
       setCats(on ? settings.cats.filter((x) => x !== c.id) : settings.cats.concat(c.id));
     });
@@ -189,15 +189,24 @@ function renderCats() {
     const small = document.createElement('small');
     small.textContent = String(count);
     small.title = state.pending === 'solo' ? T('haseł') : T('kart');
-    b.append(small);
+    b.append(mk('span', 'chip-ico', c.icon), mk('span', 'chip-name', c.name), small);
     b.dataset.cat = c.id;
     b.setAttribute('aria-pressed', String(on));
     box.append(b);
   }
   const cards = allCategories().filter((c) => settings.cats.includes(c.id)).reduce((n, c) => n + c.cards.length, 0);
   $('#cats-info').textContent = state.pending === 'solo'
-    ? T('Haseł do wylosowania: {0} (gra ma 10 rund)', soloRounds(settings.cats, 9999).length)
-    : T('Kart w talii: {0}', cards);
+    ? T('haseł: {0}', soloRounds(settings.cats, 9999).length)
+    : T('kart: {0}', cards);
+  fitCats();
+}
+
+// Wszystkie kategorie mają się zmieścić bez przewijania: gdy nazwy się nie mieszczą (np. po dodaniu własnych talii
+// na małym ekranie), przechodzimy na zwarty układ – jeden wiersz na nazwę, bez liczby kart.
+function fitCats() {
+  const box = $('#cats');
+  box.classList.remove('dense');
+  if ([...box.children].some((b) => b.scrollHeight > b.clientHeight + 1 || b.scrollWidth > b.clientWidth + 1)) box.classList.add('dense');
 }
 
 function setCats(ids) {
@@ -464,9 +473,18 @@ function startCoop() {
   passDevice();
 }
 
+// Dwie karty do wyboru dla wyroczni – różne (talia z jedną kartą: jedna).
+function drawChoices() {
+  const a = state.deck.draw();
+  if (state.deck.size < 2) return [a];
+  let b = state.deck.draw();
+  for (let i = 0; i < 5 && b.left === a.left && b.right === a.right; i++) b = state.deck.draw();
+  return [a, b];
+}
+
 function passDevice(extra) {
   state.phase = 'pass';
-  state.choices = [state.deck.draw(), state.deck.draw()];
+  state.choices = drawChoices();
   state.target = randomTarget();
   state.clue = '';
   state.lr = null;

@@ -185,7 +185,7 @@ body {
 .topbar h1 span { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .logo-icon { width: 1.5em; height: 1.5em; border-radius: 8px; box-shadow: 0 4px 14px rgba(255, 79, 123, .35); }
 .top-btns { display: flex; gap: 6px; }
-#cats-mode, #stats-note { font-family: 'Nunito', sans-serif; font-weight: 600; font-size: .62em; }
+#decks-note, #stats-note { font-family: 'Nunito', sans-serif; font-weight: 600; font-size: .62em; }
 
 .screen {
   flex: 1 1 auto; min-height: 0; overflow: hidden;
@@ -287,6 +287,18 @@ label.row { display: flex; align-items: center; gap: 8px; color: var(--text); fo
   background: linear-gradient(135deg, rgba(63, 224, 208, .28), rgba(79, 124, 255, .28)); color: var(--chip-on-text); border-color: rgba(63, 224, 208, .75);
   box-shadow: 0 0 0 1px rgba(63, 224, 208, .25) inset, 0 4px 14px rgba(63, 224, 208, .15);
 }
+.chip-ico { flex: 0 0 auto; line-height: 1; }
+.chip-name { flex: 1 1 auto; min-width: 0; line-height: 1.02; }
+/* własna talia: przerywana ramka (wybrana – pełna) */
+.chip.custom { border-style: dashed; border-color: color-mix(in srgb, var(--gold) 60%, transparent); }
+.chip.custom.on { border-style: solid; }
+/* zwarty układ, gdy nazwy kategorii się nie mieszczą: jeden wiersz, bez liczby kart */
+.cats-grid.dense .chip { font-size: clamp(10px, 1.5vh, 13px); }
+.cats-grid.dense .chip-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.45; }
+.cats-grid.dense .chip small { display: none; }
+.cats-foot { flex: 0 0 auto; display: flex; align-items: center; justify-content: center; gap: 10px; }
+.cats-foot p { min-width: 0; }
+.cats-foot button { flex: 0 0 auto; padding: .2em .75em; line-height: 1.2; }
 
 /* ---------- ustawienia ---------- */
 .teams-setup { flex: 0 1 auto; min-height: 0; display: grid; gap: var(--gap); grid-template-columns: 1fr; }
@@ -482,19 +494,19 @@ button.lr { font-size: 1.05em; padding: .8em; font-weight: 600; }
 
 .dial-wrap { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
 #screen-play .dial-wrap { flex: 0 1 auto; }
-#dial {
+#dial, #card-dial {
   flex: 0 1 auto; width: 100%; aspect-ratio: 400 / 222; min-height: 100px; display: block;
   touch-action: none; user-select: none; -webkit-user-select: none; cursor: grab;
 }
-#dial:active { cursor: grabbing; }
+#dial:active, #card-dial:active { cursor: grabbing; }
 #dial.locked, #dial.locked:active { cursor: default; }
 
 /* suwak pod tarczą; po odpowiedzi zablokowany i wyszarzony */
-#dial-range { flex: 0 0 auto; width: 100%; margin: 4px 0 0; -webkit-appearance: none; appearance: none; height: 22px; background: transparent; transition: opacity .25s, filter .25s; }
-#dial-range::-webkit-slider-runnable-track { height: 6px; border-radius: 3px; background: linear-gradient(90deg, #4f7cff, #a66bff, #ff5470); }
-#dial-range::-moz-range-track { height: 6px; border-radius: 3px; background: linear-gradient(90deg, #4f7cff, #a66bff, #ff5470); }
-#dial-range::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; margin-top: -7px; border-radius: 50%; background: #fff; border: 3px solid #2b1d3c; box-shadow: 0 2px 8px rgba(0,0,0,.4); }
-#dial-range::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: #fff; border: 3px solid #2b1d3c; box-shadow: 0 2px 8px rgba(0,0,0,.4); }
+#dial-range, #card-range { flex: 0 0 auto; width: 100%; margin: 4px 0 0; -webkit-appearance: none; appearance: none; height: 22px; background: transparent; transition: opacity .25s, filter .25s; }
+#dial-range::-webkit-slider-runnable-track, #card-range::-webkit-slider-runnable-track { height: 6px; border-radius: 3px; background: linear-gradient(90deg, #4f7cff, #a66bff, #ff5470); }
+#dial-range::-moz-range-track, #card-range::-moz-range-track { height: 6px; border-radius: 3px; background: linear-gradient(90deg, #4f7cff, #a66bff, #ff5470); }
+#dial-range::-webkit-slider-thumb, #card-range::-webkit-slider-thumb { -webkit-appearance: none; width: 20px; height: 20px; margin-top: -7px; border-radius: 50%; background: #fff; border: 3px solid #2b1d3c; box-shadow: 0 2px 8px rgba(0,0,0,.4); }
+#dial-range::-moz-range-thumb, #card-range::-moz-range-thumb { width: 14px; height: 14px; border-radius: 50%; background: #fff; border: 3px solid #2b1d3c; box-shadow: 0 2px 8px rgba(0,0,0,.4); }
 #dial-range:disabled { opacity: .35; filter: grayscale(.8); cursor: not-allowed; }
 #dial-range:disabled::-webkit-slider-thumb { background: #c9c2da; box-shadow: none; }
 #dial-range:disabled::-moz-range-thumb { background: #c9c2da; box-shadow: none; }
@@ -617,6 +629,75 @@ svg.instant .dial-needle { transition: none; }
   background: rgba(255, 209, 102, .12); border: 1px dashed rgba(255, 209, 102, .55);
 }
 
+/* ---------- własne talie ---------- */
+.decks-empty {
+  flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: var(--gap); text-align: center; padding: 0 8px;
+}
+.decks-empty .lead { max-width: 26em; }
+.head-btns button { white-space: nowrap; }
+.decks-list {
+  flex: 1 1 auto; min-height: 0; display: grid; gap: 8px; align-content: start;
+  grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr)); grid-auto-rows: minmax(0, clamp(34px, 7vh, 54px));
+}
+.deck-row {
+  display: flex; align-items: center; gap: 10px; text-align: left; min-height: 0; overflow: hidden;
+  padding: .2em .8em; border-radius: 14px; background: var(--glass); border: 1px solid var(--line);
+}
+.deck-row.new { border-color: var(--gold); box-shadow: 0 0 16px color-mix(in srgb, var(--gold) 30%, transparent); }
+.deck-ico { flex: 0 0 auto; font-size: 1.3em; line-height: 1; }
+/* jeden wiersz: ikona, nazwa (skracana „…”), liczba kart; interlinia mieści polskie znaki czcionki Baloo 2 */
+.deck-title { flex: 1 1 auto; min-width: 0; font-weight: 600; line-height: 1.5; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.deck-meta { flex: 0 0 auto; color: var(--muted); font-family: 'Nunito', sans-serif; font-weight: 600; font-size: .8em; }
+.deck-count .muted { font-family: 'Nunito', sans-serif; font-size: .72em; }
+
+.deck-head { flex: 0 0 auto; display: flex; align-items: flex-end; gap: 8px; }
+.deck-head .avatar-btn { border-color: var(--gold); }
+.deck-name { flex: 1 1 auto; min-width: 0; }
+.deck-count { font-size: 1.05em; }
+.pager { align-items: center; font-family: var(--font-head); font-variant-numeric: tabular-nums; }
+.pager button { min-width: 2.4em; font-size: 1em; padding: .15em .6em; }
+.deck-cards {
+  flex: 1 1 auto; min-height: 0; overflow: hidden; display: grid; gap: 6px 10px; align-content: start;
+  grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
+}
+.deck-cards.empty { display: flex; align-items: center; justify-content: center; }
+/* wiersz karty: zawsze trzy kolumny (lewy koniec | pasek | prawy koniec), także w poziomie */
+.deck-cards .card-row { padding: .45em .8em; border-width: 1px; grid-template-columns: minmax(0, 1fr) 34px minmax(0, 1fr); gap: 8px; }
+.deck-cards .card-row .ch-r { text-align: right; }
+.card-row .ch-l, .card-row .ch-r { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.5; }
+.deck-cards .card-row { padding-top: .2em; padding-bottom: .2em; }
+.card-row .ch-bar { position: relative; overflow: visible; }
+.card-row .ch-bar i {
+  position: absolute; top: 50%; width: 12px; height: 12px; border-radius: 50%; transform: translate(-50%, -50%);
+  background: #fff; border: 2.5px solid #2b1d3c;
+}
+.deck-empty { margin: auto 0; color: var(--muted); text-align: center; line-height: 1.45; padding: 0 8px; }
+.deck-actions { flex: 0 0 auto; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px 10px; }
+.deck-actions button { min-width: 0; }
+
+/* formularz karty: pola, tarcza z miejscem hasła */
+.card-form { flex: 0 0 auto; display: grid; gap: calc(var(--gap) * .8); grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.card-form .card-clue { grid-column: 1 / -1; }
+#screen-card .dial-wrap { flex: 1 1 auto; justify-content: flex-end; }
+.card-dial.dim #card-dial { opacity: .45; filter: grayscale(.6); }
+.card-note { flex: 0 0 auto; font-size: .85em; line-height: 1.3; }
+
+/* okno talii */
+.dialog-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.dialog-head h2 { min-width: 0; overflow-wrap: anywhere; }
+.dialog-body { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.dialog .actions { margin-top: 0; }
+.share-box { display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
+.share-qr {
+  width: min(100%, 36vh); aspect-ratio: 1; display: grid; place-items: center; padding: 8px; border-radius: 12px;
+  background: #fff; color: #2b1d3c; font-size: .9em; text-align: center; box-shadow: 0 0 0 1px var(--line);
+}
+.share-qr svg { width: 100%; height: 100%; display: block; }
+.share-qr.none { background: var(--glass); color: var(--muted); aspect-ratio: auto; padding: 1em; }
+.deck-preview { margin: 0; padding-left: 1.1em; line-height: 1.4; }
+.deck-preview li::marker { color: var(--accent); }
+
 /* ---------- okno instalacji ---------- */
 .overlay { position: fixed; inset: 0; background: rgba(8, 5, 15, .7); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; padding: 16px; z-index: 10; }
 .dialog { background: var(--bg-2); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; max-width: 420px; width: 100%; display: flex; flex-direction: column; gap: 12px; line-height: 1.45; box-shadow: var(--shadow); animation: pop .35s ease-out both; }
@@ -693,6 +774,26 @@ svg.instant .dial-needle { transition: none; }
   .settings { grid-template-columns: 1fr 1fr; column-gap: 16px; }
   .stats-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
   .stat.wide { grid-column: span 2; }
+  .deck-actions { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  /* talia poziomo: nazwa i licznik kart w jednym rzędzie */
+  #screen-deck { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto minmax(0, 1fr) auto; column-gap: 16px; }
+  #screen-deck .deck-head { grid-column: 1; grid-row: 1; }
+  #screen-deck .screen-head { grid-column: 2; grid-row: 1; align-self: end; }
+  #screen-deck .deck-cards { grid-column: 1 / -1; grid-row: 2; }
+  #screen-deck .deck-actions { grid-column: 1 / -1; grid-row: 3; }
+  .decks-empty .big-icon svg { width: clamp(48px, 18vh, 90px); }
+  #screen-card {
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 16px; row-gap: calc(var(--gap) * .8);
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
+  }
+  #screen-card .screen-title { grid-column: 1; grid-row: 1; }
+  .card-form { grid-column: 1; grid-row: 2; grid-template-columns: minmax(0, 1fr); }
+  #screen-card .dial-wrap { grid-column: 2; grid-row: 1 / span 3; min-height: 0; }
+  #card-dial { flex: 1 1 0; aspect-ratio: auto; min-height: 0; }
+  .card-note, #card-error { grid-column: 1; grid-row: 3; align-self: start; }
+  #screen-card .actions { grid-column: 1 / -1; grid-row: 4; }
+  .share-box { flex-direction: row; text-align: left; }
+  .share-qr { width: min(45%, 52vh); flex: 0 0 auto; }
 }
 @media (orientation: landscape) and (max-height: 400px) { .chip small { display: none; } }
 
