@@ -131,7 +131,7 @@
   w podsumowaniu i na dużym ekranie. Nazwy drużyn, gracze, awatary, kolory i próg wygranej są zapamiętywane.
 - Menu: cztery tryby w układzie 2×2 i przyciski Statystyki · Ustawienia · Zasady.
 
-## 1.10.0 – 29.10.2026 – własne talie i 6 nowych kategorii
+## 1.10.0 – 29.10.2026 (`e9e11d7`) – własne talie i 6 nowych kategorii
 
 - Własne talie (menu → Moje talie): edytor kart – dwa końce skali i nieobowiązkowe przykładowe hasło, którego miejsce
   ustawia się wskazówką na tarczy. Do 8 talii po 60 kart, zapis tylko w tym telefonie.
