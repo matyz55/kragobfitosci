@@ -108,7 +108,7 @@
 - Osoba, która widzi cel i podaje hasło, nazywa się teraz „wyrocznia” (np. „Wyrocznia: Ania”, „Jestem wyrocznią –
   pokaż cel”, „Wyrocznia milczy!”) – na wszystkich ekranach, na dużym ekranie, w zasadach i w opisie gry.
 
-## 1.8.0 – 29.10.2026 – ustawienia, minutnik, podpowiedzi i wznawianie gry
+## 1.8.0 – 29.10.2026 (`19267e5`) – ustawienia, minutnik, podpowiedzi i wznawianie gry
 
 - Wznawianie gry: po odświeżeniu, zamknięciu aplikacji albo powrocie do menu można wrócić do przerwanej gry
   („Przerwana gra → Wznów” w menu) – z tymi samymi kartami, hasłem, wynikiem i położeniem wskazówki. Przerwanie
