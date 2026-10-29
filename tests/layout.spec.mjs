@@ -111,6 +111,16 @@ for (const [w, h] of VIEWPORTS) {
 
     await page.click('#btn-coop');
     await fits(page, 'ustawienia współpracy');
+    await page.click('#screen-setup-coop .back');
+    await page.click('#btn-stats');
+    await fits(page, 'statystyki');
+    await page.click('#screen-stats .back');
+    await page.click('#btn-daily');
+    await page.evaluate(() => { state.game.index = 9; state.history = [4, 3, 2, 0, 4, 3, 2, 0, 4].map((p) => ({ pts: p, centre: p === 4 })); });
+    await page.click('#btn-confirm');
+    await page.click('#btn-next');
+    await expect(page.locator('#btn-share')).toBeVisible();
+    await fits(page, 'koniec wyzwania dnia');
   });
 }
 

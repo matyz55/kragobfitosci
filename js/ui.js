@@ -22,6 +22,9 @@ const ICONS = {
   bulb: '<path d="M9.5 18h5M10.5 21h3"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.7.6 1.1 1.4 1.1 2.2v.5h5V16c0-.8.4-1.6 1.1-2.2A6 6 0 0 0 12 3z"/>',
   timer: '<circle cx="12" cy="13.5" r="7.5"/><path d="M12 13.5V9.5M9.5 2.5h5M18.5 6.5l1.5-1.5"/>',
   play: '<path d="M8 5.5v13l10.5-6.5z"/>',
+  calendar: '<rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4M8.5 14.8l2.2 2.2 4.6-4.6"/>',
+  chart: '<path d="M3 20.5h18"/><rect x="5" y="11" width="3.5" height="7" rx="1"/><rect x="10.25" y="5.5" width="3.5" height="12.5" rx="1"/><rect x="15.5" y="13.5" width="3.5" height="4.5" rx="1"/>',
+  share: '<path d="M12 14.5V3.5M7.5 8L12 3.5 16.5 8"/><path d="M5 11.5v8.5h14v-8.5"/>',
 };
 
 function icon(name) {

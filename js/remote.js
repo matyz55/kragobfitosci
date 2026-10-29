@@ -26,7 +26,10 @@ function tvSnapshot() {
   s.band = BAND;
   if (state.timer) s.timer = { left: Math.max(0, (state.timer.end - Date.now()) / 1000), total: state.timer.total };
   if (g.mode !== 'solo') s.psychic = state.psychic;
-  if (g.mode === 'teams') { s.team = g.teams[g.active].name; s.other = g.teams[1 - g.active].name; s.sudden = !!g.suddenDeath; }
+  if (g.mode === 'teams') {
+    s.team = g.teams[g.active].name; s.other = g.teams[1 - g.active].name; s.sudden = !!g.suddenDeath;
+    s.colors = [g.teams[0].color, g.teams[1].color];
+  }
   if (state.phase !== 'pass' && state.card) { s.left = state.card.left; s.right = state.card.right; }
   if (['guess', 'lr', 'reveal'].includes(state.phase)) s.clue = state.clue;
   if (state.phase === 'reveal' || state.phase === 'end') {

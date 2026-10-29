@@ -6,6 +6,13 @@ const SETTINGS_KEY = 'krag.settings';
 const BEST_KEY = 'krag.soloBest';
 const SAVE_KEY = 'krag.save';
 const SAVE_VERSION = 1;
+const TEAMS_KEY = 'krag.teams';
+
+// Kolory i awatary drużyn do wyboru (stuknięcie zmienia na następny).
+const TEAM_COLORS = [['#3fe0d0', 'turkusowy'], ['#ff6fae', 'różowy'], ['#ffd166', 'żółty'], ['#6ee36e', 'zielony'],
+  ['#5b8cff', 'niebieski'], ['#b48cff', 'fioletowy'], ['#ff9a52', 'pomarańczowy'], ['#ff5c5c', 'czerwony']];
+const TEAM_AVATARS = [['🦊', 'lis'], ['🐼', 'panda'], ['🐸', 'żaba'], ['🐙', 'ośmiornica'], ['🦁', 'lew'], ['🐧', 'pingwin'],
+  ['🦄', 'jednorożec'], ['🐝', 'pszczoła'], ['🐯', 'tygrys'], ['🐨', 'koala'], ['🐳', 'wieloryb'], ['🦉', 'sowa']];
 
 function loadJSON(key, def) {
   try { const v = JSON.parse(localStorage.getItem(key)); return v == null ? def : v; } catch { return def; }
@@ -34,6 +41,17 @@ function show(id) {
   document.querySelectorAll('.screen').forEach((s) => s.classList.toggle('hidden', s.id !== id));
   $('#btn-home').classList.toggle('hidden', id === 'screen-menu');
   if (id !== 'screen-play') stopTimer();
+  if (id === 'screen-menu') updateMenuInfo();
+}
+
+// Informacje w menu: przerwana gra i dzisiejsze wyzwanie.
+function updateMenuInfo() {
+  updateResumeBox();
+  const rec = Stats.daily.get(todayKey());
+  const streak = Stats.daily.streak();
+  $('#daily-desc').textContent = rec
+    ? T('Dziś: {0}/{1} pkt · seria: {2}', rec.score, DAILY_ROUNDS * 4, streak)
+    : (streak ? T('Te same hasła dla wszystkich · seria: {0}', streak) : T('Te same hasła dla wszystkich'));
 }
 
 function parseNames(s) {
@@ -89,6 +107,52 @@ function onSettingChange(e) {
   else if (t.name === 'hints') settings.hints = v === '1';
   saveSettings();
   applyLook();
+}
+
+// ---------- drużyny: nazwy, gracze, awatary i kolory (zapamiętywane) ----------
+
+const teamPrefs = Object.assign({ avatars: [0, 1], colors: [0, 1] }, loadJSON(TEAMS_KEY, {}));
+
+function setTeamColors(a, b) {
+  const st = document.documentElement.style;
+  if (a) st.setProperty('--team-a', a);
+  if (b) st.setProperty('--team-b', b);
+}
+
+function renderTeamPickers() {
+  for (const i of [0, 1]) {
+    const k = i ? 'b' : 'a';
+    const [emoji, aName] = TEAM_AVATARS[teamPrefs.avatars[i] % TEAM_AVATARS.length];
+    const [, cName] = TEAM_COLORS[teamPrefs.colors[i] % TEAM_COLORS.length];
+    const av = $(`#team-${k}-avatar`), col = $(`#team-${k}-color`);
+    av.textContent = emoji;
+    av.setAttribute('aria-label', T('Awatar: {0}. Stuknij, aby zmienić', T(aName)));
+    av.title = av.getAttribute('aria-label');
+    col.setAttribute('aria-label', T('Kolor: {0}. Stuknij, aby zmienić', T(cName)));
+    col.title = col.getAttribute('aria-label');
+  }
+  setTeamColors(TEAM_COLORS[teamPrefs.colors[0] % TEAM_COLORS.length][0], TEAM_COLORS[teamPrefs.colors[1] % TEAM_COLORS.length][0]);
+}
+
+function openTeamsSetup() {
+  if (teamPrefs.names) { $('#team-a-name').value = teamPrefs.names[0]; $('#team-b-name').value = teamPrefs.names[1]; }
+  if (teamPrefs.players) { $('#team-a-players').value = teamPrefs.players[0]; $('#team-b-players').value = teamPrefs.players[1]; }
+  if (teamPrefs.goal) $('#team-goal').value = String(teamPrefs.goal);
+  renderTeamPickers();
+  show('screen-setup-teams');
+}
+
+// następny awatar albo kolor drużyny (kolor inny niż drużyny przeciwnej)
+function cycleTeam(kind, i) {
+  if (kind === 'avatar') {
+    teamPrefs.avatars[i] = (teamPrefs.avatars[i] + 1) % TEAM_AVATARS.length;
+    if (teamPrefs.avatars[i] === teamPrefs.avatars[1 - i]) teamPrefs.avatars[i] = (teamPrefs.avatars[i] + 1) % TEAM_AVATARS.length;
+  } else {
+    teamPrefs.colors[i] = (teamPrefs.colors[i] + 1) % TEAM_COLORS.length;
+    if (teamPrefs.colors[i] === teamPrefs.colors[1 - i]) teamPrefs.colors[i] = (teamPrefs.colors[i] + 1) % TEAM_COLORS.length;
+  }
+  saveJSON(TEAMS_KEY, teamPrefs);
+  renderTeamPickers();
 }
 
 // ---------- wybór kategorii (po wyborze trybu) ----------
@@ -214,19 +278,24 @@ function roundDots(total) {
 }
 
 // Dane tablicy wyników – te same dla telefonu i dużego ekranu.
+const teamLabel = (t) => (t.avatar ? `${t.avatar} ${t.name}` : t.name);
+
 function scoreList() {
   const g = state.game;
   if (g.mode === 'teams') {
-    return g.teams.map((t, i) => ({ name: t.name, score: t.score, active: i === g.active, team: i ? 'b' : 'a', progress: t.score / g.goal, bump: true }))
+    return g.teams.map((t, i) => ({ name: teamLabel(t), score: t.score, active: i === g.active, team: i ? 'b' : 'a', progress: t.score / g.goal, bump: true }))
       .concat({ name: T('gra do'), score: g.goal, small: true });
   }
   if (g.mode === 'coop') {
     return [{ name: T('Wspólny wynik'), score: g.score, active: true, bump: true },
       { name: T('Karty'), score: g.cardsLeft, dots: roundDots(g.cardsTotal) }];
   }
+  const third = g.daily
+    ? { name: T('Wyzwanie'), score: g.daily.slice(8, 10) + '.' + g.daily.slice(5, 7) }
+    : { name: T('Rekord'), score: loadJSON(BEST_KEY, 0) };
   return [{ name: T('Wynik'), score: g.score, active: true, bump: true },
     { name: T('Runda'), score: `${Math.min(g.index + 1, g.rounds.length)}/${g.rounds.length}`, dots: roundDots(g.rounds.length) },
-    { name: T('Rekord'), score: loadJSON(BEST_KEY, 0) }];
+    third];
 }
 
 function renderScores() {
@@ -329,6 +398,16 @@ function startSolo() {
   soloRound();
 }
 
+// Wyzwanie dnia: 10 haseł wspólnych dla wszystkich graczy danego dnia, zawsze zwykła szerokość pól.
+function startDaily() {
+  state.setup = { mode: 'daily' };
+  newGameView();
+  setDifficulty('normal');
+  state.game = newDailyGame(todayKey(), LANG);
+  if (state.game.done) return;
+  soloRound();
+}
+
 function soloRound() {
   const g = state.game, r = g.rounds[g.index];
   state.phase = 'guess';
@@ -344,6 +423,7 @@ function soloReveal() {
   state.phase = 'reveal';
   state.last = res;
   state.history.push({ pts: res.pts, centre: res.pts === 4 });
+  Stats.round({ pts: res.pts, centre: res.pts === 4, cat: state.card.cat });
   state.result = { pts: res.pts, title: T('{0} pkt', res.pts) };
   SFX.points(res.pts); Haptics.points(res.pts);
   if (res.pts === 4) confetti(40);
@@ -356,9 +436,14 @@ function startTeams() {
   const names = [$('#team-a-name').value.trim() || T('Drużyna A'), $('#team-b-name').value.trim() || T('Drużyna B')];
   const players = [parseNames($('#team-a-players').value), parseNames($('#team-b-players').value)];
   const goal = Number($('#team-goal').value);
-  state.setup = { mode: 'teams', names, players, goal };
+  const avatars = teamPrefs.avatars.map((a) => TEAM_AVATARS[a % TEAM_AVATARS.length][0]);
+  const colors = teamPrefs.colors.map((c) => TEAM_COLORS[c % TEAM_COLORS.length][0]);
+  Object.assign(teamPrefs, { names, players: [$('#team-a-players').value, $('#team-b-players').value], goal });
+  saveJSON(TEAMS_KEY, teamPrefs);
+  state.setup = { mode: 'teams', names, players, goal, avatars, colors };
   newGameView();
-  state.game = newTeamGame(names.map((n, i) => ({ name: n, players: players[i] })), goal);
+  setTeamColors(colors[0], colors[1]);
+  state.game = newTeamGame(names.map((n, i) => ({ name: n, players: players[i], avatar: avatars[i], color: colors[i] })), goal);
   state.deck = makeDeck(settings.cats);
   passDevice();
 }
@@ -397,7 +482,8 @@ function renderPass() {
   const chip = $('#pass-chip');
   let text = T('Przekaż urządzenie wyroczni.');
   if (g.mode === 'teams') {
-    chip.textContent = g.suddenDeath ? T('Dogrywka · {0}', g.teams[g.active].name) : T('Tura: {0}', g.teams[g.active].name);
+    const tl = teamLabel(g.teams[g.active]);
+    chip.textContent = g.suddenDeath ? T('Dogrywka · {0}', tl) : T('Tura: {0}', tl);
     chip.className = `turn-chip team-${g.active ? 'b' : 'a'}`;
     if (state.extra) text = T('Sam środek, a drużyna wciąż przegrywa – dodatkowa tura!') + ' ' + text;
   } else {
@@ -484,7 +570,7 @@ function renderGuess(dialValue, timerSeconds) {
   renderScores();
   showClue();
   if (g.mode === 'solo') {
-    $('#status').textContent = T('Gdzie na tej skali leży hasło? Ustaw wskazówkę.');
+    $('#status').textContent = g.daily ? T('Wyzwanie dnia: gdzie na tej skali leży hasło?') : T('Gdzie na tej skali leży hasło? Ustaw wskazówkę.');
     setActions(button(T('Sprawdź'), 'primary big', soloReveal, 'btn-confirm'));
     return;
   }
@@ -535,6 +621,7 @@ function reveal(lr) {
     const res = finishTeamTurn(g, dial.value, state.target, lr);
     state.last = res;
     state.history.push({ pts: res.pts, team: me, lrOk: res.lrOk, centre: res.pts === 4 });
+    Stats.round({ pts: res.pts, centre: res.pts === 4, cat: state.card.cat, oracle: state.psychic });
     state.result = {
       pts: res.pts,
       title: T('„{0}”: {1} pkt', team, res.pts),
@@ -547,6 +634,7 @@ function reveal(lr) {
     const res = finishCoopTurn(g, dial.value, state.target);
     state.last = res;
     state.history.push({ pts: res.pts, centre: res.bonus });
+    Stats.round({ pts: res.pts, centre: res.bonus, cat: state.card.cat, oracle: state.psychic });
     state.result = { pts: res.pts, bonus: res.bonus, title: T('{0} pkt', res.pts), eyebrow: res.bonus ? T('Sam środek!') : undefined, sub: res.bonus ? T('+1 karta do talii') : undefined };
     SFX.points(res.pts); Haptics.points(res.pts);
     if (res.bonus) confetti(40);
@@ -606,9 +694,11 @@ function loadSave() {
 
 function saveSummary(s) {
   const g = s.game;
-  if (g.mode === 'teams') return `${T('Dwie drużyny')} · ${g.teams[0].name} ${g.teams[0].score} : ${g.teams[1].score} ${g.teams[1].name}`;
+  if (g.mode === 'teams') return `${T('Dwie drużyny')} · ${teamLabel(g.teams[0])} ${g.teams[0].score} : ${g.teams[1].score} ${teamLabel(g.teams[1])}`;
   if (g.mode === 'coop') return T('Współpraca · {0} pkt, karty: {1}', g.score, g.cardsLeft);
-  return T('Jeden gracz · runda {0}/{1}, {2} pkt', Math.min(g.index + 1, g.rounds.length), g.rounds.length, g.score);
+  const round = Math.min(g.index + 1, g.rounds.length);
+  return g.daily ? T('Wyzwanie dnia · runda {0}/{1}, {2} pkt', round, g.rounds.length, g.score)
+    : T('Jeden gracz · runda {0}/{1}, {2} pkt', round, g.rounds.length, g.score);
 }
 
 function updateResumeBox() {
@@ -625,6 +715,7 @@ function resumeGame() {
     clue: s.clue, lr: s.lr, last: s.last, result: s.result, psychic: s.psychic, lrTeam: s.lrTeam, extra: !!s.extra,
   });
   setBand(s.band);
+  if (s.game.mode === 'teams') setTeamColors(s.game.teams[0].color, s.game.teams[1].color);
   state.deck = s.deck ? makeDeck(s.deck.cats, s.deck.pile) : null;
   $('#scores')._prev = null;
   if (s.phase === 'pass' || s.phase === 'psychic') {
@@ -645,6 +736,57 @@ function resumeGame() {
   }
 }
 
+// ---------- statystyki ----------
+
+function statTile(label, value, sub, cls) {
+  const d = document.createElement('div');
+  d.className = `stat ${cls || ''}`;
+  const l = document.createElement('span'), v = document.createElement('b');
+  l.className = 'stat-label'; l.textContent = label;
+  v.className = 'stat-value'; v.textContent = value;
+  d.append(l, v);
+  if (sub) { const s2 = document.createElement('span'); s2.className = 'stat-sub'; s2.textContent = sub; d.append(s2); }
+  return d;
+}
+
+function renderStats() {
+  const s = Stats.summary();
+  const grid = $('#stats-grid');
+  grid.textContent = '';
+  const pct = (x) => `${x}%`;
+  grid.append(
+    statTile(T('Gry'), String(s.games)),
+    statTile(T('Rundy'), String(s.rounds)),
+    statTile(T('Średnio'), s.rounds ? T('{0} pkt', plNum(s.avg)) : '–'),
+    statTile(T('W środek'), s.rounds ? pct(s.centrePct) : '–'),
+    statTile(T('Pudła'), s.rounds ? pct(s.missPct) : '–'),
+    statTile(T('Seria'), String(Stats.daily.streak()), T('dni wyzwań')),
+  );
+  const o = s.bestOracle;
+  grid.append(statTile(T('Najlepsza wyrocznia'), o ? o.name : '–',
+    o ? T('{0} pkt na rundę · rund: {1} · w środek: {2}', plNum(o.avg), o.rounds, o.centres) : T('Liczy się od 3 rund jako wyrocznia'), 'wide'));
+  const cats = s.favCats.map((c) => { const cat = allCategories().find((x) => x.id === c.id); return cat ? `${cat.icon} ${cat.name} (${c.n})` : null; }).filter(Boolean);
+  grid.append(statTile(T('Ulubione kategorie'), cats[0] || '–', cats.slice(1).join(' · ') || null, 'wide'));
+  grid.append(statTile(T('Rekordy'), T('Solo {0} · razem {1} · wyzwanie {2}', loadJSON(BEST_KEY, 0), s.bestCoop, Stats.daily.best()),
+    T('Gry: solo {0}, drużyny {1}, współpraca {2}, wyzwania {3}', s.byMode.solo, s.byMode.teams, s.byMode.coop, s.byMode.daily), 'wide'));
+  const clear = $('#btn-stats-clear');
+  clear.textContent = T('Wyczyść statystyki');
+  clear.dataset.confirm = '';
+}
+
+function clearStats() {
+  const btn = $('#btn-stats-clear');
+  if (!btn.dataset.confirm) {
+    btn.dataset.confirm = '1';
+    btn.textContent = T('Na pewno? Stuknij jeszcze raz');
+    setTimeout(() => { if (btn.dataset.confirm) { btn.dataset.confirm = ''; btn.textContent = T('Wyczyść statystyki'); } }, 4000);
+    return;
+  }
+  Stats.clear();
+  try { localStorage.removeItem(BEST_KEY); } catch {}
+  renderStats();
+}
+
 // ---------- koniec gry ----------
 
 // Liczba z jednym miejscem po przecinku (polski zapis z przecinkiem).
@@ -658,7 +800,7 @@ function endSummary() {
     const max = Math.max(g.goal, ...g.teams.map((t) => t.score));
     return {
       kind: 'teams',
-      rows: g.teams.map((t, i) => ({ name: t.name, score: t.score, max, win: i === g.winner, team: i ? 'b' : 'a' })),
+      rows: g.teams.map((t, i) => ({ name: teamLabel(t), score: t.score, max, win: i === g.winner, team: i ? 'b' : 'a' })),
       stats: T('Tury: {0} · trafienia w sam środek: {1} : {2}', h.length, centres(0), centres(1)),
     };
   }
@@ -669,10 +811,28 @@ function endSummary() {
       stats: T('Rozegrane karty: {0} · trafienia w sam środek: {1}', g.turn, centres()),
     };
   }
+  const avg = T('Średnio {0} pkt na rundę · trafienia w sam środek: {1}', plNum(g.score / Math.max(1, h.length)), centres());
   return {
     kind: 'rounds', dots: h.map((x) => x.pts), meter: null,
-    stats: T('Średnio {0} pkt na rundę · trafienia w sam środek: {1}', plNum(g.score / Math.max(1, h.length)), centres()),
+    stats: g.daily ? `${avg} · ${T('seria: {0}', Stats.daily.streak())}` : avg,
   };
+}
+
+// Tekst do udostępnienia wyniku wyzwania dnia (pierwsze podejście dnia).
+function dailyShareText() {
+  const g = state.game;
+  const rec = Stats.daily.get(g.daily) || { score: g.score, pts: state.history.map((h) => h.pts) };
+  const [y, m, d] = g.daily.split('-');
+  return `${T('Krąg obfitości – wyzwanie dnia {0}: {1}/{2} pkt', `${d}.${m}.${y}`, rec.score, DAILY_ROUNDS * 4)}\n${dailySquares(rec.pts)}\n${location.origin}${location.pathname}`;
+}
+
+async function shareDaily() {
+  const text = dailyShareText();
+  const btn = $('#btn-share');
+  try {
+    if (navigator.share) await navigator.share({ text });
+    else { await navigator.clipboard.writeText(text); btn.lastChild.textContent = T('Skopiowano'); }
+  } catch {}
 }
 
 function endGame() {
@@ -680,6 +840,9 @@ function endGame() {
   state.phase = 'end';
   clearSave();
   show('screen-end');
+  Stats.game(g.daily ? 'daily' : g.mode, g.score != null ? g.score : 0);
+  $('#btn-share').classList.toggle('hidden', !g.daily);
+  if (g.daily) { $('#btn-share').lastChild.textContent = T('Udostępnij wynik'); }
   let win;
   if (g.mode === 'teams') {
     const w = g.teams[g.winner];
@@ -692,6 +855,13 @@ function endGame() {
     state.endIcon = win ? 'trophy' : 'orb';
     $('#end-title').textContent = T('{0} pkt', g.score);
     $('#end-text').textContent = T(coopRank(g.score));
+  } else if (g.daily) {
+    const first = Stats.daily.set(g.daily, { score: g.score, pts: state.history.map((h) => h.pts) });
+    win = g.score >= 30;
+    state.endIcon = win ? 'trophy' : 'target';
+    $('#end-title').textContent = T('{0} / {1} pkt', g.score, g.rounds.length * 4);
+    $('#end-text').textContent = first ? T('Twój wynik dnia. Jutro nowy zestaw haseł.')
+      : T('Trening – liczy się pierwsze podejście dnia ({0} pkt).', Stats.daily.get(g.daily).score);
   } else {
     const best = loadJSON(BEST_KEY, 0);
     const record = g.score > best;
@@ -713,9 +883,10 @@ function again() {
   const s = state.setup;
   if (!s) return show('screen-menu');
   if (s.mode === 'solo') return startSolo();
+  if (s.mode === 'daily') return startDaily();
   newGameView();
   state.deck = makeDeck(settings.cats);
-  if (s.mode === 'teams') state.game = newTeamGame(s.names.map((n, i) => ({ name: n, players: s.players[i] })), s.goal);
+  if (s.mode === 'teams') state.game = newTeamGame(s.names.map((n, i) => ({ name: n, players: s.players[i], avatar: s.avatars[i], color: s.colors[i] })), s.goal);
   else state.game = newCoopGame(s.players, s.cards);
   passDevice();
 }
@@ -774,7 +945,12 @@ function init() {
   hapticBtn.classList.toggle('hidden', !(Haptics.supported && window.matchMedia('(pointer: coarse)').matches));
   hapticBtn.addEventListener('click', () => { Haptics.toggle(); hapticLabel(); });
   hapticLabel();
-  $('#btn-teams').addEventListener('click', () => show('screen-setup-teams'));
+  $('#btn-teams').addEventListener('click', openTeamsSetup);
+  $('#btn-daily').addEventListener('click', startDaily);
+  $('#btn-stats').addEventListener('click', () => { renderStats(); show('screen-stats'); });
+  $('#btn-stats-clear').addEventListener('click', clearStats);
+  $('#btn-share').addEventListener('click', shareDaily);
+  document.querySelectorAll('.avatar-btn, .color-btn').forEach((b) => b.addEventListener('click', () => cycleTeam(b.classList.contains('avatar-btn') ? 'avatar' : 'color', Number(b.dataset.team))));
   $('#btn-coop').addEventListener('click', () => show('screen-setup-coop'));
   $('#btn-rules').addEventListener('click', () => { showRulesTab('basics'); show('screen-rules'); });
   $('#btn-settings').addEventListener('click', openSettings);
@@ -804,7 +980,7 @@ function init() {
   // przed zamknięciem karty lub schowaniem aplikacji zapisujemy grę (np. bieżące położenie wskazówki)
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') saveGame(); });
   window.addEventListener('pagehide', saveGame);
-  updateResumeBox();
+  updateMenuInfo();
 
   initRemote();
   if ('serviceWorker' in navigator && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});

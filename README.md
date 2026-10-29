@@ -32,6 +32,18 @@ Moda i wygląd, Historia, Miłość i przyjaźń, Dom i codzienność, Książki
 Motoryzacja, Pory roku i święta, Zdrowie i ciało. Kategorie wybiera się po wyborze trybu (i ustawień graczy) –
 tuż przed startem gry; wybór jest zapamiętywany. Karty i przykłady: `js/data.js`.
 
+## Wyzwanie dnia, statystyki, drużyny
+
+- **Wyzwanie dnia** (menu): 10 haseł losowanych na podstawie samej daty – ten sam zestaw u wszystkich graczy danego
+  dnia, zawsze zwykła szerokość pól. Liczy się pierwsze podejście dnia (kolejne to trening), wynik można udostępnić
+  (np. „🟥🟧🟨⬛…” – kolor kwadratu to punkty w rundzie). Na kafelku w menu: dzisiejszy wynik i seria kolejnych dni.
+- **Statystyki** (menu, tylko w tej przeglądarce): liczba gier i rund, średnia punktów, odsetek trafień w sam środek
+  i pudeł, seria wyzwań, najlepsza wyrocznia (średnia punktów, liczona od 3 rund), ulubione kategorie i rekordy.
+  Można je wyczyścić (z potwierdzeniem).
+- **Drużyny**: awatar (zwierzątko) i kolor każdej drużyny – stuknięcie zmienia na następny; nazwy, gracze, awatary,
+  kolory i próg wygranej są zapamiętywane na następną grę. Kolory i awatary widać w tablicy wyników, na ekranie
+  przekazania, w podsumowaniu i na dużym ekranie.
+
 ## Ustawienia i wznawianie
 
 - **Ustawienia** (menu → Ustawienia, zapamiętywane w przeglądarce):
@@ -121,6 +133,7 @@ i dźwięki. Telefon (albo komputer), na którym toczy się gra, jest pilotem: p
 - `sw.js`, `manifest.webmanifest`, `icons/` – instalacja jako aplikacja i działanie bez sieci
 - `fonts/` – czcionki Baloo 2 i Nunito (SIL OFL 1.1); test `tests/polish.spec.mjs` sprawdza, że mają wszystkie polskie znaki
 - `js/haptics.js` – wibracje
+- `js/stats.js` – statystyki i wyniki wyzwania dnia (localStorage)
 
 ## Uruchomienie lokalne i testy
 

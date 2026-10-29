@@ -64,6 +64,10 @@ function render(s) {
   }
   show('#tv-lobby', false);
   show('#tv-game', true);
+  // kolory drużyn wybrane na telefonie (tylko poprawne zapisy koloru, np. #3fe0d0)
+  if (Array.isArray(s.colors)) {
+    s.colors.forEach((c, i) => { if (/^#[0-9a-f]{6}$/i.test(c || '')) document.documentElement.style.setProperty(i ? '--team-b' : '--team-a', c); });
+  }
   renderScores(s.scores);
 
   if (s.phase !== 'guess') showTimer(null);

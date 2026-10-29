@@ -106,7 +106,7 @@ test('wznawianie: zgadywanie po odświeżeniu – to samo hasło, wynik i poło�
   const before = await page.evaluate(() => ({ card: state.card, target: state.target, scores: state.game.teams.map((t) => t.score) }));
   await page.reload();
   await expect(page.locator('#resume-box')).toBeVisible();
-  await expect(page.locator('#resume-info')).toContainText('Drużyna A 0 : 1 Drużyna B');
+  await expect(page.locator('#resume-info')).toContainText(/Drużyna A 0 : 1 .*Drużyna B/);
   await page.click('#btn-resume');
   await expect(page.locator('#clue-box')).toContainText('herbata');
   expect(await page.evaluate(() => ({ card: state.card, target: state.target, scores: state.game.teams.map((t) => t.score) }))).toEqual(before);

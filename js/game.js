@@ -3,7 +3,7 @@
 // Tryb drużynowy: punkty 4/3/2, zgadywanie „lewo/prawo”, gra do 10 pkt, dogrywka, nadrabianie straty;
 // tryb współpracy: 7 kart, środek celu dokłada kartę.
 
-const GAME_VERSION = '1.8.0';
+const GAME_VERSION = '1.9.0';
 
 // Szerokość jednego pola celu na skali 0–100. Cel ma pięć pól: 2 | 3 | 4 | 3 | 2.
 // Poziom trudności zmienia szerokość pól: łatwy – szersze (np. dla dzieci), trudny – węższe.
@@ -108,11 +108,11 @@ function coopRank(points) {
 }
 
 // ---- Tryb drużynowy ----
-// teams: [{ name, players: [] }]. Drużyna zaczynająca ma 0 pkt, druga 1 pkt (wyrównanie za kolejność).
+// teams: [{ name, players: [], avatar, color }]. Drużyna zaczynająca ma 0 pkt, druga 1 pkt (wyrównanie za kolejność).
 function newTeamGame(teams, goal = 10) {
   return {
     mode: 'teams', goal,
-    teams: teams.map((t, i) => ({ name: t.name, players: t.players, score: i === 0 ? 0 : 1, psychic: 0 })),
+    teams: teams.map((t, i) => ({ name: t.name, players: t.players, avatar: t.avatar || '', color: t.color || '', score: i === 0 ? 0 : 1, psychic: 0 })),
     active: 0, turn: 0, suddenDeath: null, winner: null, extraTurn: false,
   };
 }
@@ -187,6 +187,34 @@ function newSoloGame(categoryIds, count = 10) {
   const rounds = soloRounds(categoryIds, count);
   return { mode: 'solo', rounds, index: 0, score: 0, done: rounds.length === 0 };
 }
+
+// ---- Wyzwanie dnia ----
+// 10 haseł wylosowanych tylko na podstawie daty (i języka): ten sam zestaw u wszystkich graczy danego dnia,
+// zawsze ze zwykłą szerokością pól. Wbudowane kategorie, bez własnych talii.
+const DAILY_ROUNDS = 10;
+const todayKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+function seededRandom(text) {
+  let h = 1779033703 ^ text.length;
+  for (let i = 0; i < text.length; i++) { h = Math.imul(h ^ text.charCodeAt(i), 3432918353); h = (h << 13) | (h >>> 19); }
+  let a = h >>> 0;
+  return () => {
+    a = (a + 0x6D2B79F5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function newDailyGame(day, lang) {
+  const ids = CATEGORIES.map((c) => c.id);
+  const rounds = soloRounds(ids, DAILY_ROUNDS, seededRandom(`krag-${lang || 'pl'}-${day}`));
+  return { mode: 'solo', daily: day, rounds, index: 0, score: 0, done: rounds.length === 0 };
+}
+
+// Kwadraty wyniku do udostępnienia: 4 pkt – czerwony (środek), 3 – pomarańczowy, 2 – żółty, pudło – czarny.
+const dailySquares = (pts) => pts.map((p) => ({ 4: '🟥', 3: '🟧', 2: '🟨' }[p] || '⬛')).join('');
 
 function finishSoloTurn(g, guess) {
   const r = g.rounds[g.index];

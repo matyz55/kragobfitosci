@@ -120,3 +120,13 @@
   na koniec; widać go też na dużym ekranie.
 - Podpowiedź dla wyroczni: przykładowe hasło najbliższe celowi na wybranej karcie (i w którą stronę leży cel).
 - Powrót do menu w trakcie gry nie pyta już o przerwanie – grę można wznowić.
+
+## 1.9.0 – 29.10.2026 – wyzwanie dnia, statystyki, awatary i kolory drużyn
+
+- Wyzwanie dnia: 10 haseł, te same dla wszystkich graczy danego dnia; liczy się pierwsze podejście, wynik można
+  udostępnić („🟥🟧🟨⬛…”). W menu widać dzisiejszy wynik i serię kolejnych dni.
+- Statystyki (menu → Statystyki, tylko w tej przeglądarce): gry, rundy, średnia, trafienia w sam środek, pudła, seria
+  wyzwań, najlepsza wyrocznia, ulubione kategorie i rekordy; można je wyczyścić.
+- Drużyny: awatar i kolor do wyboru dla każdej drużyny, widoczne w tablicy wyników, na ekranie przekazania,
+  w podsumowaniu i na dużym ekranie. Nazwy drużyn, gracze, awatary, kolory i próg wygranej są zapamiętywane.
+- Menu: cztery tryby w układzie 2×2 i przyciski Statystyki · Ustawienia · Zasady.

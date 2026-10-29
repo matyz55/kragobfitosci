@@ -41,16 +41,20 @@
     </section>
     <section class="modes">
       <button class="mode" id="btn-solo" data-mode="solo">
-        <span class="mode-icon" data-icon="solo"></span><span class="mode-txt"><b>Jeden gracz</b><span class="mode-desc">10 rund z gotowymi hasłami, do 40 pkt</span></span>
+        <span class="mode-icon" data-icon="solo"></span><span class="mode-txt"><b>Jeden gracz</b><span class="mode-desc">10 rund z gotowymi hasłami</span></span>
+      </button>
+      <button class="mode" id="btn-daily" data-mode="daily">
+        <span class="mode-icon" data-icon="calendar"></span><span class="mode-txt"><b>Wyzwanie dnia</b><span class="mode-desc" id="daily-desc">Te same hasła dla wszystkich</span></span>
       </button>
       <button class="mode" id="btn-teams" data-mode="teams">
-        <span class="mode-icon" data-icon="teams"></span><span class="mode-txt"><b>Dwie drużyny</b><span class="mode-desc">Wyrocznia, hasło, 4/3/2 pkt i „lewo czy prawo?”</span></span>
+        <span class="mode-icon" data-icon="teams"></span><span class="mode-txt"><b>Dwie drużyny</b><span class="mode-desc">Wyrocznia, hasło i „lewo czy prawo?”</span></span>
       </button>
       <button class="mode" id="btn-coop" data-mode="coop">
-        <span class="mode-icon" data-icon="coop"></span><span class="mode-txt"><b>Współpraca</b><span class="mode-desc">2+ graczy razem przeciw talii kart</span></span>
+        <span class="mode-icon" data-icon="coop"></span><span class="mode-txt"><b>Współpraca</b><span class="mode-desc">Wszyscy razem przeciw talii</span></span>
       </button>
     </section>
     <nav class="menu-row">
+      <button id="btn-stats" class="ghost" data-icon="chart">Statystyki</button>
       <button id="btn-settings" class="ghost" data-icon="sliders">Ustawienia</button>
       <button id="btn-rules" class="ghost" data-icon="book">Zasady</button>
     </nav>
@@ -108,6 +112,13 @@
     </div>
   </main>
 
+  <!-- STATYSTYKI -->
+  <main id="screen-stats" class="screen hidden">
+    <h2 class="screen-title">Statystyki <span class="muted" id="stats-note">tylko w tej przeglądarce</span></h2>
+    <div class="stats-grid" id="stats-grid"></div>
+    <div class="actions"><button class="ghost" id="btn-stats-clear">Wyczyść statystyki</button><button class="primary back">Wróć</button></div>
+  </main>
+
   <!-- KATEGORIE -->
   <main id="screen-cats" class="screen hidden">
     <div class="screen-head">
@@ -125,11 +136,19 @@
     <h2 class="screen-title">Dwie drużyny</h2>
     <div class="teams-setup">
       <div class="team-box team-a">
-        <label>Nazwa drużyny <input type="text" id="team-a-name" value="Drużyna A" maxlength="24"></label>
+        <div class="team-head">
+          <button type="button" class="avatar-btn" id="team-a-avatar" data-team="0"></button>
+          <button type="button" class="color-btn" id="team-a-color" data-team="0"><i></i></button>
+          <label class="team-name">Nazwa drużyny <input type="text" id="team-a-name" value="Drużyna A" maxlength="24"></label>
+        </div>
         <label>Gracze (po przecinku) <input type="text" id="team-a-players" placeholder="np. Ania, Bartek" maxlength="200"></label>
       </div>
       <div class="team-box team-b">
-        <label>Nazwa drużyny <input type="text" id="team-b-name" value="Drużyna B" maxlength="24"></label>
+        <div class="team-head">
+          <button type="button" class="avatar-btn" id="team-b-avatar" data-team="1"></button>
+          <button type="button" class="color-btn" id="team-b-color" data-team="1"><i></i></button>
+          <label class="team-name">Nazwa drużyny <input type="text" id="team-b-name" value="Drużyna B" maxlength="24"></label>
+        </div>
         <label>Gracze (po przecinku) <input type="text" id="team-b-players" placeholder="np. Celina, Darek" maxlength="200"></label>
       </div>
     </div>
@@ -208,6 +227,7 @@
       <h2 id="end-title"></h2>
       <p id="end-text" class="lead"></p>
       <div id="end-summary" class="end-summary"></div>
+      <button class="ghost hidden" id="btn-share" data-icon="share">Udostępnij wynik</button>
     </section>
     <div class="actions"><button class="ghost" id="btn-menu">Menu</button><button class="primary" id="btn-again">Jeszcze raz</button></div>
   </main>
@@ -289,6 +309,7 @@
   <script src="js/ui.js"></script>
   <script src="js/sound.js"></script>
   <script src="js/haptics.js"></script>
+  <script src="js/stats.js"></script>
   <script src="js/net.js"></script>
   <script src="js/remote.js"></script>
   <script src="js/app.js"></script>
