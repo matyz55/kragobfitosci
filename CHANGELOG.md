@@ -121,7 +121,7 @@
 - Podpowiedź dla wyroczni: przykładowe hasło najbliższe celowi na wybranej karcie (i w którą stronę leży cel).
 - Powrót do menu w trakcie gry nie pyta już o przerwanie – grę można wznowić.
 
-## 1.9.0 – 29.10.2026 – wyzwanie dnia, statystyki, awatary i kolory drużyn
+## 1.9.0 – 29.10.2026 (`996cbcc`) – wyzwanie dnia, statystyki, awatary i kolory drużyn
 
 - Wyzwanie dnia: 10 haseł, te same dla wszystkich graczy danego dnia; liczy się pierwsze podejście, wynik można
   udostępnić („🟥🟧🟨⬛…”). W menu widać dzisiejszy wynik i serię kolejnych dni.
