@@ -34,6 +34,11 @@
       <input type="range" id="hero-range" class="hidden" min="0" max="100" step="0.5" aria-hidden="true" tabindex="-1">
       <p class="lead">Wyrocznia zna ukryty cel na skali i podaje hasło. Reszta zgaduje, gdzie ten cel leży.</p>
     </section>
+    <section id="resume-box" class="resume hidden" aria-live="polite">
+      <div class="resume-txt"><b>Przerwana gra</b><span id="resume-info"></span></div>
+      <button class="primary small" id="btn-resume" data-icon="play">Wznów</button>
+      <button class="ghost small icon-btn" id="btn-resume-drop" data-icon="close" title="Porzuć przerwaną grę" aria-label="Porzuć przerwaną grę"></button>
+    </section>
     <section class="modes">
       <button class="mode" id="btn-solo" data-mode="solo">
         <span class="mode-icon" data-icon="solo"></span><span class="mode-txt"><b>Jeden gracz</b><span class="mode-desc">10 rund z gotowymi hasłami, do 40 pkt</span></span>
@@ -46,10 +51,61 @@
       </button>
     </section>
     <nav class="menu-row">
+      <button id="btn-settings" class="ghost" data-icon="sliders">Ustawienia</button>
       <button id="btn-rules" class="ghost" data-icon="book">Zasady</button>
-      <button id="btn-install" class="ghost hidden" data-icon="install">Zainstaluj</button>
     </nav>
     <p class="center muted app-version">Wersja <span id="version"></span></p>
+  </main>
+
+  <!-- USTAWIENIA -->
+  <main id="screen-settings" class="screen hidden">
+    <h2 class="screen-title">Ustawienia</h2>
+    <form class="settings" id="settings-form" onsubmit="return false">
+      <fieldset class="seg">
+        <legend>Motyw</legend>
+        <div class="seg-opts">
+          <label><input type="radio" name="theme" value="dark"><span>Ciemny</span></label>
+          <label><input type="radio" name="theme" value="light"><span>Jasny</span></label>
+          <label><input type="radio" name="theme" value="contrast"><span>Kontrast</span></label>
+        </div>
+      </fieldset>
+      <fieldset class="seg">
+        <legend>Wielkość tekstu</legend>
+        <div class="seg-opts">
+          <label><input type="radio" name="bigText" value="0"><span>Zwykła</span></label>
+          <label><input type="radio" name="bigText" value="1"><span>Duża</span></label>
+        </div>
+      </fieldset>
+      <fieldset class="seg">
+        <legend>Poziom trudności <span class="seg-hint">szerokość pól celu</span></legend>
+        <div class="seg-opts">
+          <label><input type="radio" name="difficulty" value="easy"><span>Łatwy</span></label>
+          <label><input type="radio" name="difficulty" value="normal"><span>Zwykły</span></label>
+          <label><input type="radio" name="difficulty" value="hard"><span>Trudny</span></label>
+        </div>
+      </fieldset>
+      <fieldset class="seg">
+        <legend>Minutnik narady</legend>
+        <div class="seg-opts">
+          <label><input type="radio" name="timer" value="0"><span>Wył.</span></label>
+          <label><input type="radio" name="timer" value="30"><span>30 s</span></label>
+          <label><input type="radio" name="timer" value="60"><span>60 s</span></label>
+          <label><input type="radio" name="timer" value="90"><span>90 s</span></label>
+          <label><input type="radio" name="timer" value="120"><span>2 min</span></label>
+        </div>
+      </fieldset>
+      <fieldset class="seg">
+        <legend>Podpowiedzi dla wyroczni</legend>
+        <div class="seg-opts">
+          <label><input type="radio" name="hints" value="1"><span>Włączone</span></label>
+          <label><input type="radio" name="hints" value="0"><span>Wyłączone</span></label>
+        </div>
+      </fieldset>
+    </form>
+    <div class="actions">
+      <button class="ghost hidden" id="btn-install" data-icon="install">Zainstaluj grę</button>
+      <button class="primary back" id="btn-settings-done">Gotowe</button>
+    </div>
   </main>
 
   <!-- KATEGORIE -->
@@ -110,13 +166,22 @@
   <main id="screen-play" class="screen hidden">
     <div class="play-head">
       <div id="scores" class="scores"></div>
-      <p id="status" class="status"></p>
+      <p id="status" class="status" role="status" aria-live="polite"></p>
+      <div id="timer" class="timer hidden" role="timer" aria-live="off">
+        <span class="timer-ico" data-icon="timer"></span>
+        <span class="timer-bar"><i></i></span>
+        <b id="timer-left">60</b>
+      </div>
     </div>
     <div class="play-stage">
       <div id="card-choice" class="card-choice hidden"></div>
       <div id="clue-input-box" class="clue-input hidden">
-        <label for="clue-input">Twoje hasło</label>
-        <input type="text" id="clue-input" maxlength="60" placeholder="wpisz albo powiedz na głos">
+        <div class="clue-input-head" id="clue-input-head">
+          <label for="clue-input">Twoje hasło</label>
+          <p id="hint-box" class="hint-box hidden" aria-live="polite"></p>
+          <button class="ghost small hidden" id="btn-hint" data-icon="bulb">Podpowiedź</button>
+        </div>
+        <input type="text" id="clue-input" maxlength="60" placeholder="wpisz albo powiedz na głos" autocomplete="off">
       </div>
       <div id="clue-box" class="clue-card hidden"></div>
       <div id="result" class="result hidden"></div>
@@ -217,6 +282,7 @@
 
   <div id="fx" class="fx" aria-hidden="true"></div>
 
+  <script src="js/i18n.js"></script>
   <script src="js/data.js"></script>
   <script src="js/game.js"></script>
   <script src="js/dial.js"></script>

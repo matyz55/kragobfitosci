@@ -107,3 +107,16 @@
 
 - Osoba, która widzi cel i podaje hasło, nazywa się teraz „wyrocznia” (np. „Wyrocznia: Ania”, „Jestem wyrocznią –
   pokaż cel”, „Wyrocznia milczy!”) – na wszystkich ekranach, na dużym ekranie, w zasadach i w opisie gry.
+
+## 1.8.0 – 29.10.2026 – ustawienia, minutnik, podpowiedzi i wznawianie gry
+
+- Wznawianie gry: po odświeżeniu, zamknięciu aplikacji albo powrocie do menu można wrócić do przerwanej gry
+  („Przerwana gra → Wznów” w menu) – z tymi samymi kartami, hasłem, wynikiem i położeniem wskazówki. Przerwanie
+  u wyroczni wraca do ekranu przekazania, a po odsłonięciu punkty nie liczą się drugi raz.
+- Nowy ekran ustawień (menu → Ustawienia): motyw ciemny, jasny albo wysokiego kontrastu, większy tekst, poziom
+  trudności (szersze albo węższe pola celu), minutnik narady i podpowiedzi dla wyroczni. Przycisk instalacji gry
+  przeniesiony do ustawień.
+- Minutnik narady (30 s – 2 min): odliczanie przy ustawianiu wskazówki, cykanie w ostatnich 10 s, sygnał i wibracja
+  na koniec; widać go też na dużym ekranie.
+- Podpowiedź dla wyroczni: przykładowe hasło najbliższe celowi na wybranej karcie (i w którą stronę leży cel).
+- Powrót do menu w trakcie gry nie pyta już o przerwanie – grę można wznowić.

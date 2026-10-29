@@ -3,10 +3,20 @@
 // Tryb drużynowy: punkty 4/3/2, zgadywanie „lewo/prawo”, gra do 10 pkt, dogrywka, nadrabianie straty;
 // tryb współpracy: 7 kart, środek celu dokłada kartę.
 
-const GAME_VERSION = '1.7.2';
+const GAME_VERSION = '1.8.0';
 
 // Szerokość jednego pola celu na skali 0–100. Cel ma pięć pól: 2 | 3 | 4 | 3 | 2.
-const BAND = 4;
+// Poziom trudności zmienia szerokość pól: łatwy – szersze (np. dla dzieci), trudny – węższe.
+const DIFFICULTY = { easy: 5.5, normal: 4, hard: 2.8 };
+let BAND = DIFFICULTY.normal;
+function setDifficulty(level) {
+  BAND = DIFFICULTY[level] || DIFFICULTY.normal;
+  return BAND;
+}
+// szerokość pól zapisana w przerwanej grze albo przysłana na duży ekran
+function setBand(width) {
+  if (typeof width === 'number' && width > 0) BAND = width;
+}
 
 // Punkty za wskazanie: odległość od środka celu. Na granicy pól liczy się lepszy wynik.
 function scoreFor(guess, target, center = 4) {
@@ -31,14 +41,22 @@ function shuffle(arr, rand = Math.random) {
   return a;
 }
 
+// Wszystkie kategorie gry: wbudowane i własne talie gracza (gameCategories z decks.js, jeśli jest).
+function allCategories() {
+  return typeof gameCategories === 'function' ? gameCategories() : CATEGORIES;
+}
+
 // Talia kart z wybranych kategorii; po wyczerpaniu tasowana od nowa.
-function makeDeck(categoryIds) {
-  const cats = CATEGORIES.filter((c) => categoryIds.includes(c.id));
+// savedPile – stos zapisany przy wznawianiu gry (kolejność kart zostaje ta sama).
+function makeDeck(categoryIds, savedPile) {
+  const cats = allCategories().filter((c) => categoryIds.includes(c.id));
   const all = [];
   for (const c of cats) for (const k of c.cards) all.push({ left: k[0], right: k[1], examples: k[2] || [], cat: c.id });
-  let pile = shuffle(all);
+  let pile = savedPile ? savedPile.slice() : shuffle(all);
   return {
     size: all.length,
+    cats: categoryIds.slice(),
+    get pile() { return pile; },
     draw() {
       if (!pile.length) pile = shuffle(all);
       return pile.pop();
@@ -47,12 +65,22 @@ function makeDeck(categoryIds) {
 }
 
 // Zestaw rund trybu jednoosobowego: pary (karta, przykład) z wybranych kategorii.
-function soloRounds(categoryIds, count) {
+function soloRounds(categoryIds, count, rand = Math.random) {
   const items = [];
-  for (const c of CATEGORIES.filter((x) => categoryIds.includes(x.id))) {
+  for (const c of allCategories().filter((x) => categoryIds.includes(x.id))) {
     for (const k of c.cards) for (const ex of k[2] || []) items.push({ left: k[0], right: k[1], clue: ex[0], target: ex[1], cat: c.id });
   }
-  return shuffle(items).slice(0, count);
+  return shuffle(items, rand).slice(0, count);
+}
+
+// Podpowiedź dla wyroczni: przykładowe hasło z puli gry jednoosobowej najbliższe celowi na tej karcie.
+// Wynik: null (karta bez przykładów) albo { clue, pos, diff } – diff < 0: cel leży dalej w lewo, > 0: w prawo.
+function hintFor(card, target) {
+  const ex = (card && card.examples) || [];
+  if (!ex.length) return null;
+  let best = ex[0];
+  for (const e of ex) if (Math.abs(e[1] - target) < Math.abs(best[1] - target)) best = e;
+  return { clue: best[0], pos: best[1], diff: target - best[1] };
 }
 
 // Czy wskazanie „lewo/prawo” drużyny przeciwnej jest trafne (środek celu względem wskazówki).

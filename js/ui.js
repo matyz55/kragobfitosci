@@ -18,6 +18,10 @@ const ICONS = {
   coop: '<circle cx="12" cy="7" r="3"/><circle cx="5" cy="10" r="2.4"/><circle cx="19" cy="10" r="2.4"/><path d="M7 20c.4-3.3 2.4-5.5 5-5.5s4.6 2.2 5 5.5M1.8 19c.3-2.4 1.6-4 3.4-4.3M22.2 19c-.3-2.4-1.6-4-3.4-4.3"/>',
   crown: '<path d="M3.5 8l4.5 4.2L12 5l4 7.2L20.5 8l-2 11h-13z"/>',
   check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+  sliders: '<path d="M4 6.5h9M18 6.5h2M4 12h3M11 12h9M4 17.5h11M19 17.5h1"/><circle cx="15.5" cy="6.5" r="2.2"/><circle cx="9" cy="12" r="2.2"/><circle cx="17" cy="17.5" r="2.2"/>',
+  bulb: '<path d="M9.5 18h5M10.5 21h3"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.7.6 1.1 1.4 1.1 2.2v.5h5V16c0-.8.4-1.6 1.1-2.2A6 6 0 0 0 12 3z"/>',
+  timer: '<circle cx="12" cy="13.5" r="7.5"/><path d="M12 13.5V9.5M9.5 2.5h5M18.5 6.5l1.5-1.5"/>',
+  play: '<path d="M8 5.5v13l10.5-6.5z"/>',
 };
 
 function icon(name) {

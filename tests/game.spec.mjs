@@ -207,6 +207,7 @@ test('dźwięk: przełącznik zapamiętany, gra działa z dźwiękiem', async ({
 });
 
 test('instalacja: bez okna przeglądarki pokazuje instrukcję', async ({ page }) => {
+  await page.click('#btn-settings');
   await expect(page.locator('#btn-install')).toBeVisible();
   await page.click('#btn-install');
   await expect(page.locator('#install-dialog')).toBeVisible();
@@ -222,6 +223,7 @@ test('instalacja: przycisk wywołuje okno instalacji przeglądarki', async ({ pa
     e.userChoice = Promise.resolve({ outcome: 'accepted' });
     window.dispatchEvent(e);
   });
+  await page.click('#btn-settings');
   await page.click('#btn-install');
   expect(await page.evaluate(() => window.prompted)).toBe(true);
   await expect(page.locator('#install-dialog')).toBeHidden();

@@ -66,6 +66,7 @@ function render(s) {
   show('#tv-game', true);
   renderScores(s.scores);
 
+  if (s.phase !== 'guess') showTimer(null);
   if (s.phase === 'menu') {
     renderScores([]);
     overlay('orb', 'Krąg obfitości', 'Wybierzcie tryb gry na telefonie.');
@@ -84,6 +85,8 @@ function render(s) {
     return;
   }
   overlay(null);
+  setBand(s.band);
+  showTimer(s.phase === 'guess' ? s.timer : null);
 
   $('#tv-left').textContent = s.left || '';
   $('#tv-right').textContent = s.right || '';
@@ -109,6 +112,27 @@ function render(s) {
     if (s.phase === 'psychic' && prev !== 'psychic') SFX.mystic();
     if (s.phase === 'guess' && prev === 'psychic') SFX.hide();
   }
+}
+
+// minutnik narady na dużym ekranie: liczy sam od pozostałego czasu przysłanego z telefonu
+let tvTimer = null;
+function showTimer(t) {
+  clearInterval(tvTimer);
+  tvTimer = null;
+  const box = $('#tv-timer');
+  if (!t) { box.classList.add('hidden'); return; }
+  const end = Date.now() + t.left * 1000;
+  box.classList.remove('hidden');
+  const tick = () => {
+    const ms = Math.max(0, end - Date.now()), left = Math.ceil(ms / 1000);
+    $('#tv-timer-left').textContent = `${Math.floor(left / 60)}:${String(left % 60).padStart(2, '0')}`;
+    box.querySelector('.timer-bar i').style.width = `${(ms / (t.total * 1000)) * 100}%`;
+    box.classList.toggle('urgent', left > 0 && left <= 10);
+    box.classList.toggle('over', left === 0);
+    if (left === 0) { clearInterval(tvTimer); tvTimer = null; }
+  };
+  tick();
+  tvTimer = setInterval(tick, 200);
 }
 
 function onMessage(m) {

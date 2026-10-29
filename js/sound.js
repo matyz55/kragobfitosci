@@ -100,5 +100,8 @@ const SFX = (() => {
       notes.forEach((f, i) => tone(f, i * 0.12, i === notes.length - 1 ? 0.7 : 0.2, { type: 'triangle', vol: 0.25 }));
     },
     end() { [392, 330, 262].forEach((f, i) => tone(f, i * 0.16, 0.3, { type: 'triangle', vol: 0.2 })); },
+    // minutnik narady: cykanie w ostatnich sekundach (wyższe w ostatnich pięciu) i sygnał końca czasu
+    timerTick(urgent) { tone(urgent ? 1320 : 990, 0, 0.05, { type: 'square', vol: urgent ? 0.09 : 0.06 }); },
+    timeUp() { [880, 660, 440].forEach((f, i) => tone(f, i * 0.18, 0.32, { type: 'sawtooth', vol: 0.14 })); },
   };
 })();

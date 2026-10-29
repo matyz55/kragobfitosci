@@ -32,6 +32,21 @@ Moda i wygląd, Historia, Miłość i przyjaźń, Dom i codzienność, Książki
 Motoryzacja, Pory roku i święta, Zdrowie i ciało. Kategorie wybiera się po wyborze trybu (i ustawień graczy) –
 tuż przed startem gry; wybór jest zapamiętywany. Karty i przykłady: `js/data.js`.
 
+## Ustawienia i wznawianie
+
+- **Ustawienia** (menu → Ustawienia, zapamiętywane w przeglądarce):
+  - motyw: ciemny, jasny albo wysokiego kontrastu; zwykła lub duża wielkość tekstu,
+  - poziom trudności – szerokość pól celu: łatwy (szersze, np. dla dzieci), zwykły, trudny (węższe),
+  - minutnik narady (wył., 30 s, 60 s, 90 s, 2 min) – odliczanie przy ustawianiu wskazówki w drużynach
+    i współpracy, w ostatnich 10 s cykanie, na koniec sygnał i wibracja (widać go też na dużym ekranie),
+  - podpowiedzi dla wyroczni – przycisk „Podpowiedź” pokazuje przykładowe hasło z puli gry jednoosobowej najbliższe
+    celowi na wybranej karcie (i czy cel leży dalej w lewo czy w prawo),
+  - instalacja gry jako aplikacji.
+- **Wznawianie gry**: stan gry zapisuje się w przeglądarce po każdym etapie tury (i przy zamykaniu karty).
+  Po odświeżeniu, zamknięciu aplikacji albo powrocie do menu w menu pojawia się „Przerwana gra → Wznów”.
+  Przerwanie u wyroczni wraca do ekranu przekazania (cel nie pokaże się nikomu przypadkiem), a po odsłonięciu
+  celu punkty nie liczą się drugi raz. Zapis znika po zakończeniu gry albo po „✕”.
+
 ## Wygląd
 
 Ciemny motyw z animowaną „zorzą” w tle i tarcza z gradientami: obręcz od niebieskiego do czerwonego jak końce skali,

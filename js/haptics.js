@@ -56,5 +56,6 @@ const Haptics = (() => {
     bonus(ok) { if (ok) setTimeout(() => buzz([20, 40, 20]), 600); },
     win() { buzz([60, 60, 60, 60, 60, 60, 250]); },
     end() { buzz([80, 80, 80]); },
+    timeUp() { buzz([200, 100, 200, 100, 200]); },
   };
 })();

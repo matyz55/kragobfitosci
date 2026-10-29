@@ -59,9 +59,12 @@ for (const [w, h] of VIEWPORTS) {
       await fits(page, `zasady ${t}`);
     }
     await page.click('#screen-rules .back');
+    await page.click('#btn-settings');
+    await fits(page, 'ustawienia');
     await page.click('#btn-install');
     await fits(page, 'instalacja');
     await page.click('#btn-install-close');
+    await page.click('#btn-settings-done');
     await page.click('#btn-tv');
     await fits(page, 'duży ekran – okno');
     await page.click('#btn-tv-close');
@@ -73,6 +76,8 @@ for (const [w, h] of VIEWPORTS) {
     await page.click('#btn-confirm');
     await fits(page, 'solo – wynik');
     await page.click('#btn-home');
+    await expect(page.locator('#resume-box')).toBeVisible();
+    await fits(page, 'menu z przerwaną grą');
 
     await page.click('#btn-teams');
     await fits(page, 'ustawienia drużyn');
@@ -144,5 +149,55 @@ for (const [w, h] of [[1280, 720], [1920, 1080], [3840, 2160], [1366, 768], [102
     await phone.click('#btn-left');
     await expect(tvPage.locator('#tv-result')).toBeVisible();
     expect(await over()).toEqual([]);
+  });
+}
+
+// duży tekst, motywy i minutnik na najmniejszych ekranach
+for (const [w, h, look] of [
+  [320, 568, { bigText: true, timer: 60 }],
+  [360, 640, { bigText: true, theme: 'contrast', timer: 90 }],
+  [390, 844, { bigText: true, theme: 'light', timer: 60 }],
+  [667, 375, { bigText: true, timer: 60 }],
+  [568, 320, { bigText: true, theme: 'light', timer: 30 }],
+  [1366, 768, { bigText: true, theme: 'contrast', timer: 120 }],
+]) {
+  test(`mieści się z ustawieniami ${JSON.stringify(look)}: ${w}×${h}`, async ({ page }) => {
+    await page.addInitScript((l) => { if (!sessionStorage.getItem('set')) { localStorage.setItem('krag.settings', JSON.stringify(l)); sessionStorage.setItem('set', '1'); } }, look);
+    await page.setViewportSize({ width: w, height: h });
+    await page.goto('/');
+    await fits(page, 'menu');
+    await page.click('#btn-settings');
+    await fits(page, 'ustawienia');
+    await page.click('#btn-settings-done');
+    await page.click('#btn-teams');
+    await fits(page, 'ustawienia drużyn');
+    await page.fill('#team-a-players', 'Aleksandra Długonazwiskowa, Bartłomiej');
+    await page.click('#btn-start-teams');
+    await fits(page, 'kategorie');
+    await page.click('#btn-cats-start');
+    await fits(page, 'przekazanie');
+    await page.click('#btn-psychic-ready');
+    await page.evaluate(() => {
+      const all = CATEGORIES.flatMap((c) => c.cards.map((k) => ({ left: k[0], right: k[1], examples: k[2] || [] })));
+      all.sort((a, b) => (b.left + b.right).length - (a.left + a.right).length);
+      state.choices = [all[0], all[1]];
+      psychicPhase();
+    });
+    await page.click('#btn-hint');
+    await fits(page, 'wyrocznia z podpowiedzią');
+    await page.fill('#clue-input', 'Bardzo długie hasło wyroczni');
+    await page.click('#btn-hide');
+    await expect(page.locator('#timer')).toBeVisible();
+    await fits(page, 'zgadywanie z minutnikiem');
+    await page.click('#btn-confirm');
+    await page.click('#btn-left');
+    await fits(page, 'odkrycie');
+    await page.evaluate(() => { state.game.winner = 0; endGame(); });
+    await fits(page, 'koniec');
+    await page.click('#btn-menu');
+    await page.click('#btn-solo');
+    await page.click('#btn-cats-start');
+    await page.click('#btn-home');
+    await fits(page, 'menu z przerwaną grą');
   });
 }

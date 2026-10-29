@@ -23,6 +23,8 @@ function tvSnapshot() {
   s.mode = g.mode;
   s.scores = scoreList();
   s.dial = dial.value;
+  s.band = BAND;
+  if (state.timer) s.timer = { left: Math.max(0, (state.timer.end - Date.now()) / 1000), total: state.timer.total };
   if (g.mode !== 'solo') s.psychic = state.psychic;
   if (g.mode === 'teams') { s.team = g.teams[g.active].name; s.other = g.teams[1 - g.active].name; s.sudden = !!g.suddenDeath; }
   if (state.phase !== 'pass' && state.card) { s.left = state.card.left; s.right = state.card.right; }

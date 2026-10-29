@@ -40,6 +40,11 @@
   <!-- rozgrywka -->
   <main id="tv-game" class="tv-game hidden">
     <p id="tv-status" class="tv-status"></p>
+    <div id="tv-timer" class="timer tv-timer hidden">
+      <span class="timer-ico" data-icon="timer"></span>
+      <span class="timer-bar"><i></i></span>
+      <b id="tv-timer-left">1:00</b>
+    </div>
     <div class="dial-wrap tv-dial-wrap">
       <svg id="tv-dial" role="img" aria-label="Tarcza"></svg>
       <section class="spectrum">
@@ -64,6 +69,7 @@
 
   <div id="fx" class="fx" aria-hidden="true"></div>
 
+  <script src="js/i18n.js"></script>
   <script src="js/game.js"></script>
   <script src="js/dial.js"></script>
   <script src="js/ui.js"></script>
