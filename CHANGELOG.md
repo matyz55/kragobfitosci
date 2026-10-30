@@ -153,7 +153,7 @@
   (razem 909 kart i 904 hasła).
 - Mniej kategorii na liście – na typowych telefonach nazwy znów mieszczą się w dwóch wierszach z liczbą kart.
 
-## 2.0.0 – 30.10.2026 – wersja angielska, klawiatura i czytniki ekranu
+## 2.0.0 – 30.10.2026 (`c9e9fa1`) – wersja angielska, klawiatura i czytniki ekranu
 
 - Wersja angielska: wszystkie napisy, zasady i własny angielski zestaw kart (21 kategorii, 869 kart, 855 haseł;
   przykłady związane z Polską zastąpione znanymi na świecie). Język wybiera się w ustawieniach albo linkiem
