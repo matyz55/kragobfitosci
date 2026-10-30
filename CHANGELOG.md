@@ -144,7 +144,7 @@
 - Wybór kategorii: tryb gry i liczba kart pod listą, przy małym ekranie zwarty układ nazw (wszystko bez przewijania).
 - Talia z jedną kartą pokazuje wyroczni jedną kartę, a dwie karty do wyboru zawsze są różne.
 
-## 1.10.1 – 30.10.2026 – więcej kart zamiast nowych kategorii
+## 1.10.1 – 30.10.2026 (`9aefb6e`) – więcej kart zamiast nowych kategorii
 
 - Zamiast 6 nowych kategorii z wersji 1.10.0 – więcej kart w dotychczasowych 22 kategoriach: karty z tamtych
   kategorii trafiły do pasujących (np. kosmos do „Nauki i techniki”, emocje do „Ludzi i charakterów” i „Miłości
