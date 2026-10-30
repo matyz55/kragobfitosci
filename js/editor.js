@@ -25,14 +25,6 @@ function resetConfirm(btn, label) {
   setLabel(btn, label);
 }
 
-// Wybrane kategorie muszą istnieć (talia mogła zniknąć albo stracić karty); gdy nic nie zostało – wszystkie wbudowane.
-function syncCats() {
-  const ids = allCategories().map((c) => c.id);
-  settings.cats = settings.cats.filter((id) => ids.includes(id));
-  if (!settings.cats.length) settings.cats = CATEGORIES.map((c) => c.id);
-  saveSettings();
-}
-
 // talia, która właśnie dostała pierwszą kartę (albo przyszła w linku), od razu jest wybrana do gry – sama
 function chooseDeck(id) {
   settings.cats = [DECK_PREFIX + id];
@@ -77,7 +69,7 @@ function newDeck() {
   const used = Decks.list().map((d) => d.icon);
   Editor.deck = { id: newDeckId(), name: '', icon: DECK_ICONS.find((i) => !used.includes(i)) || DECK_ICONS[0], cards: [] };
   openDeck();
-  $('#deck-name').focus();
+  focusLater($('#deck-name'));
 }
 
 function editDeck(id) {
@@ -110,12 +102,14 @@ function persistDeck() {
   if (d.cards.length && !Editor.wasPlayable) chooseDeck(d.id);
   Editor.wasPlayable = d.cards.length > 0;
   syncCats();
+  saveSettings();
 }
 
 function deckDone() {
   const d = Editor.deck;
   if (!d.cards.length && !d.name) Decks.remove(d.id);
   syncCats();
+  saveSettings();
   Editor.deck = null;
   renderDecks(d.id);
   show('screen-decks');
@@ -125,6 +119,7 @@ function deleteDeck() {
   confirmTap($('#btn-deck-delete'), T('Usuń talię'), () => {
     Decks.remove(Editor.deck.id);
     syncCats();
+    saveSettings();
     Editor.deck = null;
     renderDecks();
     show('screen-decks');
@@ -135,13 +130,14 @@ function deleteDeck() {
 function cardRow(k, i) {
   const b = button('', 'choice card-row', () => openCard(i));
   const bar = mk('span', 'ch-bar');
+  bar.append(mk('span', 'sr-only', ' – '));
   if (k[2]) {
     const dot = mk('i');
     dot.style.left = `${k[2][0][1]}%`;
     bar.append(dot);
   }
   b.append(mk('span', 'ch-l', k[0]), bar, mk('span', 'ch-r', k[1]));
-  b.setAttribute('aria-label', k[2] ? T('{0} – {1}, hasło: {2}', k[0], k[1], k[2][0][0]) : `${k[0]} – ${k[1]}`);
+  if (k[2]) b.append(mk('span', 'sr-only', T(', hasło: {0}', k[2][0][0])));
   return b;
 }
 
@@ -203,7 +199,7 @@ function openCard(i) {
   show('screen-card');
   Editor.dial.set(k && k[2] ? k[2][0][1] : 50);
   updateCardPreview();
-  if (!k) $('#card-left').focus();
+  if (!k) focusLater($('#card-left'));
 }
 
 // Podgląd na tarczy: końce skali z pól, wskazówka w miejscu hasła (przygaszona, gdy hasła nie ma).
@@ -256,10 +252,13 @@ function cancelCard() {
 // ---------- okno talii (udostępnianie, dodawanie z linku, komunikaty) ----------
 
 function deckDialog(title, body, actions) {
+  const dlg = $('#deck-dialog'), wasOpen = !dlg.classList.contains('hidden');
   $('#deck-dialog-title').textContent = title;
   $('#deck-dialog-body').replaceChildren(...body);
   $('#deck-dialog-actions').replaceChildren(...actions);
-  $('#deck-dialog').classList.remove('hidden');
+  dlg.classList.remove('hidden');
+  // nowa treść w otwartym już oknie: fokus na tytuł (czytnik ogłosi zmianę, trwające Enter niczego nie kliknie)
+  if (wasOpen) $('#deck-dialog-title').focus();
 }
 
 function closeDeckDialog() {
@@ -363,6 +362,7 @@ async function checkSharedDeck() {
 
 function initEditor() {
   Editor.dial = createDial($('#card-dial'), $('#card-range'), (v, user) => { if (user) { SFX.tick(v); Haptics.dial(v); } });
+  Editor.dial.describe = (v) => describeNeedle(v, { left: $('#card-left').value.trim() || T('Lewy koniec'), right: $('#card-right').value.trim() || T('Prawy koniec') });
   $('#btn-decks').addEventListener('click', () => openDecks('screen-menu'));
   $('#btn-cats-decks').addEventListener('click', () => openDecks('screen-cats'));
   $('#btn-decks-back').addEventListener('click', decksBack);

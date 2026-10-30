@@ -63,9 +63,37 @@ o klasie albo o firmie.
   kolory i próg wygranej są zapamiętywane na następną grę. Kolory i awatary widać w tablicy wyników, na ekranie
   przekazania, w podsumowaniu i na dużym ekranie.
 
+## Wersja angielska
+
+- Język gry: **polski albo angielski**. Domyślnie po polsku, gdy wśród języków przeglądarki (telefonu) jest polski,
+  w przeciwnym razie po angielsku. Zmiana: Ustawienia → Język albo link „English / Polski” pod menu (zapamiętywane);
+  adres z `?lang=en` albo `?lang=pl` wymusza język.
+- Po angielsku są wszystkie napisy (słownik `js/i18n-en.js`), zasady i **własny zestaw kart** (`js/data-en.js`):
+  21 kategorii (bez „Polskich klimatów”), 869 kart i 855 haseł, w każdej kategorii co najmniej 40 kart i 20 haseł.
+  Karty to nasze karty przetłumaczone na angielski, a przykłady związane z Polską zastąpione znanymi na świecie
+  (np. „Celebration” – Kool & the Gang zamiast „Sto lat”).
+- Wyzwanie dnia ma osobny zestaw dla każdego języka. Duży ekran przełącza się na język telefonu.
+  Nazwa gry „Krąg obfitości” zostaje bez tłumaczenia.
+
+## Klawiatura i czytniki ekranu
+
+- Całą grę da się przejść samą klawiaturą: Tab i Enter, **strzałki** przesuwają wskazówkę (z Shift o 5,
+  PageUp/PageDown o 10), **Enter** zatwierdza i przechodzi dalej, **L / P** (po angielsku L / R) – lewo czy prawo,
+  **1 / 2** – wybór karty przez wyrocznię, **Esc** zamyka okno, **?** – lista skrótów (także przycisk „Klawiatura”
+  w zasadach).
+- Po każdej zmianie ekranu i etapu tury fokus przechodzi na właściwe miejsce (nagłówek, suwak wskazówki, przycisk
+  „Dalej”), a czytnik ekranu ogłasza nowy ekran.
+- Okna: fokus w środku, reszta strony niedostępna (atrybut `inert`), Esc zamyka, fokus wraca do przycisku, który
+  otworzył okno. Zakładki zasad sterowane strzałkami (role `tablist`/`tab`/`tabpanel`).
+- Opisy dla czytników: położenie wskazówki słowami („72 – bliżej: Gorące”), cel na skali u wyroczni, wynik rundy
+  z położeniem celu, kategorie z liczbą kart, karty do wyboru jako „lewy – prawy koniec”.
+- Test `tests/a11y.spec.mjs` sprawdza wszystkie ekrany narzędziem axe-core (WCAG 2.0–2.2 A/AA) w motywach ciemnym,
+  jasnym i kontrastowym oraz po angielsku, a także grę samą klawiaturą.
+
 ## Ustawienia i wznawianie
 
 - **Ustawienia** (menu → Ustawienia, zapamiętywane w przeglądarce):
+  - język: polski albo angielski,
   - motyw: ciemny, jasny albo wysokiego kontrastu; zwykła lub duża wielkość tekstu,
   - poziom trudności – szerokość pól celu: łatwy (szersze, np. dla dzieci), zwykły, trudny (węższe),
   - minutnik narady (wył., 30 s, 60 s, 90 s, 2 min) – odliczanie przy ustawianiu wskazówki w drużynach
@@ -135,7 +163,8 @@ i dźwięki. Telefon (albo komputer), na którym toczy się gra, jest pilotem: p
 - Każdy ekran mieści się w oknie bez przewijania – na telefonach (pionowo i poziomo), tabletach i komputerach.
   Tarcza dopasowuje się do wolnego miejsca, a przy telefonie trzymanym poziomo stoi obok przycisków.
   Gdy nazwy kategorii się nie mieszczą (najmniejsze ekrany, dużo własnych talii), lista przechodzi na zwarty układ.
-  Sprawdzają to testy `tests/layout.spec.mjs` i `tests/layout-decks.spec.mjs` na 19 rozmiarach ekranu.
+  Sprawdzają to testy `tests/layout.spec.mjs` i `tests/layout-decks.spec.mjs` na 19 rozmiarach ekranu
+  oraz `tests/layout-en.spec.mjs` dla wersji angielskiej.
 - Przycisk **Zainstaluj** w menu: w Chrome, Edge i innych przeglądarkach opartych na Chromium otwiera okno instalacji
   (gdy przeglądarka je udostępni), w pozostałych pokazuje instrukcję (iPhone/iPad – menu „Udostępnij”, Safari na
   Macu – menu „Plik”, Firefox na komputerze nie instaluje aplikacji ze stron). Po instalacji przycisk znika.
@@ -155,6 +184,8 @@ i dźwięki. Telefon (albo komputer), na którym toczy się gra, jest pilotem: p
 - `js/haptics.js` – wibracje
 - `js/stats.js` – statystyki i wyniki wyzwania dnia (localStorage)
 - `js/decks.js` – własne talie: zapis, sprawdzanie, kodowanie talii w linku; `js/editor.js` – ekrany talii, kod QR, dodawanie z linku
+- `js/i18n.js` – wybór języka i tłumaczenie napisów; `js/i18n-en.js` – słownik angielski; `js/data-en.js` – angielskie karty
+- `js/a11y.js` – klawiatura i czytniki ekranu (okna, skróty, zakładki zasad)
 
 ## Uruchomienie lokalne i testy
 
@@ -177,3 +208,7 @@ npm test           # testy Playwright
 - Kompresja talii w linku (CompressionStream, format `deflate-raw`: Chrome/Edge 103+, Firefox 113+, Safari 16.4+ według
   danych zgodności MDN): https://developer.mozilla.org/en-US/docs/Web/API/CompressionStream/CompressionStream
 - Kody QR: biblioteka qrcode-generator (Kazuhiko Arase, licencja MIT) z cdnjs – https://cdnjs.com/libraries/qrcode-generator
+- Dostępność: wytyczne WCAG 2.2 (https://www.w3.org/TR/WCAG22/), wzorzec zakładek z ARIA Authoring Practices
+  (https://www.w3.org/WAI/ARIA/apg/patterns/tabs/), atrybut `inert` (Chrome/Edge 102+, Firefox 112+, Safari 15.5+
+  według danych zgodności MDN: https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/inert),
+  testy narzędziem axe-core (Deque, licencja MPL-2.0, tylko w testach): https://github.com/dequelabs/axe-core

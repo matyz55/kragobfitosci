@@ -9,6 +9,8 @@ export default defineConfig({
   reporter: 'list',
   use: {
     baseURL: `http://localhost:${port}`,
+    // gra wybiera język z ustawień przeglądarki – testy domyślnie po polsku (angielskie mają własne ustawienie)
+    locale: 'pl-PL',
     // PW_CHROMIUM – ścieżka do własnej przeglądarki (gdy zainstalowana wersja Playwrighta jest inna)
     launchOptions: process.env.PW_CHROMIUM ? { executablePath: process.env.PW_CHROMIUM } : {},
   },

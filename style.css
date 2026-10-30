@@ -195,6 +195,14 @@ body {
 }
 @keyframes screen-in { from { opacity: 0; } }
 .hidden { display: none !important; }
+/* tekst tylko dla czytników ekranu */
+.sr-only {
+  position: absolute !important; width: 1px; height: 1px; margin: -1px; padding: 0; border: 0;
+  overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+}
+/* nagłówki dostają fokus programowo (nowy ekran) – bez obwódki, to nie jest element do klikania */
+h2[tabindex="-1"]:focus { outline: none; }
+.tab-page:focus-visible { outline: 2px solid var(--focus); outline-offset: 4px; border-radius: 6px; }
 
 h2 { margin: 0; font-family: var(--font-head); font-weight: 600; font-size: 1.3em; letter-spacing: .2px; line-height: 1.15; }
 .screen-title { flex: 0 0 auto; }
@@ -203,6 +211,11 @@ h2 { margin: 0; font-family: var(--font-head); font-weight: 600; font-size: 1.3e
 .lead { font-size: 1.05em; line-height: 1.45; margin: 0; font-weight: 500; }
 .error { color: var(--bad); margin: 0; }
 .app-version { font-size: .72em; opacity: .6; margin: 0; }
+/* przycisk wyglądający jak link (np. zmiana języka w menu) */
+button.link {
+  background: none; border: 0; border-radius: 6px; padding: .3em .4em; font: inherit; color: inherit;
+  text-decoration: underline; text-underline-offset: 2px; box-shadow: none;
+}
 p { margin: 0; }
 
 /* ---------- przyciski i pola ---------- */
@@ -696,6 +709,10 @@ svg.instant .dial-needle { transition: none; }
 .share-qr svg { width: 100%; height: 100%; display: block; }
 .share-qr.none { background: var(--glass); color: var(--muted); aspect-ratio: auto; padding: 1em; }
 .deck-preview { margin: 0; padding-left: 1.1em; line-height: 1.4; }
+/* lista skrótów klawiszowych */
+.keys { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 6px 12px; margin: 0; align-items: baseline; }
+.keys dt { font-family: var(--font-head); font-weight: 700; color: var(--em); white-space: nowrap; }
+.keys dd { margin: 0; }
 .deck-preview li::marker { color: var(--accent); }
 
 /* ---------- okno instalacji ---------- */

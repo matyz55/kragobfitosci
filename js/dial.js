@@ -102,6 +102,8 @@ function createDial(svg, range, onChange) {
   let locked = false;
   const api = {
     value: 50,
+    // opis położenia dla czytników ekranu (aria-valuetext suwaka), np. „72 – bliżej: Gorące”
+    describe: null,
     get locked() { return locked; },
     set locked(v) {
       locked = !!v;
@@ -114,6 +116,7 @@ function createDial(svg, range, onChange) {
       svg.classList.toggle('instant', !!user); // ruch gracza bez opóźnienia, ruch gry płynnie
       needle.style.transform = `rotate(${((v - 50) * 1.8).toFixed(2)}deg)`;
       range.value = String(v);
+      if (api.describe) range.setAttribute('aria-valuetext', api.describe(v));
       if (onChange) onChange(v, !!user);
     },
     showTarget(t, coop) {
@@ -193,6 +196,15 @@ function createDial(svg, range, onChange) {
   svg.addEventListener('pointerup', () => drag(false));
   svg.addEventListener('pointercancel', () => drag(false));
   range.addEventListener('input', () => { if (!api.locked) api.set(Number(range.value), true); });
+  // klawiatura: strzałki – o pół kreski (suwak), z Shift – o 5, PageUp/PageDown – o 10
+  range.addEventListener('keydown', (e) => {
+    const big = { PageUp: 10, PageDown: -10 }[e.key];
+    const shifted = e.shiftKey ? { ArrowRight: 5, ArrowUp: 5, ArrowLeft: -5, ArrowDown: -5 }[e.key] : undefined;
+    const step = big != null ? big : shifted;
+    if (step == null || api.locked) return;
+    e.preventDefault();
+    api.set(api.value + step, true);
+  });
 
   api.set(50);
   return api;

@@ -84,7 +84,7 @@ test('edytor: wymagane oba końce skali, poprawianie i usuwanie kart, usuwanie t
   await expect(page.locator('#card-spec-right')).toHaveText('Zima');
   await page.click('#btn-card-save');
   await expect(page.locator('#deck-cards .card-row')).toHaveCount(1);
-  await expect(page.locator('#deck-cards .card-row')).toHaveAttribute('aria-label', 'Lato – Zima');
+  await expect(page.locator('#deck-cards .card-row')).toHaveAccessibleName('Lato – Zima');
   // poprawka karty i dopisanie hasła
   await page.click('#deck-cards .card-row');
   await expect(page.locator('#card-left')).toHaveValue('Lato');
@@ -92,7 +92,7 @@ test('edytor: wymagane oba końce skali, poprawianie i usuwanie kart, usuwanie t
   await page.fill('#card-clue', 'Lipiec');
   await page.evaluate(() => Editor.dial.set(12, true));
   await page.click('#btn-card-save');
-  await expect(page.locator('#deck-cards .card-row')).toHaveAttribute('aria-label', 'Lato – Mroźna zima, hasło: Lipiec');
+  await expect(page.locator('#deck-cards .card-row')).toHaveAccessibleName(/^Lato – Mroźna zima ?, hasło: Lipiec$/);
   expect(await page.evaluate(() => Decks.list()[0].cards)).toEqual([['Lato', 'Mroźna zima', [['Lipiec', 12]]]]);
   // talia bez nazwy dostaje nazwę zastępczą i jest wybrana do gry
   expect(await page.evaluate(() => gameCategories()[0].name)).toBe('Moja talia');
@@ -259,7 +259,7 @@ test('limity: 8 talii, 60 kart w talii', async ({ page }) => {
   expect(pages).toBeGreaterThan(1);
   for (let i = 1; i < pages; i++) await page.click('#btn-deck-next');
   await expect(page.locator('#btn-deck-next')).toBeDisabled();
-  await expect(page.locator('#deck-cards .card-row').last()).toHaveAttribute('aria-label', 'Lewo 59 – Prawo 59');
+  await expect(page.locator('#deck-cards .card-row').last()).toHaveAccessibleName('Lewo 59 – Prawo 59');
   await page.click('#btn-deck-prev');
   await expect(page.locator('#deck-page')).toHaveText(`${pages - 1}/${pages}`);
   await expect(page.locator('#btn-deck-next')).toBeEnabled();

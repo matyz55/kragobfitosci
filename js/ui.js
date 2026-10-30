@@ -29,6 +29,7 @@ const ICONS = {
   plus: '<path d="M12 5v14M5 12h14"/>',
   link: '<path d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1.2 1.2"/><path d="M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1.2-1.2"/>',
   trash: '<path d="M4.5 7h15M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13M10 11v5.5M14 11v5.5"/>',
+  keyboard: '<rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M6 14h.01M18 14h.01M9 14h6"/>',
 };
 
 function icon(name) {
@@ -116,6 +117,7 @@ function renderScoreboard(box, scores) {
     d.append(mk('span', null, s.name), v);
     if (s.progress != null) {
       const bar = mk('div', 'score-bar');
+      bar.setAttribute('aria-hidden', 'true');
       const fill = mk('i');
       fill.style.width = `${Math.round(Math.max(0, Math.min(1, s.progress)) * 100)}%`;
       bar.append(fill);
@@ -123,6 +125,7 @@ function renderScoreboard(box, scores) {
     }
     if (s.dots) {
       const dots = mk('div', 'score-dots');
+      dots.setAttribute('aria-hidden', 'true');
       const cur = s.dots.indexOf(null);
       s.dots.forEach((p, i) => dots.append(mk('i', p == null ? (i === cur ? 'cur' : '') : `p${p}`)));
       d.append(dots);
@@ -139,8 +142,8 @@ function renderScoreboard(box, scores) {
 // Karta hasła: duży cytat i podpis (kto jest wyrocznią).
 function renderClue(el, clue, psychic) {
   el.textContent = '';
-  el.append(mk('div', 'clue-label', psychic ? `Hasło · wyrocznia ${psychic}` : 'Hasło'));
-  el.append(mk('div', `clue-text${clue ? '' : ' none'}`, clue ? `„${clue}”` : 'podane na głos'));
+  el.append(mk('div', 'clue-label', psychic ? T('Hasło · wyrocznia {0}', psychic) : T('Hasło')));
+  el.append(mk('div', `clue-text${clue ? '' : ' none'}`, clue ? T('„{0}”', clue) : T('podane na głos')));
 }
 
 // Karta wyniku rundy: odznaka z punktami, nazwa trafienia, punkty, dodatkowa informacja.
@@ -150,7 +153,7 @@ function renderResult(el, r) {
   el.textContent = '';
   el.append(mk('div', 'res-badge', r.pts ? `+${r.pts}` : '0'));
   const txt = mk('div', 'res-txt');
-  txt.append(mk('span', 'res-eyebrow', r.eyebrow || HIT_NAMES[r.pts] || ''));
+  txt.append(mk('span', 'res-eyebrow', r.eyebrow || (HIT_NAMES[r.pts] ? T(HIT_NAMES[r.pts]) : '')));
   txt.append(mk('b', 'res-title', r.title));
   if (r.sub) txt.append(mk('span', 'res-sub', r.sub));
   el.append(txt);

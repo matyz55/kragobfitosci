@@ -4,7 +4,7 @@
 // gdzie 0 = sam lewy koniec, 100 = sam prawy. Położenia to szacunki autorów gry (opinia, nie fakt) –
 // dlatego przykłady są wybrane tak, żeby ich miejsce na skali było w miarę oczywiste.
 
-const CATEGORIES = [
+const CARDS_PL = [
   {
     id: 'general', name: 'Ogólne', icon: '🌍',
     cards: [
@@ -417,7 +417,7 @@ const CATEGORIES = [
       ['Zwierzę stadne', 'Samotnik', [['Owca', 3], ['Ryś', 90]]],
       ['Zimą śpi', 'Zimą aktywny', [['Jeż', 4], ['Wilk', 92]]],
       ['Pożyteczny owad', 'Szkodnik', [['Pszczoła', 3], ['Szarańcza', 96]]],
-      ['Drzewo iglaste', 'Drzewo liściaste', [['Sosna', 2], ['Dąb', 98], ['Modrzew', 50]]],
+      ['Drzewo iglaste', 'Drzewo liściaste', [['Sosna', 2], ['Dąb', 98]]],
       ['Dobry pupil dla dziecka', 'Zły pupil dla dziecka', [['Świnka morska', 4], ['Krokodyl', 98]]],
       ['Zwierzę z polskich lasów', 'Zwierzę egzotyczne', [['Żubr', 3], ['Kangur', 98]]],
       ['Śmieszne zwierzę', 'Majestatyczne zwierzę'],
@@ -825,7 +825,7 @@ const CATEGORIES = [
       ['Taniec dla każdego', 'Taniec dla zawodowców', [['Kaczuszki', 3], ['Tango argentyńskie', 92]]],
       ['Łatwy kostium', 'Trudny kostium', [['Duch z prześcieradła', 2], ['Pełna zbroja rycerska', 96]]],
       ['Śmieszny prezent', 'Praktyczny prezent', [['Gumowy kurczak', 3], ['Komplet garnków', 96]]],
-      ['Łatwe wyzwanie', 'Niemożliwe wyzwanie', [['Zaśpiewać „Sto lat”', 3], ['Przepłynąć Bałtyk', 98]]],
+      ['Łatwe wyzwanie', 'Niemożliwe wyzwanie', [['Zaśpiewać „Sto lat”', 3], ['Przebiec maraton w godzinę', 99]]],
       ['Oryginalne przebranie', 'Oklepane przebranie', [['Wampir na Halloween', 90]]],
       ['Zabrać na festiwal', 'Zbędne na festiwalu', [['Peleryna przeciwdeszczowa', 3], ['Żelazko', 98]]],
       ['Zaproszenie, które cieszy', 'Zaproszenie, które przeraża', [['Na wesele przyjaciela', 5], ['Na sobotnie zebranie w pracy', 95]]],

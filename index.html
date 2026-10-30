@@ -59,13 +59,20 @@
       <button id="btn-settings" class="ghost" data-icon="sliders">Ustawienia</button>
       <button id="btn-rules" class="ghost" data-icon="book">Zasady</button>
     </nav>
-    <p class="center muted app-version">Wersja <span id="version"></span></p>
+    <p class="center muted app-version">Wersja <span id="version"></span> · <button type="button" class="link" id="btn-lang"></button></p>
   </main>
 
   <!-- USTAWIENIA -->
   <main id="screen-settings" class="screen hidden">
     <h2 class="screen-title">Ustawienia</h2>
     <form class="settings" id="settings-form" onsubmit="return false">
+      <fieldset class="seg">
+        <legend>Język <span class="seg-hint">Language</span></legend>
+        <div class="seg-opts">
+          <label><input type="radio" name="lang" value="pl"><span lang="pl">Polski</span></label>
+          <label><input type="radio" name="lang" value="en"><span lang="en">English</span></label>
+        </div>
+      </fieldset>
       <fieldset class="seg">
         <legend>Motyw</legend>
         <div class="seg-opts">
@@ -207,11 +214,12 @@
         <input type="text" id="clue-input" maxlength="60" placeholder="wpisz albo powiedz na głos" autocomplete="off">
       </div>
       <div id="clue-box" class="clue-card hidden"></div>
-      <div id="result" class="result hidden"></div>
+      <div id="result" class="result hidden" role="status"></div>
+      <p id="target-desc" class="sr-only" aria-live="polite"></p>
     </div>
     <div class="play-main">
       <div class="dial-wrap">
-        <svg id="dial" role="img" aria-label="Tarcza"></svg>
+        <svg id="dial" aria-hidden="true"></svg>
         <section class="spectrum">
           <div class="spec spec-left" id="spec-left"></div>
           <div class="spec spec-right" id="spec-right"></div>
@@ -284,7 +292,7 @@
         <input type="text" id="card-clue" maxlength="40" placeholder="np. Kasia" autocomplete="off"></label>
     </div>
     <div class="dial-wrap card-dial" id="card-dial-wrap">
-      <svg id="card-dial" role="img" aria-label="Miejsce hasła na skali"></svg>
+      <svg id="card-dial" aria-hidden="true"></svg>
       <section class="spectrum">
         <div class="spec spec-left" id="card-spec-left"></div>
         <div class="spec spec-right" id="card-spec-right"></div>
@@ -302,20 +310,21 @@
 
   <!-- ZASADY -->
   <main id="screen-rules" class="screen hidden">
-    <div class="tabs" role="tablist">
-      <button class="tab on" data-tab="basics" role="tab">Podstawy</button>
-      <button class="tab" data-tab="teams" role="tab">Drużyny</button>
-      <button class="tab" data-tab="coop" role="tab">Razem</button>
-      <button class="tab" data-tab="clues" role="tab">Hasła</button>
+    <h2 class="sr-only">Zasady</h2>
+    <div class="tabs" role="tablist" aria-label="Zasady">
+      <button class="tab on" data-tab="basics" role="tab" id="tab-basics" aria-controls="page-basics">Podstawy</button>
+      <button class="tab" data-tab="teams" role="tab" id="tab-teams" aria-controls="page-teams">Drużyny</button>
+      <button class="tab" data-tab="coop" role="tab" id="tab-coop" aria-controls="page-coop">Razem</button>
+      <button class="tab" data-tab="clues" role="tab" id="tab-clues" aria-controls="page-clues">Hasła</button>
     </div>
     <section class="rules">
-      <div class="tab-page" data-page="basics">
+      <div class="tab-page" data-page="basics" data-i18n="rules-basics" role="tabpanel" id="page-basics" aria-labelledby="tab-basics" tabindex="0">
         <p>Karta to skala między przeciwieństwami, np. <b>Zimne ↔ Gorące</b>. Ukryty cel widzi tylko <b>wyrocznia</b> –
           podaje hasło, które według niej leży w tym miejscu. Pozostali ustawiają wskazówkę.</p>
         <p>Cel ma pola <b>2 · 3 · 4 · 3 · 2</b>: środek 4 pkt, obok 3, brzeg 2, poza celem 0. Na granicy pól liczy się lepsze.</p>
         <p><b>Jeden gracz:</b> gra pokazuje gotowe hasło. Jego miejsce to szacunek autorów gry, nie jedyna słuszna odpowiedź.</p>
       </div>
-      <div class="tab-page hidden" data-page="teams">
+      <div class="tab-page hidden" data-page="teams" data-i18n="rules-teams" role="tabpanel" id="page-teams" aria-labelledby="tab-teams" tabindex="0">
         <ul>
           <li>Drużyny grają na zmianę, wyrocznia zmienia się co turę. Druga drużyna zaczyna z 1 pkt.</li>
           <li>Po ustawieniu wskazówki przeciwnicy mówią, czy środek celu jest <b>na lewo czy na prawo</b> – trafienie to 1 pkt
@@ -324,7 +333,7 @@
           <li>Koniec przy 10 pkt (lub innym progu). Remis – każda drużyna gra jeszcze jedną turę, wygrywa ta z większą liczbą punktów w tej rundzie.</li>
         </ul>
       </div>
-      <div class="tab-page hidden" data-page="coop">
+      <div class="tab-page hidden" data-page="coop" data-i18n="rules-coop" role="tabpanel" id="page-coop" aria-labelledby="tab-coop" tabindex="0">
         <ul>
           <li>Wszyscy grają razem, wyrocznia zmienia się co rundę, bez „lewo/prawo”.</li>
           <li>Talia ma 7 kart (można wybrać 5 lub 10).</li>
@@ -332,7 +341,7 @@
           <li>16 pkt i więcej to wygrana.</li>
         </ul>
       </div>
-      <div class="tab-page hidden" data-page="clues">
+      <div class="tab-page hidden" data-page="clues" data-i18n="rules-clues" role="tabpanel" id="page-clues" aria-labelledby="tab-clues" tabindex="0">
         <ul>
           <li>Jedna myśl – bez łączenia kilku pomysłów.</li>
           <li>Hasło musi istnieć naprawdę.</li>
@@ -341,15 +350,15 @@
         </ul>
       </div>
     </section>
-    <div class="actions"><button class="primary back">Wróć</button></div>
+    <div class="actions"><button class="ghost" id="btn-keys" data-icon="keyboard">Klawiatura</button><button class="primary back">Wróć</button></div>
   </main>
 
   <!-- OKNO TALII: udostępnianie, talia z linku, komunikaty -->
   <div id="deck-dialog" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="deck-dialog-title">
     <div class="dialog">
       <div class="dialog-head">
-        <h2 id="deck-dialog-title"></h2>
-        <button class="ghost small icon-btn" id="btn-deck-dialog-close" data-icon="close" title="Zamknij" aria-label="Zamknij"></button>
+        <h2 id="deck-dialog-title" tabindex="-1"></h2>
+        <button class="ghost small icon-btn" id="btn-deck-dialog-close" data-icon="close" title="Zamknij" aria-label="Zamknij" data-close></button>
       </div>
       <div id="deck-dialog-body" class="dialog-body"></div>
       <div class="actions" id="deck-dialog-actions"></div>
@@ -361,7 +370,7 @@
     <div class="dialog">
       <h2 id="install-title">Zainstaluj grę</h2>
       <p id="install-text"></p>
-      <div class="actions"><button class="primary" id="btn-install-close">OK</button></div>
+      <div class="actions"><button class="primary" id="btn-install-close" data-close>OK</button></div>
     </div>
   </div>
 
@@ -376,14 +385,16 @@
         albo wpisz kod z ekranu:</p>
       <div class="tv-join"><input type="text" id="tv-code" maxlength="4" placeholder="KOD" autocapitalize="characters" autocomplete="off"><button class="primary" id="btn-tv-connect">Połącz</button></div>
       <p class="muted" id="tv-status" aria-live="polite"></p>
-      <div class="actions"><button class="ghost hidden" id="btn-tv-disconnect">Rozłącz</button><button class="ghost" id="btn-tv-close">Zamknij</button></div>
+      <div class="actions"><button class="ghost hidden" id="btn-tv-disconnect">Rozłącz</button><button class="ghost" id="btn-tv-close" data-close>Zamknij</button></div>
     </div>
   </div>
 
   <div id="fx" class="fx" aria-hidden="true"></div>
 
   <script src="js/i18n.js"></script>
+  <script src="js/i18n-en.js"></script>
   <script src="js/data.js"></script>
+  <script src="js/data-en.js"></script>
   <script src="js/decks.js"></script>
   <script src="js/game.js"></script>
   <script src="js/dial.js"></script>
@@ -395,5 +406,6 @@
   <script src="js/remote.js"></script>
   <script src="js/app.js"></script>
   <script src="js/editor.js"></script>
+  <script src="js/a11y.js"></script>
 </body>
 </html>

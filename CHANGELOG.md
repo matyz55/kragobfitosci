@@ -152,3 +152,15 @@
 - 86 nowych kart: każda kategoria ma teraz co najmniej 40 kart i 20 haseł dla jednego gracza
   (razem 909 kart i 904 hasła).
 - Mniej kategorii na liście – na typowych telefonach nazwy znów mieszczą się w dwóch wierszach z liczbą kart.
+
+## 2.0.0 – 30.10.2026 – wersja angielska, klawiatura i czytniki ekranu
+
+- Wersja angielska: wszystkie napisy, zasady i własny angielski zestaw kart (21 kategorii, 869 kart, 855 haseł;
+  przykłady związane z Polską zastąpione znanymi na świecie). Język wybiera się w ustawieniach albo linkiem
+  „English / Polski” pod menu; domyślnie gra mówi po polsku, gdy telefon ma wśród języków polski.
+- Wyzwanie dnia ma osobny zestaw dla każdego języka, a duży ekran przełącza się na język telefonu.
+- Pełna obsługa klawiatury: strzałki przesuwają wskazówkę (z Shift o 5), Enter zatwierdza, L / P – lewo czy prawo,
+  1 / 2 – wybór karty, Esc zamyka okno, „?” – lista skrótów (też przycisk „Klawiatura” w zasadach).
+- Czytniki ekranu: fokus przechodzi na nowy ekran i właściwy przycisk, położenie wskazówki i cel opisane słowami,
+  okna z blokadą tła, zakładki zasad sterowane strzałkami, czytelne nazwy kategorii i kart.
+- Wszystkie ekrany sprawdzone automatycznie pod kątem WCAG 2.2 AA w trzech motywach i po angielsku.

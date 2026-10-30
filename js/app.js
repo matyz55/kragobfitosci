@@ -24,8 +24,17 @@ function saveJSON(key, v) {
 // Ustawienia gracza (zapamiętywane w przeglądarce).
 const DEFAULTS = { theme: 'dark', bigText: false, difficulty: 'normal', timer: 0, hints: true };
 const settings = Object.assign({ cats: CATEGORIES.map((c) => c.id) }, DEFAULTS, loadJSON(SETTINGS_KEY, {}));
-settings.cats = settings.cats.filter((id) => allCategories().some((c) => c.id === id));
-if (!settings.cats.length) settings.cats = CATEGORIES.map((c) => c.id);
+
+// Wybrane kategorie. Kategorie drugiego języka (np. „Polskie klimaty” po przełączeniu na angielski) zostają w zapisie
+// i wracają po powrocie do tamtego języka; usunięte własne talie znikają.
+const CARD_IDS = new Set(CARDS_PL.concat(typeof CARDS_EN === 'undefined' ? [] : CARDS_EN).map((c) => c.id));
+const catHere = (id) => allCategories().some((c) => c.id === id);
+const activeCats = () => settings.cats.filter(catHere);
+function syncCats() {
+  settings.cats = settings.cats.filter((id) => CARD_IDS.has(id) || catHere(id));
+  if (!activeCats().length) settings.cats = settings.cats.concat(CATEGORIES.map((c) => c.id));
+}
+syncCats();
 
 function saveSettings() { saveJSON(SETTINGS_KEY, settings); }
 
@@ -42,6 +51,38 @@ function show(id) {
   $('#btn-home').classList.toggle('hidden', id === 'screen-menu');
   if (id !== 'screen-play') stopTimer();
   if (id === 'screen-menu') updateMenuInfo();
+  // fokus na nowym ekranie (klawiatura, czytniki ekranu); w turze ustawiają go kolejne etapy tury
+  if (id !== 'screen-play') focusLater(() => screenFocus(id));
+}
+
+// Fokus po narysowaniu ekranu – wygrywa ostatnie wywołanie (np. etap tury po zmianie ekranu).
+// Gdy w międzyczasie gracz sam przeniósł fokus (np. Tab), zostawiamy go tam, gdzie jest.
+let focusFrame = 0;
+function focusLater(target) {
+  cancelAnimationFrame(focusFrame);
+  const before = document.activeElement;
+  focusFrame = requestAnimationFrame(() => {
+    const now = document.activeElement;
+    if (now && now !== before && now !== document.body) return;
+    const el = typeof target === 'function' ? target() : target;
+    if (el && el.getClientRects().length && !el.closest('[inert]')) el.focus({ preventScroll: true });
+  });
+}
+
+// Domyślny fokus ekranu: w menu – „Wznów” albo pierwszy tryb, gdzie indziej – nagłówek ekranu.
+function screenFocus(id) {
+  if (id === 'screen-menu') return $('#resume-box').classList.contains('hidden') ? $('#btn-solo') : $('#btn-resume');
+  const scr = document.getElementById(id);
+  return scr && (scr.querySelector('h2:not(.hidden)') || scr.querySelector('button:not(:disabled)'));
+}
+
+// Położenie wskazówki słowami (czytniki ekranu): „72 – bliżej: Gorące”.
+function describeNeedle(v, card = state.card) {
+  const n = Math.round(v);
+  if (!card) return String(n);
+  if (v < 40) return T('{0} – bliżej: {1}', n, card.left);
+  if (v > 60) return T('{0} – bliżej: {1}', n, card.right);
+  return T('{0} – środek skali', n);
 }
 
 // Informacje w menu: przerwana gra i dzisiejsze wyzwanie.
@@ -88,7 +129,7 @@ function applyLook() {
 
 function openSettings() {
   const f = $('#settings-form');
-  const vals = { theme: settings.theme, bigText: settings.bigText ? '1' : '0', difficulty: settings.difficulty, timer: String(settings.timer), hints: settings.hints ? '1' : '0' };
+  const vals = { lang: LANG, theme: settings.theme, bigText: settings.bigText ? '1' : '0', difficulty: settings.difficulty, timer: String(settings.timer), hints: settings.hints ? '1' : '0' };
   for (const [name, val] of Object.entries(vals)) {
     const input = f.querySelector(`input[name="${name}"][value="${val}"]`);
     if (input) input.checked = true;
@@ -100,6 +141,7 @@ function onSettingChange(e) {
   const t = e.target;
   if (!t.name) return;
   const v = t.value;
+  if (t.name === 'lang') { setLang(v); return; }
   if (t.name === 'theme') settings.theme = v;
   else if (t.name === 'bigText') settings.bigText = v === '1';
   else if (t.name === 'difficulty') settings.difficulty = v;
@@ -107,6 +149,18 @@ function onSettingChange(e) {
   else if (t.name === 'hints') settings.hints = v === '1';
   saveSettings();
   applyLook();
+}
+
+// Zmiana języka: zapis w ustawieniach i ponowne wczytanie strony (napisy, karty, wyzwanie dnia w nowym języku).
+// Przerwana gra zostaje w zapisie i można ją wznowić.
+function setLang(lang) {
+  if (!LANGS.includes(lang)) return;
+  settings.lang = lang;
+  saveSettings();
+  saveGame();
+  const u = new URL(window.location.href);
+  u.searchParams.delete('lang');
+  window.location.replace(u.toString());
 }
 
 // ---------- drużyny: nazwy, gracze, awatary i kolory (zapamiętywane) ----------
@@ -135,7 +189,11 @@ function renderTeamPickers() {
 }
 
 function openTeamsSetup() {
-  if (teamPrefs.names) { $('#team-a-name').value = teamPrefs.names[0]; $('#team-b-name').value = teamPrefs.names[1]; }
+  // domyślne nazwy drużyn w języku gry (zapisane mogły pochodzić z drugiego języka)
+  const DEFAULT_NAMES = [['Drużyna A', 'Team A'], ['Drużyna B', 'Team B']];
+  if (teamPrefs.names) {
+    ['a', 'b'].forEach((k, i) => { const n = teamPrefs.names[i]; $(`#team-${k}-name`).value = DEFAULT_NAMES[i].includes(n) ? T(DEFAULT_NAMES[i][0]) : n; });
+  }
   if (teamPrefs.players) { $('#team-a-players').value = teamPrefs.players[0]; $('#team-b-players').value = teamPrefs.players[1]; }
   if (teamPrefs.goal) $('#team-goal').value = String(teamPrefs.goal);
   renderTeamPickers();
@@ -182,14 +240,17 @@ function renderCats() {
   for (const c of allCategories()) {
     const on = settings.cats.includes(c.id);
     const b = button('', `chip${on ? ' on' : ''}${c.custom ? ' custom' : ''}`, () => {
-      if (on && settings.cats.length === 1) return; // co najmniej jedna kategoria
+      if (on && activeCats().length === 1) return; // co najmniej jedna kategoria
       setCats(on ? settings.cats.filter((x) => x !== c.id) : settings.cats.concat(c.id));
     });
     const count = state.pending === 'solo' ? soloRounds([c.id], 9999).length : c.cards.length;
-    const small = document.createElement('small');
-    small.textContent = String(count);
+    // czytnik ekranu: „Ogólne, kart: 41” (bez emotki)
+    const small = mk('small');
     small.title = state.pending === 'solo' ? T('haseł') : T('kart');
-    b.append(mk('span', 'chip-ico', c.icon), mk('span', 'chip-name', c.name), small);
+    small.append(mk('span', 'sr-only', `, ${state.pending === 'solo' ? T('haseł:') : T('kart:')} `), String(count));
+    const ico = mk('span', 'chip-ico', c.icon);
+    ico.setAttribute('aria-hidden', 'true');
+    b.append(ico, mk('span', 'chip-name', c.name), small);
     b.dataset.cat = c.id;
     b.setAttribute('aria-pressed', String(on));
     box.append(b);
@@ -210,13 +271,19 @@ function fitCats() {
 }
 
 function setCats(ids) {
-  settings.cats = allCategories().map((c) => c.id).filter((id) => ids.includes(id));
+  const elsewhere = settings.cats.filter((id) => !catHere(id) && CARD_IDS.has(id));
+  settings.cats = elsewhere.concat(allCategories().map((c) => c.id).filter((id) => ids.includes(id)));
   saveSettings();
   renderCats();
 }
 
 function showRulesTab(tab) {
-  document.querySelectorAll('#screen-rules .tab').forEach((t) => t.classList.toggle('on', t.dataset.tab === tab));
+  document.querySelectorAll('#screen-rules .tab').forEach((t) => {
+    const on = t.dataset.tab === tab;
+    t.classList.toggle('on', on);
+    t.setAttribute('aria-selected', String(on));
+    t.tabIndex = on ? 0 : -1; // strzałki przenoszą między zakładkami, Tab – do treści
+  });
   document.querySelectorAll('#screen-rules .tab-page').forEach((p) => p.classList.toggle('hidden', p.dataset.page !== tab));
 }
 
@@ -261,6 +328,9 @@ function setCard(card) {
   state.card = card;
   $('#spec-left').textContent = card.left;
   $('#spec-right').textContent = card.right;
+  const range = $('#dial-range');
+  range.setAttribute('aria-label', T('Wskazówka na skali: {0} ↔ {1}', card.left, card.right));
+  range.setAttribute('aria-valuetext', describeNeedle(dial.value));
 }
 
 // Konfetti (przy trafieniu w środek i na koniec wygranej gry).
@@ -331,6 +401,7 @@ function resetPlayView() {
   $('#clue-input-box').classList.add('hidden');
   hideHint();
   $('#result').classList.add('hidden');
+  $('#target-desc').textContent = '';
   $('#screen-play').classList.remove('psychic-view');
 }
 
@@ -530,19 +601,18 @@ function psychicPhase() {
   box.textContent = '';
   state.choices.forEach((c, i) => {
     const b = button('', 'choice', () => pick(i));
-    const l = document.createElement('span'), bar = document.createElement('span'), r = document.createElement('span');
-    l.className = 'ch-l'; l.textContent = c.left;
-    bar.className = 'ch-bar';
-    r.className = 'ch-r'; r.textContent = c.right;
-    b.append(l, bar, r);
+    const bar = mk('span', 'ch-bar');
+    bar.append(mk('span', 'sr-only', ' – '));
+    b.append(mk('span', 'ch-l', c.left), bar, mk('span', 'ch-r', c.right));
     b.dataset.i = i;
-    b.setAttribute('aria-label', `${c.left} – ${c.right}`);
     box.append(b);
   });
   function pick(i) {
     setCard(state.choices[i]);
     box.querySelectorAll('.choice').forEach((b, j) => { b.classList.toggle('on', i === j); b.setAttribute('aria-pressed', String(i === j)); });
     hideHint();
+    // cel słowami dla czytników ekranu (wyrocznia widzi go na tarczy)
+    $('#target-desc').textContent = T('Cel na tej skali: {0}.', describeNeedle(state.target));
     tvSync();
   }
   pick(0);
@@ -550,6 +620,7 @@ function psychicPhase() {
   $('#btn-hint').classList.toggle('hidden', !settings.hints);
   $('#clue-input').value = '';
   setActions(button(T('Ukryj cel i oddaj drużynie'), 'primary big', guessPhase, 'btn-hide'));
+  focusLater(() => box.querySelector('.choice.on'));
 }
 
 // Podpowiedź dla wyroczni: przykładowe hasło z puli gry jednoosobowej, najbliższe celowi na wybranej karcie.
@@ -587,6 +658,7 @@ function renderGuess(dialValue, timerSeconds) {
   if (dialValue != null) dial.set(dialValue);
   renderScores();
   showClue();
+  focusLater($('#dial-range'));
   if (g.mode === 'solo') {
     $('#status').textContent = g.daily ? T('Wyzwanie dnia: gdzie na tej skali leży hasło?') : T('Gdzie na tej skali leży hasło? Ustaw wskazówkę.');
     setActions(button(T('Sprawdź'), 'primary big', soloReveal, 'btn-confirm'));
@@ -620,6 +692,7 @@ function renderLR() {
     button(T('◀ Na lewo'), 'lr', () => reveal('L'), 'btn-left'),
     button(T('Na prawo ▶'), 'lr', () => reveal('R'), 'btn-right'),
   );
+  focusLater($('#btn-left'));
 }
 
 // Wynik rundy: { pts, title, sub, eyebrow, bonus } – ten sam obiekt trafia na duży ekran.
@@ -671,6 +744,7 @@ function renderReveal() {
   renderScores();
   showResult(state.result);
   $('#status').textContent = '';
+  $('#target-desc').textContent = T('Cel: {0}, wskazówka: {1}.', Math.round(state.target), Math.round(dial.value));
   let label, next;
   if (g.mode === 'solo') {
     label = g.done ? T('Podsumowanie') : T('Dalej');
@@ -684,6 +758,7 @@ function renderReveal() {
     next = () => (g.done ? endGame() : passDevice());
   }
   setActions(button(label, 'primary big', next, 'btn-next'));
+  focusLater($('#btn-next'));
 }
 
 // ---------- zapis i wznawianie przerwanej gry ----------
@@ -841,7 +916,8 @@ function dailyShareText() {
   const g = state.game;
   const rec = Stats.daily.get(g.daily) || { score: g.score, pts: state.history.map((h) => h.pts) };
   const [y, m, d] = g.daily.split('-');
-  return `${T('Krąg obfitości – wyzwanie dnia {0}: {1}/{2} pkt', `${d}.${m}.${y}`, rec.score, DAILY_ROUNDS * 4)}\n${dailySquares(rec.pts)}\n${location.origin}${location.pathname}`;
+  const date = LANG === 'pl' ? `${d}.${m}.${y}` : new Date(+y, m - 1, +d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  return `${T('Krąg obfitości – wyzwanie dnia {0}: {1}/{2} pkt', date, rec.score, DAILY_ROUNDS * 4)}\n${dailySquares(rec.pts)}\n${location.origin}${location.pathname}`;
 }
 
 async function shareDaily() {
@@ -925,8 +1001,14 @@ function home() {
 let saveSoon = null;
 
 function init() {
+  translatePage();
   applyLook();
   $('#version').textContent = GAME_VERSION;
+  // szybka zmiana języka w menu (nazwa drugiego języka w tym języku)
+  const langBtn = $('#btn-lang');
+  langBtn.textContent = LANG === 'pl' ? 'English' : 'Polski';
+  langBtn.lang = LANG === 'pl' ? 'en' : 'pl';
+  langBtn.addEventListener('click', () => setLang(LANG === 'pl' ? 'en' : 'pl'));
   fillIcons(document);
   dial = createDial($('#dial'), $('#dial-range'), (v, user) => {
     if (user) {
@@ -936,6 +1018,9 @@ function init() {
     } else Haptics.sync(v);
     tvDial(v);
   });
+  dial.describe = (v) => describeNeedle(v);
+  // nagłówki ekranów mogą dostać fokus (czytnik ekranu ogłasza nowy ekran)
+  document.querySelectorAll('.screen h2').forEach((h) => { h.tabIndex = -1; });
   const hero = createDial($('#hero-dial'), $('#hero-range'));
   hero.locked = true;
   hero.showTarget(68);
@@ -976,7 +1061,7 @@ function init() {
   $('#btn-cats-back').addEventListener('click', catsBack);
   $('#btn-cats-start').addEventListener('click', catsStart);
   $('#btn-cats-all').addEventListener('click', () => setCats(allCategories().map((c) => c.id)));
-  $('#btn-cats-none').addEventListener('click', () => setCats([settings.cats[0]]));
+  $('#btn-cats-none').addEventListener('click', () => setCats([activeCats()[0]]));
   document.querySelectorAll('#screen-rules .tab').forEach((t) => t.addEventListener('click', () => showRulesTab(t.dataset.tab)));
   $('#btn-install').addEventListener('click', install);
   $('#btn-install-close').addEventListener('click', () => $('#install-dialog').classList.add('hidden'));

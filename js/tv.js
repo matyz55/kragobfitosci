@@ -43,11 +43,11 @@ function overlay(artName, title, text, summary) {
 // Napis nad tarczą – zależny od etapu tury.
 function statusFor(s) {
   switch (s.phase) {
-    case 'psychic': return `Wyrocznia ${s.psychic} patrzy na cel i wymyśla hasło…`;
+    case 'psychic': return T('Wyrocznia {0} patrzy na cel i wymyśla hasło…', s.psychic);
     case 'guess':
-      if (s.mode === 'solo') return 'Gdzie na tej skali leży hasło?';
-      return s.mode === 'teams' ? `„${s.team}” ustawia wskazówkę. Wyrocznia milczy!` : 'Wszyscy oprócz wyroczni ustawiają wskazówkę.';
-    case 'lr': return `„${s.other}”: środek celu jest na lewo czy na prawo od wskazówki?`;
+      if (s.mode === 'solo') return T('Gdzie na tej skali leży hasło?');
+      return s.mode === 'teams' ? T('„{0}” ustawia wskazówkę. Wyrocznia milczy!', s.team) : T('Wszyscy oprócz wyroczni ustawiają wskazówkę.');
+    case 'lr': return T('„{0}”: środek celu jest na lewo czy na prawo od wskazówki?', s.other);
     default: return '';
   }
 }
@@ -56,6 +56,13 @@ function render(s) {
   const prev = tv.phase;
   tv.last = s;
   tv.phase = s.phase;
+  // gra na telefonie w innym języku – duży ekran przełącza się na ten sam (odświeżenie z ?lang=)
+  if (LANGS.includes(s.lang) && s.lang !== LANG) {
+    const u = new URL(location.href);
+    u.searchParams.set('lang', s.lang);
+    location.replace(u.toString());
+    return;
+  }
   // starsza wersja dużego ekranu niż gry na telefonie – jednorazowe odświeżenie
   if (s.ver && s.ver !== GAME_VERSION) {
     try {
@@ -73,11 +80,12 @@ function render(s) {
   if (s.phase !== 'guess') showTimer(null);
   if (s.phase === 'menu') {
     renderScores([]);
-    overlay('orb', 'Krąg obfitości', 'Wybierzcie tryb gry na telefonie.');
+    overlay('orb', 'Krąg obfitości', T('Wybierzcie tryb gry na telefonie.'));
     return;
   }
   if (s.phase === 'pass') {
-    overlay('orb', `Wyrocznia: ${s.psychic}`, `${s.sudden ? 'Dogrywka! ' : ''}${s.mode === 'teams' ? `Tura drużyny „${s.team}”. ` : ''}Przekażcie telefon wyroczni – tylko ona patrzy na cel.`);
+    overlay('orb', T('Wyrocznia: {0}', s.psychic), (s.sudden ? T('Dogrywka!') + ' ' : '') + (s.mode === 'teams' ? T('Tura drużyny „{0}”.', s.team) + ' ' : '')
+      + T('Przekażcie telefon wyroczni – tylko ona patrzy na cel.'));
     return;
   }
   if (s.phase === 'end' && s.end) {
@@ -148,7 +156,7 @@ function onMessage(m) {
 // pokój sieciowy: kod i QR dla telefonu
 async function hostRoom() {
   show('#tv-host', false);
-  $('#tv-net-status').textContent = 'Tworzenie pokoju…';
+  $('#tv-net-status').textContent = T('Tworzenie pokoju…');
   try {
     tv.room = await KragNet.host('tv', (conn) => {
       conn.on('data', onMessage);
@@ -156,19 +164,20 @@ async function hostRoom() {
     }, (() => { try { return localStorage.getItem('krag.tvRoom') || ''; } catch { return ''; } })());
     try { localStorage.setItem('krag.tvRoom', tv.room.code); } catch {}
     $('#tv-code').textContent = tv.room.code;
-    $('#tv-room').textContent = `Kod: ${tv.room.code}`;
+    $('#tv-room').textContent = T('Kod: {0}', tv.room.code);
     show('#tv-room', true);
     show('#tv-code-box', true);
     $('#tv-net-status').textContent = '';
     const url = KragNet.pageUrl('index.html', { tv: tv.room.code });
     try { $('#tv-qr').innerHTML = await KragNet.qrSvg(url); } catch { $('#tv-qr').textContent = ''; }
   } catch (e) {
-    $('#tv-net-status').textContent = 'Nie udało się utworzyć pokoju (brak internetu?). Spróbuj ponownie.';
+    $('#tv-net-status').textContent = T('Nie udało się utworzyć pokoju (brak internetu?). Spróbuj ponownie.');
     show('#tv-host', true);
   }
 }
 
 function init() {
+  translatePage();
   fillIcons(document);
   dialApi = createDial($('#tv-dial'), $('#tv-dial-range'));
   dialApi.locked = true;
@@ -182,8 +191,9 @@ function init() {
   const soundBtn = $('#tv-sound');
   const soundLabel = () => {
     const on = SFX.enabled && tv.soundOn;
-    soundBtn.innerHTML = icon(on ? 'soundOn' : 'soundOff') + (on ? '' : '<span>Włącz dźwięk</span>');
-    soundBtn.setAttribute('aria-label', on ? 'Dźwięk włączony' : 'Włącz dźwięk');
+    soundBtn.innerHTML = icon(on ? 'soundOn' : 'soundOff');
+    if (!on) soundBtn.append(mk('span', null, T('Włącz dźwięk')));
+    soundBtn.setAttribute('aria-label', on ? T('Dźwięk włączony') : T('Włącz dźwięk'));
   };
   soundBtn.addEventListener('click', () => {
     if (!tv.soundOn) { tv.soundOn = true; if (!SFX.enabled) SFX.toggle(); else SFX.click(); } else { SFX.toggle(); }
@@ -203,7 +213,7 @@ function init() {
   }
   // okno otwarte z gry na tym samym urządzeniu nie potrzebuje sieci; w innym przypadku od razu tworzymy pokój
   if (window.opener) {
-    $('#tv-lobby-text').textContent = 'Czekam na grę z okna obok…';
+    $('#tv-lobby-text').textContent = T('Czekam na grę z okna obok…');
     show('#tv-host', true);
   } else if (!/[?&]local=1/.test(location.search)) {
     hostRoom();

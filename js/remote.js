@@ -18,7 +18,7 @@ function tvSend(msg) {
 // Stan dla dużego ekranu – tylko dane (bez HTML), żeby nic z sieci nie trafiało na stronę jako kod.
 function tvSnapshot() {
   const g = state.game;
-  const s = { t: 'state', ver: GAME_VERSION, phase: g ? state.phase : 'menu' };
+  const s = { t: 'state', ver: GAME_VERSION, lang: LANG, phase: g ? state.phase : 'menu' };
   if (!g) return s;
   s.mode = g.mode;
   s.scores = scoreList();
@@ -63,8 +63,8 @@ function tvStatus(text) {
 
 async function connectTv(code, silent) {
   code = KragNet.normCode(code);
-  if (code.length !== 4) { tvStatus('Kod ma 4 znaki – widać go na dużym ekranie.'); return; }
-  if (!silent) tvStatus('Łączenie…');
+  if (code.length !== 4) { tvStatus(T('Kod ma 4 znaki – widać go na dużym ekranie.')); return; }
+  if (!silent) tvStatus(T('Łączenie…'));
   try {
     const { conn } = await KragNet.connect('tv', code);
     if (tvConn) try { tvConn.close(); } catch {}
@@ -76,14 +76,14 @@ async function connectTv(code, silent) {
     conn.on('close', () => {
       if (tvConn !== conn) return;
       tvConn = null;
-      tvStatus('Rozłączono z dużym ekranem.');
+      tvStatus(T('Rozłączono z dużym ekranem.'));
       // telewizor mógł się odświeżyć – kilka prób ponownego połączenia z tym samym kodem
       if (tvCode && tvRetry < 5) { tvRetry++; setTimeout(() => { if (!tvConn && tvCode) connectTv(tvCode, true); }, 3000); }
     });
-    tvStatus(`✔ Połączono z dużym ekranem (${code}).`);
+    tvStatus(T('✔ Połączono z dużym ekranem ({0}).', code));
     tvSync();
   } catch (e) {
-    if (!silent) tvStatus('Nie udało się połączyć. Sprawdź kod i czy duży ekran jest włączony.');
+    if (!silent) tvStatus(T('Nie udało się połączyć. Sprawdź kod i czy duży ekran jest włączony.'));
   }
 }
 
@@ -93,7 +93,7 @@ function disconnectTv() {
   const c = tvConn;
   tvConn = null;
   if (c) try { c.close(); } catch {}
-  tvStatus('Rozłączono.');
+  tvStatus(T('Rozłączono.'));
 }
 
 function openTvWindow() {

@@ -19,6 +19,7 @@ export async function fits(page, label) {
     for (const el of els) {
       if (!el.getClientRects().length) continue;
       if (el.closest('.rules')) continue; // treść zasad mierzymy niżej (pole z treścią)
+      if (el.closest('.sr-only')) continue; // tekst tylko dla czytników ekranu jest celowo poza widokiem
       const r = el.getBoundingClientRect();
       if (r.width === 0 || r.height === 0) continue;
       if (r.bottom > H + 1 || r.right > W + 1 || r.left < -1 || r.top < -1) {
@@ -28,7 +29,10 @@ export async function fits(page, label) {
     const rules = scr.querySelector('.rules');
     if (rules && rules.scrollHeight > rules.clientHeight + 1) out.push(`zasady ${rules.scrollHeight}>${rules.clientHeight}`);
     // elementy przewijane wewnątrz (np. lista kategorii) też nie mogą się przewijać
-    for (const el of els) if (el.scrollHeight > el.clientHeight + 1 && getComputedStyle(el).overflowY !== 'visible' && el.tagName !== 'INPUT') out.push(`przewijanie w ${el.tagName}.${el.className}`);
+    for (const el of els) {
+      if (el.closest('.sr-only') || el.tagName === 'INPUT') continue; // tekst tylko dla czytników ekranu jest celowo ukryty
+      if (el.scrollHeight > el.clientHeight + 1 && getComputedStyle(el).overflowY !== 'visible') out.push(`przewijanie w ${el.tagName}.${el.className}`);
+    }
     // napisy na przyciskach nie mogą być ucięte
     for (const b of scr.querySelectorAll('button')) {
       if (b.getClientRects().length && (b.scrollWidth > b.clientWidth + 1 || b.scrollHeight > b.clientHeight + 1)) out.push(`ucięty przycisk: ${b.innerText}`);
