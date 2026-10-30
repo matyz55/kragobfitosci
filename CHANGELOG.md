@@ -143,3 +143,12 @@
   Zmysły i kształty – razem 28 kategorii, 914 kart i 891 haseł dla jednego gracza.
 - Wybór kategorii: tryb gry i liczba kart pod listą, przy małym ekranie zwarty układ nazw (wszystko bez przewijania).
 - Talia z jedną kartą pokazuje wyroczni jedną kartę, a dwie karty do wyboru zawsze są różne.
+
+## 1.10.1 – 30.10.2026 – więcej kart zamiast nowych kategorii
+
+- Zamiast 6 nowych kategorii z wersji 1.10.0 – więcej kart w dotychczasowych 22 kategoriach: karty z tamtych
+  kategorii trafiły do pasujących (np. kosmos do „Nauki i techniki”, emocje do „Ludzi i charakterów” i „Miłości
+  i przyjaźni”, zmysły i kształty do „Ogólnych”), a skale zbyt podobne do już istniejących zostały pominięte.
+- 86 nowych kart: każda kategoria ma teraz co najmniej 40 kart i 20 haseł dla jednego gracza
+  (razem 909 kart i 904 hasła).
+- Mniej kategorii na liście – na typowych telefonach nazwy znów mieszczą się w dwóch wierszach z liczbą kart.

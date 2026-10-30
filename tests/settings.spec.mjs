@@ -43,7 +43,9 @@ test('poziom trudności zmienia szerokość pól celu', async ({ page }) => {
 });
 
 test('minutnik narady: odliczanie, cykanie i koniec czasu', async ({ page }) => {
-  await page.clock.install();
+  // zegar zatrzymany – czas płynie tylko w runFor (wynik nie zależy od obciążenia komputera)
+  await page.clock.install({ time: new Date('2026-10-30T10:00:00') });
+  await page.clock.pauseAt(new Date('2026-10-30T10:00:01'));
   await page.goto('/');
   await setOption(page, 'timer', '30');
   await startTeams(page);

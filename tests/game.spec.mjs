@@ -174,12 +174,12 @@ test('kategorie: wybierane po trybie, zapamiętane, co najmniej jedna zostaje', 
   expect(cats).toEqual(['music']);
 });
 
-test('każdą kategorię da się grać osobno: min. 32 karty i 15 haseł, bez powtórzeń i obcych liter', async ({ page }) => {
+test('każdą kategorię da się grać osobno: min. 40 kart i 20 haseł, bez powtórzeń i obcych liter', async ({ page }) => {
   const r = await page.evaluate(() => {
     const seen = new Set(), dup = [], small = [], foreign = [];
     for (const c of CATEGORIES) {
       const hasla = soloRounds([c.id], 9999).length;
-      if (c.cards.length < 32 || hasla < 15) small.push(`${c.id}: ${c.cards.length} kart, ${hasla} haseł`);
+      if (c.cards.length < 40 || hasla < 20) small.push(`${c.id}: ${c.cards.length} kart, ${hasla} haseł`);
       for (const k of c.cards) {
         const key = `${k[0]}|${k[1]}`.toLowerCase();
         if (seen.has(key)) dup.push(key);

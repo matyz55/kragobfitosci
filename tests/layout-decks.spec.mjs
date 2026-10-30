@@ -43,7 +43,7 @@ for (const [w, h] of VIEWPORTS) {
     await page.click('#btn-teams');
     await page.click('#btn-start-teams');
     await page.click('#btn-cats-all');
-    await expect(page.locator('#cats .chip')).toHaveCount(36);
+    await expect(page.locator('#cats .chip')).toHaveCount(30); // 22 kategorie + 8 talii
     await fits(page, 'kategorie z ośmioma taliami');
     // pusta lista i nowa karta
     await page.evaluate(() => { localStorage.setItem('krag.decks', '[]'); });
